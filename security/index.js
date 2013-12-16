@@ -1,5 +1,6 @@
 var nodefn = require('when/node/function'),
-    User = require('../models').User;
+    errors = require('../helpers').errors,
+    User   = require('../models').User;
 
 /**
  * Security application configuration.
@@ -25,7 +26,7 @@ module.exports = function(app, passport) {
    */
   app.ensureAuthenticated = function(req, res, next) {
     if (req.isAuthenticated()) { return next(); }
-    res.send(401);
+    next(new errors.Forbidden());
   };
 
   /**
@@ -33,7 +34,7 @@ module.exports = function(app, passport) {
    */
   app.ensureIsAdmin = function(req, res, next) {
     if (req.user.uid == process.env.APP_ADMIN) { return next(); }
-    res.send(403);
+    next(new errors.Unauthorized());
   };
 
   /**

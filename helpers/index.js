@@ -2,5 +2,6 @@
  * Helpers.
  */
 module.exports = {
-  logger: require('./logger')
+  logger: require('./logger'),
+  errors: require('./errors')
 };

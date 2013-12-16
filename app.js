@@ -18,14 +18,14 @@
   odule dependencies.
 */
 
-var express = require('express'),
-    http = require('http'),
-    path = require('path'),
-    passport = require('passport'),
-    _ = require('underscore'),
-    logger = require('./helpers').logger,
-    appInfo = require('./package.json'),
-    routes = require('./routes');
+var express    = require('express'),
+    http       = require('http'),
+    path       = require('path'),
+    passport   = require('passport'),
+    logger     = require('./helpers').logger,
+    middleware = require('./middlewares'),
+    appInfo    = require('./package.json'),
+    routes     = require('./routes');
 
 var app = module.exports = express();
 
@@ -46,15 +46,7 @@ app.configure(function() {
   app.use(express.cookieParser());
   app.use(express.cookieSession({secret: process.env.APP_SESSION_SECRET || 'NuNUXKeEpR_'}));
   app.use(express.bodyParser());
-  app.use (function(req, res, next) {
-    if (req._body) return next();
-    req.rawBody = '';
-    req.setEncoding('utf8');
-    req.on('data', function(chunk) {
-      req.rawBody += chunk;
-    });
-    req.on('end', next);
-  });
+  app.use(middleware.rawbodyHandler());
   app.use(passport.initialize());
   app.use(passport.session());
   app.use(express.methodOverride());
@@ -64,32 +56,18 @@ app.configure(function() {
 app.configure('development', function() {
   app.use(require('less-middleware')({ src: path.join(__dirname, 'public') }));
   app.use(express.static(path.join(__dirname, 'public')));
-  app.use(errorHandler);
+  app.use(middleware.errorHandler(app));
   logger.setLevel('debug');
 });
 
 app.configure('production', function() {
   var oneDay = 86400000;
   app.use(express.static(path.join(__dirname, 'public-build'), {maxAge: oneDay}));
-  app.use(errorHandler);
+  app.use(middleware.errorHandler(app));
   logger.setLevel('info');
 });
 
-function errorHandler(err, req, res, next) {
-  if ('test' != app.get('env')) logger.error(err.stack || err);
-  res.status(err.status || 500);
-  var error = _.isString(err) ? err : (_.isObject(err) ? err.message : 'Unknown Error');
-  res.format({
-    html: function() {
-      res.render('error', {error: error, info: app.get('info')});
-    },
-    json: function(){
-      res.json({error: error});
-    }
-  });
-}
-
-// Set up secuirty
+// Set up security
 require('./security')(app, passport);
 
 // Register routes...

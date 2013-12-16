@@ -23,7 +23,8 @@
     "passport-browserid": "0.1.4",
     "mongoose": "~3.8.2",
     "when": "~2.7.0",
-    "underscore": "~1.5.2"
+    "underscore": "~1.5.2",
+    "colors": "~0.6.2"
   },
   "devDependencies": {
     "mocha": "~1.12.0",

@@ -1,3 +1,6 @@
+var colors = require('colors'),
+    _      = require('underscore');
+
 var logger = exports;
 
 logger.level = 3; // defaut
@@ -27,6 +30,15 @@ logger.warn = function() {
 };
 
 logger.error = function() {
-  console.error.apply(this, arguments);
+  if (_.isObject(arguments[0])) {
+    var err = arguments[0];
+    console.error('\nERROR:'.red, err.message ? err.message.red : err);
+    console.error('');
+    if (err.stack) {
+      console.error(err.stack, '\n');
+    }
+  } else {
+    console.error.apply(this, arguments);
+  }
 };
 

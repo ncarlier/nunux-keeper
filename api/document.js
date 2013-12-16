@@ -1,4 +1,6 @@
 var logger   = require('../helpers').logger,
+    errors   = require('../helpers').errors,
+    when     = require('when'),
     Document = require('../models').Document;
 
 var checkForHex = new RegExp("^[0-9a-fA-F]{24}$");
@@ -9,16 +11,17 @@ module.exports = {
    */
   get: function(req, res, next) {
     if (!checkForHex.test(req.params.id)) {
-      return res.send(400);
+      return next(new errors.BadRequest());
     }
     Document.findById(req.params.id).exec()
     .then(function(doc) {
       if (doc) {
-        res.json(doc);
+        return when.resolve(doc);
       } else {
-        res.send(404);
+        return when.reject(new errors.NotFound('Document not found.'));
       }
-    }, next);
+    })
+    .then(res.json, next);
   },
 
   /**
@@ -37,24 +40,20 @@ module.exports = {
    */
   del: function(req, res, next) {
     if (!checkForHex.test(req.params.id)) {
-      return res.send(400);
+      return next(new errors.BadRequest());
     }
 
     Document.findById(req.params.id).exec()
     .then(function(doc) {
-      if (doc) {
-        if (doc.owner === req.user.uid) {
-          Document.remove(doc).exec()
-          .then(function() {
-            res.send(205);
-          }, next);
-        }
-        else {
-          res.send(403);
-        }
+      if (!doc) return when.reject(new errors.NotFound('Document not found.'));
+      if (doc.owner === req.user.uid) {
+        return Document.remove(doc).exec();
       } else {
-        res.send(404);
+        return when.reject(new errors.Forbidden());
       }
+    })
+    .then(function() {
+      res.send(205);
     }, next);
   }
 };
