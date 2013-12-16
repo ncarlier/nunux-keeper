@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Page Archive Request</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+body {
+  background: #364050;
+  color: white;
+  font-family: 'Source Sans Pro', sans-serif;
+}
+h1 {
+  display: inline-block;
+  width: 10%;
+  text-align: center;
+  font-variant: small-caps;
+  margin: 0;
+}
+p {
+  display: inline-block;
+  text-align: center;
+  width: 80%;
+  font-size: 1.5em;
+  margin: 0;
+  color: #DADADA;
+}
+a {
+  float: right;
+  color: #DADADA;
+}
+  </style>
+</head>
+<body>
+  <h1>reader</h1>
+  <p><%= message %></p>
+  <a href="<%= realm %>/#/timeline/archive" target="_blank">See archives</a>
+  <script>
+function receiveMessage(event) {
+  if ('ping' === event.data) {
+    event.source.postMessage("pong", event.origin);
+  }
+}
+window.addEventListener("message", receiveMessage, false);
+  </script>
+</body>
+</html>

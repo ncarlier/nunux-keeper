@@ -1,0 +1,36 @@
+{
+  "author": "Nicolas Carlier (https://github.com/ncarlier/)",
+  "name": "keeper",
+  "version": "0.0.1",
+  "description": "Keep my web in my place.",
+  "license": "gplv3",
+  "homepage": "http://keeper.nunux.org",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ncarlier/nunux-keeper.git"
+  },
+  "scripts": {
+    "start": "node app",
+    "test": "grunt"
+  },
+  "dependencies": {
+    "express": "3.3.x",
+    "request": "2.27.x",
+    "ejs": "*",
+    "less-middleware": "*",
+    "passport": "0.1.x",
+    "passport-google": "0.3.0",
+    "passport-browserid": "0.1.4",
+    "mongoose": "~3.8.2",
+    "when": "~2.7.0",
+    "underscore": "~1.5.2"
+  },
+  "devDependencies": {
+    "mocha": "~1.12.0",
+    "should": "~1.2.2",
+    "matchdep": "~0.1.2",
+    "grunt": "~0.4.1",
+    "grunt-mocha-test": "~0.4.0",
+    "grunt-contrib-jshint": "~0.7.2"
+  }
+}

@@ -1,0 +1,4 @@
+public/components/
+node_modules/
+public/stylesheets/*.css
+public-build/
