@@ -33,22 +33,24 @@ describe('Check document API', function() {
   });
 
   it('should create new document', function(done) {
-    var newDoc = {
-      title:       'Sample Doc',
-      body:        '<p>sample</p>',
-      contentType: 'text/html'
-    };
+    var title   = 'Sample Doc',
+        content = '<p>sample</p>';
 
     request.post({
-      url:  url,
-      jar:  true,
-      json: true,
-      body: newDoc
+      url: url,
+      jar: true,
+      qs:  {title: title},
+      headers: {
+        'Content-Type': 'text/html'
+      },
+      body: content
     }, function(err, res, body) {
       if (err) return done(err);
       res.statusCode.should.equal(201);
-      body.title.should.equal('Sample Doc');
+      body = JSON.parse(body);
+      body.title.should.equal(title);
       body.owner.should.equal('foo@bar.com');
+      body.content.should.equal(content);
       body.should.have.property('_id');
       body.should.have.property('date');
       docId = body._id;

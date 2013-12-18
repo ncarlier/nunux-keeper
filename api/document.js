@@ -1,6 +1,7 @@
 var logger   = require('../helpers').logger,
     errors   = require('../helpers').errors,
     when     = require('when'),
+    sanitize = require('validator').sanitize,
     Document = require('../models').Document;
 
 var checkForHex = new RegExp("^[0-9a-fA-F]{24}$");
@@ -28,8 +29,32 @@ module.exports = {
    * Post new document.
    */
   create: function(req, res, next) {
-    req.body.owner = req.user.uid;
-    Document.create(req.body)
+    // Sanitize and validate query params
+    var title = sanitize(req.query.title).trim();
+    title = sanitize(title).entityEncode();
+    var url = req.query.url;
+    if (url) {
+      try {
+        check(req.query.url).isUrl()
+      } catch (e) {
+        return next(new errors.BadRequest(e.message));
+      }
+    }
+
+    var obj = {
+      contentType: req.header('Content-Type'),
+      content: req.rawBody
+    };
+    // Extract content
+    Document.extract(obj)
+    .then(function(doc) {
+      doc.title = title;
+      doc.owner = req.user.uid;
+      doc.url   = url;
+
+      // Create document
+      return Document.create(doc);
+    })
     .then(function(doc) {
       res.status(201).json(doc);
     }, next);
