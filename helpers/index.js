@@ -3,5 +3,6 @@
  */
 module.exports = {
   logger: require('./logger'),
-  errors: require('./errors')
+  errors: require('./errors'),
+  elasticsearch: require('./elasticsearch')
 };

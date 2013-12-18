@@ -1,6 +1,7 @@
 var logger = require('../helpers').logger,
     errors = require('../helpers').errors,
     when   = require('when'),
+    elasticsearch     = require('../helpers').elasticsearch,
     DocumentExtractor = require('../extractors').DocumentExtractor;
 
 /**
@@ -21,6 +22,10 @@ module.exports = function(db) {
       return when.reject(new errors.BadRequest('Content-type undefined.'));
     }
     return DocumentExtractor.get(obj.contentType).extract(obj);
+  });
+
+  DocumentSchema.static('search', function(q) {
+    return elasticsearch.search('documents', q);
   });
 
   return db.model('Document', DocumentSchema);

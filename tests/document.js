@@ -58,6 +58,24 @@ describe('Check document API', function() {
     });
   });
 
+  it('should find documents', function(done) {
+    var query = 'sample';
+
+    request.get({
+      url: url,
+      jar: true,
+      qs:  {q: query},
+      json: true
+    }, function(err, res, body) {
+      if (err) return done(err);
+      res.statusCode.should.equal(200);
+      body.should.have.property('hits');
+      body.hits.total.should.be.above(0);
+      done();
+    });
+  });
+
+
   it('should delete new document', function(done) {
     request.del({
       url:  url + '/' + docId,
