@@ -1,6 +1,18 @@
-var nodefn = require('when/node/function'),
-    errors = require('../helpers').errors,
-    User   = require('../models').User;
+var nodefn  = require('when/node/function'),
+    errors  = require('../helpers').errors,
+    User    = require('../models').User,
+    http    = require('http'),
+    request = http.IncomingMessage.prototype;
+
+/**
+ * Test if request is done by an Admin.
+ *
+ * @return {Boolean}
+ * @api public
+ */
+request.isAdmin = function() {
+  return this.user && this.user.uid === process.env.APP_ADMIN;
+};
 
 /**
  * Security application configuration.
@@ -25,7 +37,7 @@ module.exports = function(app, passport) {
    * Middleware to check that the user is logged.
    */
   app.ensureAuthenticated = function(req, res, next) {
-    if (req.isAuthenticated()) { return next(); }
+    if (req.isAuthenticated()) {return next(); }
     next(new errors.Forbidden());
   };
 
@@ -33,8 +45,7 @@ module.exports = function(app, passport) {
    * Middleware to check that the user is an admin.
    */
   app.ensureIsAdmin = function(req, res, next) {
-    if (req.user.uid == process.env.APP_ADMIN) { return next(); }
-    next(new errors.Unauthorized());
+    next(req.isAdmin() ? null : new errors.Unauthorized());
   };
 
   /**

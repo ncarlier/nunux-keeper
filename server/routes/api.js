@@ -4,9 +4,13 @@ var api = require('../api');
  * API Routes.
  */
 module.exports = function(app) {
-  // Documents API
+  // API info:
+  app.get('/api', app.ensureAuthenticated, api.info(app));
+  // Documents API:
   app.get('/api/document/:id', app.ensureAuthenticated, api.documents.get);
   app.get('/api/document', app.ensureAuthenticated, api.documents.search);
   app.post('/api/document', app.ensureAuthenticated, api.documents.create);
   app.delete('/api/document/:id', app.ensureAuthenticated, api.documents.del);
+  // Admin API:
+  //app.get('/api/admin/user/:id', app.ensureAuthenticated, app.ensureIsAdmin, api.admin.users.get);
 };

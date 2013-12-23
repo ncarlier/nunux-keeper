@@ -10,7 +10,7 @@
     "url": "https://github.com/ncarlier/nunux-keeper.git"
   },
   "scripts": {
-    "start": "node app",
+    "start": "node server/app",
     "test": "grunt"
   },
   "dependencies": {

@@ -3,9 +3,15 @@
 ## Features
 
 * Save document
+  * Text
+    If content type is HTML, then text is sanitize using readability.
+    And medias will be downloaded localy (async).
+  * URL
+    If content type is HTML, see above.
+    If content type is an image, then image will be downloaded (async).
+  * Image
 * Full text indexation
-* Save original images
-* Filter HTML content (using readability)
+* Media downloader jobs
 * Bookmarklet
 * Login with Google OpenID or Mozilla Persona
 * RESTFul JSON API
@@ -19,6 +25,7 @@
 
 ## Too see
 
+- Plugins (downloader and viewer)
 - Font Awesome
 - Less / Sass
 - Twitter Bootstrap 3

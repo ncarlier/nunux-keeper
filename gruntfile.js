@@ -8,11 +8,11 @@ module.exports = function(grunt) {
         options: {
           reporter: 'spec',
         },
-        src: ['tests/**/*.js']
+        src: ['server/tests/**/*.js']
       }
     },
     jshint: {
-      backend: ['app.js', 'api/*.js', 'controllers/*.js', 'helpers/*.js', 'models/*.js', 'routes/*.js', 'security/*.js'],
+      backend: ['server/app.js', 'server/**/*.js'],
       frontend: {
         options: {
           globalstrict: true,
@@ -29,10 +29,10 @@ module.exports = function(grunt) {
             Mousetrap: false
           }
         },
-        src: ['public/javascripts/**/*.js']
+        src: ['client/javascripts/**/*.js']
       }
     },
-    clean: ["public-build"]
+    clean: ["build"]
   });
 
   // Register building task

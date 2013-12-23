@@ -9,7 +9,7 @@ describe('Check API access', function() {
 
   after(mockServer.stop);
 
-  it('should be redirect if not logged', function(done) {
+  it('should be redirect to the welcome page if not logged', function(done) {
     var url = mockServer.getRealm() + '/';
     request.get(url, function (err, res, body) {
       if (err) return done(err);
@@ -19,14 +19,22 @@ describe('Check API access', function() {
     });
   });
 
-  it('should be logged', function(done) {
+  it('should be redirect to the home page if logged', function(done) {
     var url = mockServer.getRealm() + '/auth/mock';
-    request.get({url: url, jar: true, json: true}, function (err, res, body) {
+    request.get({url: url, jar: true}, function (err, res, body) {
       if (err) return done(err);
       res.statusCode.should.equal(200);
       res.req.path.should.equal('/');
-      body.info.name.should.equal('keeper');
-      body.user.uid.should.equal('foo@bar.com');
+      done();
+    });
+  });
+
+  it('should access to API infos', function(done) {
+    var url = mockServer.getRealm() + '/api';
+    request.get({url: url, jar: true, json: true}, function (err, res, body) {
+      if (err) return done(err);
+      res.statusCode.should.equal(200);
+      body.name.should.equal('keeper');
       done();
     });
   });
