@@ -1,8 +1,9 @@
-var logger   = require('../helpers').logger,
-    errors   = require('../helpers').errors,
-    when     = require('when'),
-    sanitize = require('validator').sanitize,
-    Document = require('../models').Document;
+var when       = require('when'),
+    logger     = require('../helpers').logger,
+    errors     = require('../helpers').errors,
+    sanitize   = require('validator').sanitize,
+    validators = require('validator').validators,
+    Document   = require('../models').Document;
 
 var checkForHex = new RegExp("^[0-9a-fA-F]{24}$");
 
@@ -47,30 +48,26 @@ module.exports = {
     var title = sanitize(req.query.title).trim();
     title = sanitize(title).entityEncode();
     var url = req.query.url;
-    if (url) {
-      try {
-        check(req.query.url).isUrl()
-      } catch (e) {
-        return next(new errors.BadRequest(e.message));
-      }
+    if (url && !validators.isUrl(url)) {
+      return next(new errors.BadRequest(e.message));
     }
 
-    var obj = {
+    var doc = {
+      title:       title,
+      content:     req.rawBody,
       contentType: req.header('Content-Type'),
-      content: req.rawBody
+      link:        url,
+      owner:       req.user.uid,
+      files:       req.files
     };
     // Extract content
-    Document.extract(obj)
-    .then(function(doc) {
-      doc.title = title;
-      doc.owner = req.user.uid;
-      doc.url   = url;
-
+    Document.extract(doc)
+    .then(function(_doc) {
       // Create document
-      return Document.create(doc);
+      return Document.create(_doc);
     })
-    .then(function(doc) {
-      res.status(201).json(doc);
+    .then(function(_doc) {
+      res.status(201).json(_doc);
     }, next);
   },
 

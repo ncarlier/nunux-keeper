@@ -7,7 +7,7 @@ var _      = require('underscore'),
 module.exports = function(app) {
   return function(err, req, res, next) {
     res.status(err.status || 500);
-    if (res.statusCode == 500) logger.error(err);
+    if (res.statusCode >= 400 && res.statusCode != 404) logger.error(err);
     var error = _.isString(err) ? err : (_.isObject(err) ? err.message : 'Unknown Error');
     res.format({
       html: function() {

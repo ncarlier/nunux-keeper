@@ -75,8 +75,45 @@ describe('Check document API', function() {
     });
   });
 
-
   it('should delete new document', function(done) {
+    request.del({
+      url:  url + '/' + docId,
+      jar:  true,
+      json: true
+    }, function(err, res, body) {
+      if (err) return done(err);
+      res.statusCode.should.equal(205);
+      done();
+    });
+  });
+
+  it('should create remote document', function(done) {
+    var title   = 'Remote Doc',
+        content = 'http://reader.nunux.org/images/screenshots.png';
+
+    request.post({
+      url: url,
+      jar: true,
+      qs:  {title: title},
+      headers: {
+        'Content-Type': 'text/vnd-curl'
+      },
+      body: content
+    }, function(err, res, body) {
+      if (err) return done(err);
+      res.statusCode.should.equal(201);
+      body = JSON.parse(body);
+      body.title.should.equal(title);
+      body.owner.should.equal('foo@bar.com');
+      //body.content.should.equal(content);
+      body.should.have.property('_id');
+      body.should.have.property('date');
+      docId = body._id;
+      done();
+    });
+  });
+
+  it('should delete remote document', function(done) {
     request.del({
       url:  url + '/' + docId,
       jar:  true,
