@@ -1,4 +1,5 @@
 var when       = require('when'),
+    _          = require('underscore'),
     logger     = require('../helpers').logger,
     errors     = require('../helpers').errors,
     sanitize   = require('validator').sanitize,
@@ -64,7 +65,7 @@ module.exports = {
     Document.extract(doc)
     .then(function(_doc) {
       // Create document
-      return Document.create(_doc);
+      return Document.persist(_doc);
     })
     .then(function(_doc) {
       res.status(201).json(_doc);
@@ -72,23 +73,35 @@ module.exports = {
   },
 
   /**
-   * Delete a document.
+   * Delete one or more documents.
    */
   del: function(req, res, next) {
-    if (!checkForHex.test(req.params.id)) {
+    var ids;
+
+    if (req.params.id) {
+      if (!checkForHex.test(req.params.id)) {
+        return next(new errors.BadRequest());
+      }
+      ids = [req.params.id];
+    } else if (req.body && _.isArray(req.body)) {
+      ids = req.body;
+    } else {
       return next(new errors.BadRequest());
     }
 
-    Document.findById(req.params.id).exec()
-    .then(function(doc) {
-      if (!doc) return when.reject(new errors.NotFound('Document not found.'));
-      if (doc.owner === req.user.uid) {
-        return Document.remove(doc).exec();
-      } else {
-        return when.reject(new errors.Forbidden());
-      }
-    })
-    .then(function() {
+    var deleteDocument = function(id) {
+      return Document.findById(id).exec()
+      .then(function(doc) {
+        if (!doc) return when.reject(new errors.NotFound('Document not found.'));
+        if (doc.owner === req.user.uid) {
+          return Document.del(doc);
+        } else {
+          return when.reject(new errors.Forbidden());
+        }
+      });
+    };
+
+    when.map(ids, deleteDocument).then(function() {
       res.send(205);
     }, next);
   }

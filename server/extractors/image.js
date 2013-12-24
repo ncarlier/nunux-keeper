@@ -16,11 +16,12 @@ module.exports = {
       if (validators.isUrl(doc.content)) {
         doc.link = doc.content;
         var inputStream = request.get(doc.link);
-        files.mkdir(doc.owner, 'images')
+        files.mkdir(doc.owner, 'tmp')
         .then(function(dir) {
           return files.writeStream(inputStream, files.getFilePath(dir, doc.link));
         })
-        .then(function() {
+        .then(function(file) {
+          doc.attachment = file;
           extracted.resolve(doc);
         }, extracted.reject);
       } else {
@@ -30,7 +31,7 @@ module.exports = {
     } else if (doc.files) { // no content, test if it's a file...
       var file = doc.files[0];
       var inputStream = fs.createReadStream(file.path);
-      files.mkdir(doc.owner, 'images')
+      files.mkdir(doc.owner, 'tmp')
       .then(function(dir) {
         return files.writeStream(inputStream, files.getFilePath(dir, doc.link));
       })

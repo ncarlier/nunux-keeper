@@ -10,6 +10,7 @@ module.exports = function(app) {
   app.get('/api/document/:id', app.ensureAuthenticated, api.documents.get);
   app.get('/api/document', app.ensureAuthenticated, api.documents.search);
   app.post('/api/document', app.ensureAuthenticated, api.documents.create);
+  app.delete('/api/document', app.ensureAuthenticated, api.documents.del);
   app.delete('/api/document/:id', app.ensureAuthenticated, api.documents.del);
   // Admin API:
   //app.get('/api/admin/user/:id', app.ensureAuthenticated, app.ensureIsAdmin, api.admin.users.get);

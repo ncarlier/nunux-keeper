@@ -26,7 +26,8 @@
     "underscore": "~1.5.2",
     "colors": "~0.6.2",
     "node-readability": "~0.2.0",
-    "validator": "~2.0.0"
+    "validator": "~2.0.0",
+    "fs-extra": "~0.8.1"
   },
   "devDependencies": {
     "mocha": "~1.12.0",

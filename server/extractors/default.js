@@ -1,5 +1,5 @@
 var logger = require('../helpers').logger,
-     when  = require('when');
+    when   = require('when');
 
 /**
  * Default content extractor.

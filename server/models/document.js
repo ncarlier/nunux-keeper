@@ -1,6 +1,8 @@
-var logger = require('../helpers').logger,
-    errors = require('../helpers').errors,
+var _      = require('underscore'),
     when   = require('when'),
+    logger = require('../helpers').logger,
+    errors = require('../helpers').errors,
+    files  = require('../helpers').files,
     elasticsearch    = require('../helpers').elasticsearch,
     contentExtractor = require('../extractors');
 
@@ -22,6 +24,30 @@ module.exports = function(db) {
       return when.reject(new errors.BadRequest('Content-type undefined.'));
     }
     return contentExtractor.get(obj.contentType).extract(obj);
+  });
+
+  DocumentSchema.static('persist', function(doc) {
+    logger.debug('Creating document %j ...', doc);
+    return this.create(doc).then(function(_doc) {
+      if (doc.attachment) {
+        // Move attachment to document directory...
+        return files.mkdir(doc.owner, 'documents', _doc._id.toString()).then(function(dir) {
+          return files.mv(doc.attachment, dir);
+        }).then(function() {
+          return when.resolve(_doc);
+        });
+      } else {
+        return when.resolve(_doc);
+      }
+    });
+  });
+
+  DocumentSchema.static('del', function(doc) {
+    logger.debug('Deleting document %j ...', doc);
+    return this.remove(doc).exec().then(function() {
+      logger.debug('Deleting document (%s) files...', doc._id);
+      return files.rm(doc.owner, 'documents', doc._id.toString());
+    });
   });
 
   DocumentSchema.static('search', function(q) {
