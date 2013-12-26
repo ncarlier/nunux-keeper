@@ -1,4 +1,5 @@
-var documents = require('./document');
+var documents = require('./document'),
+    resources = require('./resource');
 
 module.exports = {
   info: function(app) {
@@ -6,5 +7,6 @@ module.exports = {
       res.json(app.get('info'));
     }
   },
-  documents: documents
+  documents: documents,
+  resources: resources
 };

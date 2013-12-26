@@ -23,6 +23,7 @@ var express    = require('express'),
     path       = require('path'),
     passport   = require('passport'),
     logger     = require('./helpers').logger,
+    files      = require('./helpers').files,
     middleware = require('./middlewares'),
     appInfo    = require('../package.json'),
     routes     = require('./routes');
@@ -57,14 +58,12 @@ app.configure('development', function() {
   app.use(require('less-middleware')({ src: path.join(__dirname, '../client') }));
   app.use(express.static(path.join(__dirname, '../client')));
   app.use(middleware.errorHandler(app));
-  logger.setLevel('debug');
 });
 
 app.configure('production', function() {
   var oneDay = 86400000;
   app.use(express.static(path.join(__dirname, '../build'), {maxAge: oneDay}));
   app.use(middleware.errorHandler(app));
-  logger.setLevel('info');
 });
 
 // Set up security

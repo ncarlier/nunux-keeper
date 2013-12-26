@@ -2,8 +2,8 @@ var when   = require('when'),
     nodefn = require('when/node/function'),
     fs     = require('fs-extra'),
     logger = require('../helpers').logger,
+    validators  = require('../helpers').validators,
     readability = require('node-readability');
-    validators  = require('validator').validators;
 
 /**
  * Extract and clean HTML content of a document using Readability.

@@ -83,7 +83,6 @@ describe('Check document API', function() {
       body.owner.should.equal(uid);
       body.content.should.equal(content);
       body.contentType.should.equal('text/html');
-      docId = body._id;
       done();
     });
   });
@@ -155,9 +154,24 @@ describe('Check document API', function() {
       body.should.have.property('date');
       body.title.should.equal(title);
       body.owner.should.equal(uid);
-      var file = files.getFilePath(files.getUserPath(uid, 'documents', body._id), content);
+      var file = files.chpath(uid, 'documents', body._id, files.getHashName(content));
       fs.existsSync(file).should.be.true;
       body.contentType.should.equal('image/png');
+      docId = body._id;
+      done();
+    });
+  });
+
+  it('should retrieve document resource (Image)', function(done) {
+    var key = files.getHashName('http://reader.nunux.org/images/screenshots.png');
+    request.head({
+      url: url + '/' + docId + '/resource/' + key,
+      jar: true
+    }, function(err, res, body) {
+      if (err) return done(err);
+      //console.log(res);
+      res.statusCode.should.equal(200);
+      res.headers['content-type'].should.equal('image/png');
       done();
     });
   });

@@ -32,8 +32,8 @@ module.exports = function(db) {
       logger.debug('Document created: %j', _doc);
       if (doc.attachment) {
         // Move attachment to document directory...
-        return files.mkdir(doc.owner, 'documents', _doc._id.toString()).then(function(dir) {
-          return files.mv(doc.attachment, dir);
+        return files.chmkdir(doc.owner, 'documents', _doc._id.toString()).then(function(dir) {
+          return files.chmv(doc.attachment, dir);
         }).then(function() {
           return when.resolve(_doc);
         });
@@ -47,7 +47,7 @@ module.exports = function(db) {
     logger.info('Deleting document #%s "%s" of %s ...', doc._id, doc.title, doc.owner);
     return this.remove(doc).exec().then(function() {
       logger.debug('Deleting document #%s files...', doc._id);
-      return files.rm(doc.owner, 'documents', doc._id.toString());
+      return files.chrm(doc.owner, 'documents', doc._id.toString());
     });
   });
 

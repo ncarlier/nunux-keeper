@@ -1,9 +1,7 @@
 var app = require('../../app'),
     http = require('http'),
-    passport = require('passport'),
-    logger  = require('../../helpers').logger;
+    passport = require('passport');
 
-logger.setLevel('info');
 
 require('../../security/mock')(app, passport, {
   passAuthentication: true,

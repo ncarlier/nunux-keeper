@@ -3,7 +3,7 @@ var when       = require('when'),
     request    = require('request'),
     logger     = require('../helpers').logger,
     files      = require('../helpers').files,
-    validators = require('validator').validators;
+    validators = require('../helpers').validators;
 
 /**
  * Save a document attachment to the owner tmp directory.
@@ -13,9 +13,10 @@ var when       = require('when'),
  * @returns {Promise} Promise of the doc with his attachment.
  */
 var saveAttachment = function(doc, inputStream, name) {
-  return files.mkdir(doc.owner, 'tmp')
+  return files.chmkdir(doc.owner, 'tmp')
   .then(function(dir) {
-    return files.writeStream(inputStream, files.getFilePath(dir, name));
+    var path = files.chpath(dir, files.getHashName(name));
+    return files.chwrite(inputStream, path);
   })
   .then(function(file) {
     doc.attachment = file;

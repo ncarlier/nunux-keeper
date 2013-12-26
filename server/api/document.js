@@ -2,23 +2,24 @@ var when       = require('when'),
     _          = require('underscore'),
     logger     = require('../helpers').logger,
     errors     = require('../helpers').errors,
+    validators = require('../helpers').validators,
     sanitize   = require('validator').sanitize,
-    validators = require('validator').validators,
     Document   = require('../models').Document;
-
-var checkForHex = new RegExp("^[0-9a-fA-F]{24}$");
 
 module.exports = {
   /**
    * Get a document.
    */
   get: function(req, res, next) {
-    if (!checkForHex.test(req.params.id)) {
+    if (!validators.isDocId(req.params.id)) {
       return next(new errors.BadRequest());
     }
     Document.findById(req.params.id).exec()
     .then(function(doc) {
       if (doc) {
+        if (doc.owner !== req.user.uid) {
+          return when.reject(new errors.Forbidden());
+        }
         return when.resolve(doc);
       } else {
         return when.reject(new errors.NotFound('Document not found.'));
@@ -34,6 +35,7 @@ module.exports = {
     if (!req.query.q) {
       return next(new errors.BadRequest());
     }
+    // TODO alter query to reduce scope on owner docs
     Document.search(req.query.q)
     .then(function(data) {
       res.json(data);
@@ -79,7 +81,7 @@ module.exports = {
     var ids;
 
     if (req.params.id) {
-      if (!checkForHex.test(req.params.id)) {
+      if (!validators.isDocId(req.params.id)) {
         return next(new errors.BadRequest());
       }
       ids = [req.params.id];

@@ -12,6 +12,8 @@ module.exports = function(app) {
   app.post('/api/document', app.ensureAuthenticated, api.documents.create);
   app.delete('/api/document', app.ensureAuthenticated, api.documents.del);
   app.delete('/api/document/:id', app.ensureAuthenticated, api.documents.del);
+  // Document resources API:
+  app.get('/api/document/:id/resource/:key', app.ensureAuthenticated, api.resources.get);
   // Admin API:
   //app.get('/api/admin/user/:id', app.ensureAuthenticated, app.ensureIsAdmin, api.admin.users.get);
 };

@@ -1,6 +1,6 @@
 var logger     = require('../helpers').logger,
     errors     = require('../helpers').errors,
-    validators = require('validator').validators,
+    validators = require('../helpers').validators,
     request    = require('request'),
     when       = require('when');
 

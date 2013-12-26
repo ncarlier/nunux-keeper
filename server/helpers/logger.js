@@ -42,3 +42,6 @@ logger.error = function() {
   }
 };
 
+// Config.
+logger.setLevel(process.env.APP_LOG || 'debug');
+
