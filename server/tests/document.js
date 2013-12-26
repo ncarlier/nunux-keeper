@@ -37,6 +37,30 @@ describe('Check document API', function() {
     });
   });
 
+  it('should create new document (JSON body)', function(done) {
+    var title   = 'Sample JSON document',
+        content = {test: true};
+
+    request.post({
+      url: url,
+      jar: true,
+      qs:  {title: title},
+      json: true,
+      body: content
+    }, function(err, res, body) {
+      if (err) return done(err);
+      res.statusCode.should.equal(201);
+      body.should.have.property('_id');
+      body.should.have.property('date');
+      body.title.should.equal(title);
+      body.owner.should.equal(uid);
+      var c = JSON.parse(body.content);
+      c.test.should.be.true;
+      body.contentType.should.equal('application/json');
+      done();
+    });
+  });
+
   it('should create new document (HTML body)', function(done) {
     var title   = 'Sample simple HTML document',
         content = '<p>sample</p>';

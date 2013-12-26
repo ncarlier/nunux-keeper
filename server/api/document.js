@@ -55,7 +55,7 @@ module.exports = {
 
     var doc = {
       title:       title,
-      content:     req.rawBody,
+      content:     req.rawBody || JSON.stringify(req.body),
       contentType: req.header('Content-Type'),
       link:        url,
       owner:       req.user.uid,

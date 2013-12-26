@@ -3,7 +3,7 @@ var app = require('../../app'),
     passport = require('passport'),
     logger  = require('../../helpers').logger;
 
-logger.setLevel('debug');
+logger.setLevel('info');
 
 require('../../security/mock')(app, passport, {
   passAuthentication: true,

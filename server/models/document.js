@@ -29,6 +29,7 @@ module.exports = function(db) {
   DocumentSchema.static('persist', function(doc) {
     logger.info('Creating document "%s" for %s ...', doc.title, doc.owner);
     return this.create(doc).then(function(_doc) {
+      logger.debug('Document created: %j', _doc);
       if (doc.attachment) {
         // Move attachment to document directory...
         return files.mkdir(doc.owner, 'documents', _doc._id.toString()).then(function(dir) {
