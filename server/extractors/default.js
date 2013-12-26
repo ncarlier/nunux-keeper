@@ -3,8 +3,15 @@ var logger = require('../helpers').logger,
 
 /**
  * Default content extractor.
+ * @module default
  */
 module.exports = {
+  /**
+   * Extract content of a document.
+   * Do nothing exept sanitize body.
+   * @param {Document} doc
+   * @return {Promise} Promise of the document with extracted content.
+   */
   extract: function(doc) {
     logger.debug('Using default extractor.');
     // TODO sanitize body

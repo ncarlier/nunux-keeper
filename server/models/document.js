@@ -27,7 +27,7 @@ module.exports = function(db) {
   });
 
   DocumentSchema.static('persist', function(doc) {
-    logger.debug('Creating document %j ...', doc);
+    logger.info('Creating document "%s" for %s ...', doc.title, doc.owner);
     return this.create(doc).then(function(_doc) {
       if (doc.attachment) {
         // Move attachment to document directory...
@@ -43,9 +43,9 @@ module.exports = function(db) {
   });
 
   DocumentSchema.static('del', function(doc) {
-    logger.debug('Deleting document %j ...', doc);
+    logger.info('Deleting document #%s "%s" of %s ...', doc._id, doc.title, doc.owner);
     return this.remove(doc).exec().then(function() {
-      logger.debug('Deleting document (%s) files...', doc._id);
+      logger.debug('Deleting document #%s files...', doc._id);
       return files.rm(doc.owner, 'documents', doc._id.toString());
     });
   });
