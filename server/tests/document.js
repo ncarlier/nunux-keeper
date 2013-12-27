@@ -109,7 +109,7 @@ describe('Check document API', function() {
     }));
   });
 
-  it('should create a new document (HTML URL)', function(done) {
+  it('should create new document (HTML URL)', function(done) {
     var title   = 'Sample online HTML document',
         content = 'http://reader.nunux.org';
 
@@ -134,7 +134,7 @@ describe('Check document API', function() {
     });
   });
 
-  it('should create a new document (Image URL)', function(done) {
+  it('should create new document (Image URL)', function(done) {
     var title   = 'Sample online image document',
         content = 'http://reader.nunux.org/images/screenshots.png';
 
@@ -180,7 +180,7 @@ describe('Check document API', function() {
     request.get({
       url: url,
       jar: true,
-      qs:  {q: uid},
+      qs:  {q: 'Sample'},
       json: true
     }, function(err, res, body) {
       if (err) return done(err);

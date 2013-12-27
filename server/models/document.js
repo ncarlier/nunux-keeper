@@ -7,9 +7,89 @@ var _      = require('underscore'),
     contentExtractor = require('../extractors');
 
 /**
+ * Get documents river configuration.
+ * @param {Object} db Mongoose instance
+ * @returns {Object} river configuration
+ */
+var getRiverConf = function(db) {
+  var conf = {
+    type: 'mongodb',
+    mongodb: {
+      servers: [],
+      options: { secondary_read_preference: true },
+      collection: 'documents'
+    },
+    index: {
+      name: 'documents',
+      type: 'document'
+    }
+  };
+  _.each(db.connections, function(conn) {
+    conf.mongodb.db = conn.name;
+    conf.mongodb.servers.push({
+      host: conn.host,
+      port: conn.port
+    });
+  });
+  return conf;
+};
+
+/**
+ * Document mapping configuration.
+ */
+var mapping = {
+  document: {
+    properties: {
+      title:       {type: "string"},
+      content:     {type: "string"},
+      contentType: {type: "string", index: "not_analyzed"},
+      owner:       {type: "string", index: "not_analyzed"},
+      link:        {type: "string"},
+      date:        {type: "date", format: "dateOptionalTime"}
+    }
+  }
+};
+
+
+/**
+ * Build elasticsearch query to find documents.
+ * @param {String} owner owner used to filter the query
+ * @param {String} q query
+ * @returns {Object} query DSL
+ */
+var buildQuery = function(owner, q) {
+  return {
+    fields: ["title"],
+    query: {
+      filtered: {
+        query: {
+          query_string: {
+            fields: ["title"],
+            query: q
+          }
+        },
+        filter : { term : { owner : owner } }
+      }
+    }
+  };
+};
+
+/**
  * Document object model.
+ * @module document
  */
 module.exports = function(db) {
+  var type = 'documents';
+
+  elasticsearch.configureRiver(getRiverConf(db)).then(function() {
+    return elasticsearch.configureMapping(type, 'document', mapping);
+  }).then(function() {
+    logger.debug('Great! Elasticsearch seem to be well configured.');
+  }, function(err) {
+    logger.error(err);
+    logger.error('Warning! Elasticsearch seem to be misconfigured. Application may not work properly.');
+  });
+
   var DocumentSchema = new db.Schema({
     title:       { type: String, required: true },
     content:     { type: String },
@@ -32,7 +112,7 @@ module.exports = function(db) {
       logger.debug('Document created: %j', _doc);
       if (doc.attachment) {
         // Move attachment to document directory...
-        return files.chmkdir(doc.owner, 'documents', _doc._id.toString()).then(function(dir) {
+        return files.chmkdir(doc.owner, type, _doc._id.toString()).then(function(dir) {
           return files.chmv(doc.attachment, dir);
         }).then(function() {
           return when.resolve(_doc);
@@ -47,12 +127,12 @@ module.exports = function(db) {
     logger.info('Deleting document #%s "%s" of %s ...', doc._id, doc.title, doc.owner);
     return this.remove(doc).exec().then(function() {
       logger.debug('Deleting document #%s files...', doc._id);
-      return files.chrm(doc.owner, 'documents', doc._id.toString());
+      return files.chrm(doc.owner, type, doc._id.toString());
     });
   });
 
-  DocumentSchema.static('search', function(q) {
-    return elasticsearch.search('documents', q);
+  DocumentSchema.static('search', function(uid, q) {
+    return elasticsearch.search(type, buildQuery(uid, q));
   });
 
   return db.model('Document', DocumentSchema);

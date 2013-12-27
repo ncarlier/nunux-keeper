@@ -35,8 +35,8 @@ module.exports = {
     if (!req.query.q) {
       return next(new errors.BadRequest());
     }
-    // TODO alter query to reduce scope on owner docs
-    Document.search(req.query.q)
+
+    Document.search(req.user.uid, req.query.q)
     .then(function(data) {
       res.json(data);
     }, next);
