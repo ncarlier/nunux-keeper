@@ -1,0 +1,42 @@
+# Application location
+APP_MAIN=/opt/node/keeper/current/app.js
+
+# Env
+# Default: development
+export NODE_ENV="production"
+
+# Server port
+# Default: 3000
+export APP_PORT=3001
+
+# Server base URL (Realm)
+# Default: http://localhost
+export APP_REALM="http://keeper.nunux.org"
+
+# Application logger level
+# Default: debug
+export APP_LOG=info
+
+# Automatic grant access
+# Default: true
+export APP_AUTO_GRANT_ACCESS=false
+
+# Session secret key
+# Default: NuNUXKeEpR_
+export APP_SESSION_SECRET="NuNUXKeEpR_"
+
+# Admin account
+export APP_ADMIN="foo@bar.com"
+
+# Elastic search URL
+# Default: http://localhost:9200
+export APP_ELASTICSEARCH_URL="http://localhost:9200"
+
+# MongoDB URL
+# Default: mongodb://localhost/keeper
+export APP_MONGO_URL="mongodb://localhost/keeper"
+
+# Application data directory
+# Default: ./var
+export APP_VAR_DIR="/var/node/keeper"
+
