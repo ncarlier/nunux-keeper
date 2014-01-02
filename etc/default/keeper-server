@@ -28,15 +28,28 @@ export APP_SESSION_SECRET="NuNUXKeEpR_"
 # Admin account
 export APP_ADMIN="foo@bar.com"
 
-# Elastic search URL
+# Elastic search URI
 # Default: http://localhost:9200
-export APP_ELASTICSEARCH_URL="http://localhost:9200"
+export APP_ELASTICSEARCH_URI="http://localhost:9200"
 
-# MongoDB URL
+# MongoDB URI
 # Default: mongodb://localhost/keeper
-export APP_MONGO_URL="mongodb://localhost/keeper"
+export APP_MONGO_URI="mongodb://localhost/keeper"
+
+# Redis URI
+# Default: redis://localhost:6379/5
+export APP_REDIS_URI="redis://localhost:6379/5"
 
 # Application data directory
 # Default: ./var
 export APP_VAR_DIR="/var/node/keeper"
+
+# Download document's resources
+# Default: default
+# Values:
+# - disabled: no resource downloaded
+# - async-redis: async download using Redis as messaging
+# - default: direct download
+export APP_DOWNLOADER="async-redis"
+
 

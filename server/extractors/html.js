@@ -1,25 +1,31 @@
 var when   = require('when'),
-    nodefn = require('when/node/function'),
     fs     = require('fs-extra'),
+    url    = require('url'),
     logger = require('../helpers').logger,
     validators  = require('../helpers').validators,
     readability = require('node-readability');
 
 /**
  * Extract and clean HTML content of a document using Readability.
- * @param {Document} document
+ * @param {Document} doc
  * @returns {Promise} Promise of the doc with clean HTML content.
  */
 var extractHtml = function(doc) {
   var extracted = when.defer();
   readability(doc.content, function(err, article) {
     if (err) return extracted.reject(err);
-    doc.content = article.cache.body;
+    // Filter images URLs
+    var replacer = function(match, p1, p2, offset, string) {
+      if (!/^https?|file|ftps?/i.test(p2)) {
+        p2 = url.resolve(doc.link, p2);
+      }
+      return '<img' + p1 + 'data-src="' + p2 + '"';
+    };
+    doc.content = article.cache.body.replace(/<img([^>]+)src\s*=\s*['"]([^'"]+)['"]/gi, replacer);
     extracted.resolve(doc);
   });
   return extracted.promise;
 };
-
 
 /**
  * HTML content extractor.

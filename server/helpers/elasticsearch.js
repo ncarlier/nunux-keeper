@@ -2,7 +2,7 @@ var when    = require('when'),
     logger  = require('./logger'),
     request = require('request');
 
-var url = process.env.APP_ELASTICSEARCH_URL || 'http://localhost:9200';
+var uri = process.env.APP_ELASTICSEARCH_URI || 'http://localhost:9200';
 
 /**
  * Get Elasticsearch river status.
@@ -12,7 +12,7 @@ var url = process.env.APP_ELASTICSEARCH_URL || 'http://localhost:9200';
 var getRiverStatus = function(name) {
   var status = when.defer();
   request.get({
-    url: url + '/_river/' + name + '/_status',
+    url: uri + '/_river/' + name + '/_status',
     json: true
   }, function (err, res, data) {
     if (err) return status.reject(err);
@@ -34,7 +34,7 @@ var configureRiver = function(river) {
     logger.debug('Configuring Elasticsearch river %s...', riverName);
     var configured = when.defer();
     request.put({
-      url: url + '/_river/' + riverName + '/_meta',
+      url: uri + '/_river/' + riverName + '/_meta',
       body: river,
       json: true
     }, function (err, res, data) {
@@ -58,7 +58,7 @@ var configureMapping = function(index, type, mapping) {
   logger.debug('Configuring Elasticsearch mapping for %s...', index);
   var configured = when.defer();
   request.put({
-    url: url + '/' + index + '/' + type + '/_mapping',
+    url: uri + '/' + index + '/' + type + '/_mapping',
     body: mapping,
     json: true
   }, function (err, res, data) {
@@ -79,7 +79,7 @@ var configureMapping = function(index, type, mapping) {
 var search = function(index, q) {
   var result = when.defer();
   request.post({
-    url: url + '/' + index + '/_search',
+    url: uri + '/' + index + '/_search',
     body: q,
     json: true
   }, function (err, res, data) {

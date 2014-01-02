@@ -70,6 +70,10 @@ module.exports = {
       return Document.persist(_doc);
     })
     .then(function(_doc) {
+      // Download document resources
+      return Document.downloadResources(_doc);
+    })
+    .then(function(_doc) {
       res.status(201).json(_doc);
     }, next);
   },

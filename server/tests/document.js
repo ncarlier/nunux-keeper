@@ -10,6 +10,7 @@ var _          = require('underscore'),
 
 describe('Check document API', function() {
   var url = mockServer.getRealm() + '/api/document',
+      imageUrl = 'http://reader.nunux.org/images/screenshots.png',
       uid = 'foo@bar.com';
   var docId, hits;
 
@@ -63,7 +64,8 @@ describe('Check document API', function() {
 
   it('should create new document (HTML body)', function(done) {
     var title   = 'Sample simple HTML document',
-        content = '<p>sample</p>';
+        content = '<p>sample</P><img src="' + imageUrl + '"/>',
+        expectedContent = '<p>sample</p><img data-src="' + imageUrl + '" />';
 
     request.post({
       url: url,
@@ -81,7 +83,7 @@ describe('Check document API', function() {
       body.should.have.property('date');
       body.title.should.equal(title);
       body.owner.should.equal(uid);
-      body.content.should.equal(content);
+      body.content.should.equal(expectedContent);
       body.contentType.should.equal('text/html');
       done();
     });
@@ -135,8 +137,7 @@ describe('Check document API', function() {
   });
 
   it('should create new document (Image URL)', function(done) {
-    var title   = 'Sample online image document',
-        content = 'http://reader.nunux.org/images/screenshots.png';
+    var title   = 'Sample online image document';
 
     request.post({
       url: url,
@@ -145,7 +146,7 @@ describe('Check document API', function() {
       headers: {
         'Content-Type': 'text/vnd-curl'
       },
-      body: content
+      body: imageUrl
     }, function(err, res, body) {
       if (err) return done(err);
       res.statusCode.should.equal(201);
@@ -154,7 +155,7 @@ describe('Check document API', function() {
       body.should.have.property('date');
       body.title.should.equal(title);
       body.owner.should.equal(uid);
-      var file = files.chpath(uid, 'documents', body._id, files.getHashName(content));
+      var file = files.chpath(uid, 'documents', body._id, files.getHashName(imageUrl));
       fs.existsSync(file).should.be.true;
       body.contentType.should.equal('image/png');
       docId = body._id;
@@ -163,7 +164,7 @@ describe('Check document API', function() {
   });
 
   it('should retrieve document resource (Image)', function(done) {
-    var key = files.getHashName('http://reader.nunux.org/images/screenshots.png');
+    var key = files.getHashName(imageUrl);
     request.head({
       url: url + '/' + docId + '/resource/' + key,
       jar: true

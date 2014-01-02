@@ -1,8 +1,9 @@
-var _      = require('underscore'),
-    when   = require('when'),
-    logger = require('../helpers').logger,
-    errors = require('../helpers').errors,
-    files  = require('../helpers').files,
+var _        = require('underscore'),
+    when     = require('when'),
+    logger   = require('../helpers').logger,
+    errors   = require('../helpers').errors,
+    files    = require('../helpers').files,
+    download = require('../downloaders'),
     elasticsearch    = require('../helpers').elasticsearch,
     contentExtractor = require('../extractors');
 
@@ -75,6 +76,27 @@ var buildQuery = function(owner, q) {
 };
 
 /**
+ * Download document resources (just images for now).
+ * @param {Document} doc
+ * @returns {Promise} Promise with doc in params
+ */
+var downloadResources = function(doc) {
+  var m, urls = [], rex = /<img[^>]+src="?([^"\s]+)"?\s*\/>/g;
+  while (m = rex.exec(doc.content)) {
+    urls.push(m[1]);
+  }
+
+  if (urls.length) {
+    return download(urls, files.chpath(doc.owner, 'documents', doc._id.toString()))
+    .then(function() {
+      return when.resolve(doc);
+    });
+  } else {
+    return when.resolve(doc);
+  }
+};
+
+/**
  * Document object model.
  * @module document
  */
@@ -123,10 +145,13 @@ module.exports = function(db) {
     });
   });
 
+  DocumentSchema.static('downloadResources', downloadResources);
+
   DocumentSchema.static('del', function(doc) {
     logger.info('Deleting document #%s "%s" of %s ...', doc._id, doc.title, doc.owner);
     return this.remove(doc).exec().then(function() {
-      logger.debug('Deleting document #%s files...', doc._id);
+      logger.debug('Deleting document #%s files: %s...',
+                   doc._id, files.chpath(doc.owner, type, doc._id.toString()));
       return files.chrm(doc.owner, type, doc._id.toString());
     });
   });
