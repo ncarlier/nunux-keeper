@@ -14,6 +14,12 @@ module.exports = function(app) {
   app.delete('/api/document/:id', app.ensureAuthenticated, api.documents.del);
   // Document resources API:
   app.get('/api/document/:id/resource/:key', app.ensureAuthenticated, api.resources.get);
+  // Categories API:
+  app.get('/api/category', app.ensureAuthenticated, api.categories.all);
+  app.get('/api/category/:key', app.ensureAuthenticated, api.categories.get);
+  app.put('/api/category/:key', app.ensureAuthenticated, api.categories.update);
+  app.post('/api/category/:label', app.ensureAuthenticated, api.categories.create);
+  app.delete('/api/category/:key', app.ensureAuthenticated, api.categories.del);
   // Admin API:
   //app.get('/api/admin/user/:id', app.ensureAuthenticated, app.ensureIsAdmin, api.admin.users.get);
 };

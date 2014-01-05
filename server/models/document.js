@@ -40,13 +40,15 @@ var getRiverConf = function(db) {
  */
 var mapping = {
   document: {
+    _source : {enabled : false},
     properties: {
-      title:       {type: "string"},
-      content:     {type: "string"},
-      contentType: {type: "string", index: "not_analyzed"},
-      owner:       {type: "string", index: "not_analyzed"},
-      link:        {type: "string"},
-      date:        {type: "date", format: "dateOptionalTime"}
+      title:       {type: 'string', store: 'yes'},
+      content:     {type: 'string', store: 'no'},
+      contentType: {type: 'string', store: 'yes', index: 'not_analyzed'},
+      owner:       {type: 'string', store: 'yes', index: 'not_analyzed'},
+      categories:  {type: 'string', store: 'yes', index: 'not_analyzed', index_name: 'category'},
+      link:        {type: 'string', store: 'yes'},
+      date:        {type: 'date',   store: 'yes', format: 'dateOptionalTime'}
     }
   }
 };
@@ -60,12 +62,12 @@ var mapping = {
  */
 var buildQuery = function(owner, q) {
   return {
-    fields: ["title"],
+    fields: ['title'],
     query: {
       filtered: {
         query: {
           query_string: {
-            fields: ["title"],
+            fields: ['title'],
             query: q
           }
         },
@@ -116,6 +118,7 @@ module.exports = function(db) {
     title:       { type: String, required: true },
     content:     { type: String },
     contentType: { type: String, required: true },
+    categories:  { type: [String] },
     link:        { type: String },
     owner:       { type: String, required: true },
     date:        { type: Date, default: Date.now }

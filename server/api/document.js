@@ -52,7 +52,7 @@ module.exports = {
     title = sanitize(title).entityEncode();
     var url = req.query.url;
     if (url && !validators.isUrl(url)) {
-      return next(new errors.BadRequest(e.message));
+      return next(new errors.BadRequest('Url invalid.'));
     }
 
     var doc = {
