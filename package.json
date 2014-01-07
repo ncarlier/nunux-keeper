@@ -34,7 +34,7 @@
   },
   "devDependencies": {
     "mocha": "~1.12.0",
-    "should": "~1.2.2",
+    "should": "*",
     "matchdep": "~0.1.2",
     "grunt": "~0.4.1",
     "grunt-mocha-test": "~0.4.0",

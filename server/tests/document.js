@@ -51,8 +51,7 @@ describe('Check document API', function() {
     }, function(err, res, body) {
       if (err) return done(err);
       res.statusCode.should.equal(201);
-      body.should.have.property('_id');
-      body.should.have.property('date');
+      body.should.have.properties('_id', 'date');
       body.title.should.equal(title);
       body.owner.should.equal(uid);
       var c = JSON.parse(body.content);
@@ -65,12 +64,13 @@ describe('Check document API', function() {
   it('should create new document (HTML body)', function(done) {
     var title   = 'Sample simple HTML document',
         content = '<p>sample</P><img src="' + imageUrl + '"/>',
-        expectedContent = '<p>sample</p><img data-src="' + imageUrl + '" />';
+        expectedContent = '<p>sample</p><img data-src="' + imageUrl + '" />',
+        categories = ['system:public', 'user:test', 'bad'];
 
     request.post({
       url: url,
       jar: true,
-      qs:  {title: title},
+      qs:  {title: title, categories: categories},
       headers: {
         'Content-Type': 'text/html'
       },
@@ -79,12 +79,41 @@ describe('Check document API', function() {
       if (err) return done(err);
       res.statusCode.should.equal(201);
       body = JSON.parse(body);
-      body.should.have.property('_id');
-      body.should.have.property('date');
+      body.should.have.properties('_id', 'date');
       body.title.should.equal(title);
       body.owner.should.equal(uid);
+      body.categories.should.have.length(2);
+      body.categories.should.not.include('bad');
       body.content.should.equal(expectedContent);
       body.contentType.should.equal('text/html');
+      docId = body._id;
+      done();
+    });
+  });
+
+  it('should update previous created document (HTML body)', function(done) {
+    var title   = 'Updated sample simple HTML document',
+        content = '<p>updated sample</P><img src="' + imageUrl + '"/>',
+        expectedContent = '<p>updated sample</p><img data-src="' + imageUrl + '" />',
+        categories = ['system:trash'];
+
+    request.put({
+      url: url + '/' + docId,
+      jar: true,
+      qs:  {title: title, categories: categories},
+      headers: {
+        'Content-Type': 'text/html'
+      },
+      body: content
+    }, function(err, res, body) {
+      if (err) return done(err);
+      res.statusCode.should.equal(200);
+      body = JSON.parse(body);
+      body.should.have.property('_id');
+      body.title.should.equal(title);
+      body.content.should.equal(expectedContent);
+      body.categories.should.have.length(1);
+      body.categories.should.include('system:trash');
       done();
     });
   });
@@ -127,8 +156,7 @@ describe('Check document API', function() {
       if (err) return done(err);
       res.statusCode.should.equal(201);
       body = JSON.parse(body);
-      body.should.have.property('_id');
-      body.should.have.property('date');
+      body.should.have.properties('_id', 'date');
       body.title.should.equal(title);
       body.owner.should.equal(uid);
       body.contentType.should.match(/^text\/html/);
@@ -151,8 +179,7 @@ describe('Check document API', function() {
       if (err) return done(err);
       res.statusCode.should.equal(201);
       body = JSON.parse(body);
-      body.should.have.property('_id');
-      body.should.have.property('date');
+      body.should.have.properties('_id', 'date');
       body.title.should.equal(title);
       body.owner.should.equal(uid);
       var file = files.chpath(uid, 'documents', body._id, files.getHashName(imageUrl));

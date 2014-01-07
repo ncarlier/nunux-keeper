@@ -132,9 +132,13 @@ module.exports = function(db) {
   });
 
   DocumentSchema.static('persist', function(doc) {
-    logger.info('Creating document "%s" for %s ...', doc.title, doc.owner);
+    logger.debug('Creating document "%s" for %s ...', doc.title, doc.owner);
+    // Filter title
+    doc.title = doc.title.trim();
+    // TODO filter categories
+    doc.categories = _.filter(doc.categories, function(cat) { return /^user|system\:/.test(cat); });
     return this.create(doc).then(function(_doc) {
-      logger.debug('Document created: %j', _doc);
+      logger.info('Document created: %j', _doc);
       if (doc.attachment) {
         // Move attachment to document directory...
         return files.chmkdir(doc.owner, type, _doc._id.toString()).then(function(dir) {
@@ -145,6 +149,28 @@ module.exports = function(db) {
       } else {
         return when.resolve(_doc);
       }
+    });
+  });
+
+  DocumentSchema.static('update', function(doc, update) {
+    var self = this;
+    logger.debug('Updating document "%s" %j ...', doc._id, update);
+    // Filter title
+    if (update.title) update.title = update.title.trim();
+    // TODO filter categories
+    if (update.categories) update.categories = _.filter(update.categories, function(cat) { return /^user|system\:/.test(cat); });
+    update.date = new Date();
+    // Filter updatable attributes.
+    update = _.pick(update, 'title', 'date', 'categories', 'content');
+    return self.findByIdAndUpdate(doc._id, update).exec()
+    .then(function(_doc) {
+      logger.info('Document updated: %j', _doc);
+      if (update.content) {
+        // Download document resources if contente changed
+        logger.debug('Updating document\'s resources...');
+        return self.downloadResources(_doc);
+      }
+      return when.resolve(_doc);
     });
   });
 

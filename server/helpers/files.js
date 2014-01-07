@@ -53,14 +53,19 @@ var getChrootPath = function() {
  */
 var writeToChroot = function(stream, to) {
   to = getChrootPath(to);
+  var writed = when.defer();
 
-  var writed = when.defer(),
-  writer = fs.createWriteStream(to);
-
-  logger.debug('Create file: %s', to);
-  var r = stream.pipe(writer);
-  r.on('error', writed.reject);
-  r.on('close', function() {writed.resolve(to)});
+  fs.exists(to, function(exists) {
+    if (exists) {
+      logger.debug('File already exists: %s', to);
+      return writed.resolve(to);
+    }
+    writer = fs.createWriteStream(to);
+    logger.debug('Creating file: %s', to);
+    var r = stream.pipe(writer);
+    r.on('error', writed.reject);
+    r.on('close', function() {writed.resolve(to)});
+  });
   return writed.promise;
 };
 

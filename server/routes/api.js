@@ -7,8 +7,9 @@ module.exports = function(app) {
   // API info:
   app.get('/api', app.ensureAuthenticated, api.info(app));
   // Documents API:
-  app.get('/api/document/:id', app.ensureAuthenticated, api.documents.get);
   app.get('/api/document', app.ensureAuthenticated, api.documents.search);
+  app.get('/api/document/:id', app.ensureAuthenticated, api.documents.get);
+  app.put('/api/document/:id', app.ensureAuthenticated, api.documents.update);
   app.post('/api/document', app.ensureAuthenticated, api.documents.create);
   app.delete('/api/document', app.ensureAuthenticated, api.documents.del);
   app.delete('/api/document/:id', app.ensureAuthenticated, api.documents.del);
