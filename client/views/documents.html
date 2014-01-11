@@ -1,0 +1,37 @@
+<div id="documents">
+  <header>
+    <nav class="navbar navbar-default" role="navigation">
+      <button type="button" class="btn btn-default navbar-btn" title="Show main menu">
+        <div class="glyphicon glyphicon-th-large" ></div>
+      </button>
+      <form class="navbar-form navbar-right" role="search">
+        <div class="form-group">
+          <input type="text" class="form-control" placeholder="Search">
+        </div>
+        <button type="submit" class="btn btn-default">
+          <div class="glyphicon glyphicon-search" ></div>
+        </button>
+      </form>
+    </nav>
+    <h1>{{ category.label }}</h1>
+  </header>
+  <section>
+    <div class="loading" ng-show="busy">
+      <span class="glyphicon glyphicon-refresh"><p>LOADING...</p></span>
+    </div>
+    <div deckgrid source="documents" cardTemplate="templates/document-card.html" class="deckgrid"></div>
+  </section>
+</div>
+
+<script type="text/ng-template" id="templates/document-card.html">
+  <div class="document">
+    <div class="photo-wrapper">
+        <img src="" data-ng-src="http://placehold.it/200x150" class="animation-fade" data-imageloaded data-loadedclass="animation-faded">
+    </div>
+
+    <div class="doc-title">
+      <h3>{{ card.title }}</h3>
+    </div>
+  </div>
+</script>
+

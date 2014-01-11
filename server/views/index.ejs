@@ -6,8 +6,80 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
   <meta name="description" content="<%= info.description %>" />
   <meta name="author" content="<%= info.author %>">
+  <link rel="stylesheet" href="stylesheets/style.css" />
+  <!--[if lt IE 9]>
+      <script src="lib/html5shiv/html5shiv.js"></script>
+  <![endif]-->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="icons/apple-touch-icon-144-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" sizes="114x114" href="icons/apple-touch-icon-114-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" sizes="72x72" href="icons/apple-touch-icon-72-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" href="icons/apple-touch-icon-57-precomposed.png">
+  <link rel="shortcut icon" href="icons/favicon.png">
 </head>
-<body>
-<h1>Nunux Keeper of <%= user.uid %></h1>
+<body ng-app="KeeperApp">
+  <div id="wrapper">
+    <div id="content" ng-view>
+    </div>
+
+    <div id="sidebar" ng-controller="SidebarCtrl">
+      <div id="logo">
+        <h1><%= info.name %></h1>
+      </div>
+      <div class="list-group">
+        <a href="#profile" target="_self" class="list-group-item" title="View profile [g p]" ng-class="{active: $root.currentPage == 'profile'}">
+          <span class="glyphicon glyphicon-user"></span>
+          Profile
+          <img src="http://www.gravatar.com/avatar/<%= user.gravatar %>?s=30" alt="<%= user.uid %>" title="<%= user.uid %>" />
+        </a>
+        <a href="#documents" target="_self" class="list-group-item" title="View all documents [g a]" ng-class="{active: $root.currentPage == 'all'}">
+          <span class="glyphicon glyphicon-th"></span>
+          All
+        </a>
+        <a href="#documents?category=none" target="_self" class="list-group-item" title="View archived items [g u]" ng-class="{active: $root.currentPage == 'uncategorized'}">
+          <span class="glyphicon glyphicon-inbox"></span>
+          Uncategorized
+        </a>
+        <a
+          href="#documents/?category={{ category.key }}"
+          title="{{ category.label }}"
+          class="list-group-item"
+          target="_self"
+          ng-repeat="category in categories"
+          ng-class="{active: $root.currentPage == category.key}">
+          <span class="glyphicon glyphicon-tag"></span>
+          {{ category.label }}
+          <span class="glyphicon glyphicon-cog setup" ng-click="setupCategory(category)"></span>
+        </a>
+        <a class="list-group-item pointer" title="Add a new category">
+          <span class="glyphicon glyphicon-plus"></span>
+          Add a category
+        </a>
+      </div>
+      <!-- Copyright -->
+      <div id="copyright">
+        <p>&copy; 2014 NUNUX.org</p>
+      </div>
+    </div><! -- end sidebar -->
+  </div><!-- end wrapper -->
+
+<% if (env == 'production') {%>
+<script src="javascripts/reader.min.js"></script>
+<% } else { %>
+<script src="lib/jquery/jquery.min.js"></script>
+<script src="lib/bootstrap/bootstrap.min.js"></script>
+<script src="lib/moment/moment.min.js"></script>
+<script src="lib/humane-js/humane.min.js"></script>
+<script src="lib/mousetrap/mousetrap.min.js"></script>
+<script src="lib/angular/angular.js"></script>
+<script src="lib/angular-route/angular-route.js"></script>
+<script src="lib/ngUpload/ng-upload.min.js"></script>
+<script src="lib/angular-deckgrid/angular-deckgrid.js"></script>
+
+<script src="javascripts/app.js"></script>
+<script src="javascripts/modules/dialog.js"></script>
+<script src="javascripts/modules/documents.js"></script>
+<script src="javascripts/modules/profile.js"></script>
+<script src="javascripts/modules/sidebar.js"></script>
+<% } %>
 </body>
 </html>

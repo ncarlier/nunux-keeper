@@ -10,18 +10,33 @@
     If content type is HTML, see above.
     If content type is an image, then image will be downloaded (async).
   * Image
+* Manage categories:
+  * Create/edit/delete category
+  * Colorize category
+  * System categories:
+    * "Public" to expose document into user public page
+    * "Trash" to remove multiples documents
+* Share document:
+  * Plugins:
+    * Mail
+    * QRcode
+    * SAAS
 * Full text indexation
 * Media downloader jobs
 * Bookmarklet
 * Login with Google OpenID or Mozilla Persona
 * RESTFul JSON API
 * TDD
+* User quotas
+* User stats
+* Remote file system (pulgins: ftp, dropbox, etc...)
 
 ## Stack
 
 * Node.js
 * MongoDB
 * ElasticSearch
+* Redis (optional)
 
 ## Too see
 
@@ -31,13 +46,14 @@
 - Twitter Bootstrap 3
 - Coffee Script?
 - DART ?
-
+- Vagrant
+- Docker
 
 -------------------------------------------------------------------------------
 
 NUNUX Keeper
 
-Copyright (c) 2013 Nicolas CARLIER (https://github.com/ncarlier)
+Copyright (c) 2014 Nicolas CARLIER (https://github.com/ncarlier)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

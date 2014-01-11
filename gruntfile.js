@@ -32,7 +32,16 @@ module.exports = function(grunt) {
         src: ['client/javascripts/**/*.js']
       }
     },
-    clean: ["build"]
+    clean: ["build"],
+    bower: {
+      install: {
+        options: {
+          targetDir: 'client/lib',
+          cleanup: true,
+          verbose: false
+        }
+      }
+    }
   });
 
   // Register building task

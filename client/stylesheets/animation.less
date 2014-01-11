@@ -1,0 +1,42 @@
+.animation(@name; @duration; @count; @function) {
+  -webkit-animation-name: @name;
+  -webkit-animation-duration: @duration;
+  -webkit-animation-iteration-count: @count;
+  -webkit-animation-timing-function: @function;
+  -moz-animation-name: @name;
+  -moz-animation-duration: @duration;
+  -moz-animation-iteration-count: @count;
+  -moz-animation-timing-function: @function;
+  -ms-animation-name: @name;
+  -ms-animation-duration: @duration;
+  -ms-animation-iteration-count: @count;
+  -ms-animation-timing-function: @function;
+  animation-name: @name;
+  animation-duration: @duration;
+  animation-iteration-count: @count;
+  animation-timing-function: @function;
+}
+
+@-ms-keyframes spin {
+  from { -ms-transform: rotate(0deg); }
+  to { -ms-transform: rotate(360deg); }
+}
+@-moz-keyframes spin {
+  from { -moz-transform: rotate(0deg); }
+  to { -moz-transform: rotate(360deg); }
+}
+@-webkit-keyframes spin {
+  from { -webkit-transform: rotate(0deg); }
+  to { -webkit-transform: rotate(360deg); }
+}
+/*********************************************************************************/
+/* Spin animation                                                                      */
+/*********************************************************************************/
+@keyframes spin {
+  from {
+    transform:rotate(0deg);
+  }
+  to {
+    transform:rotate(360deg);
+  }
+}

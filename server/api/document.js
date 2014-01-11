@@ -111,7 +111,7 @@ module.exports = {
       // Check that content can be modified
       if (req.rawBody) {
         var contentType = req.header('Content-Type');
-        if (doc.contentType !== contentType) {
+        if (doc.contentType.toLowerCase() !== contentType.toLowerCase()) {
           return when.reject(new errors.BadRequest('Change document content type is not supported ('+ doc.contentType  +' -> '+ contentType +').'));
         }
         if (!/^text/g.test(contentType)) {

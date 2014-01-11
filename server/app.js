@@ -2,7 +2,7 @@
 
   NUNUX Keeper
 
-  Copyright (c) 2013 Nicolas CARLIER (https://github.com/ncarlier)
+  Copyright (c) 2014 Nicolas CARLIER (https://github.com/ncarlier)
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
