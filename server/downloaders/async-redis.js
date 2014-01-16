@@ -1,7 +1,7 @@
 var _      = require('underscore'),
     when   = require('when'),
     files  = require('../helpers').files,
-    redis  = require('../helpers').redis,
+    redis  = require('../helpers/redis'),
     logger = require('../helpers').logger;
 
 
