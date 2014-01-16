@@ -2,7 +2,19 @@ var when    = require('when'),
     logger  = require('./logger'),
     request = require('request');
 
-var uri = process.env.APP_ELASTICSEARCH_URI || 'http://localhost:9200';
+/**
+ * Get Elasticsearch docker URI.
+ */
+var getElasticSearchUri = function() {
+  if (process.env.DB_PORT_9200_TCP_ADDR) {
+    return 'http://' + process.env.DB_PORT_9200_TCP_ADDR + ':9200';
+  }
+  return null;
+}
+
+var uri = process.env.APP_ELASTICSEARCH_URI ||
+          getElasticSearchUri() ||
+          'http://localhost:9200';
 
 /**
  * Get Elasticsearch river status.
@@ -16,7 +28,6 @@ var getRiverStatus = function(name) {
     json: true
   }, function (err, res, data) {
     if (err) return status.reject(err);
-    if (res.statusCode >= 400) return status.reject(data);
     status.resolve(data);
   });
   return status.promise;
@@ -29,9 +40,7 @@ var getRiverStatus = function(name) {
  */
 var configureRiver = function(river) {
   var riverName = river.mongodb.db;
-  return getRiverStatus(riverName).then(function(status) {
-    if (status.exists) return when.resolve();
-    logger.debug('Configuring Elasticsearch river %s...', riverName);
+  var _configure = function() {
     var configured = when.defer();
     request.put({
       url: uri + '/_river/' + riverName + '/_meta',
@@ -44,6 +53,17 @@ var configureRiver = function(river) {
       configured.resolve(data);
     });
     return configured.promise;
+  };
+
+  return getRiverStatus(riverName).then(function(status) {
+    if (status.exists) return when.resolve();
+    logger.debug('Configuring Elasticsearch river %s...', riverName);
+    return _configure();
+  }, function(err) {
+    if (err.status && err.status === 404) {
+      return _configure();
+    }
+    return when.reject(err);
   });
 };
 

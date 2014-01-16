@@ -1,0 +1,4 @@
+#!/bin/bash
+
+docker run -rm -link mongo-elastic:db -volumes-from KEEPER_VOLUMES -i -t -p 3000:3000 nunux/keeper bash
+

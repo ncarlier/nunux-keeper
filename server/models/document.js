@@ -105,15 +105,6 @@ var downloadResources = function(doc) {
 module.exports = function(db) {
   var type = 'documents';
 
-  elasticsearch.configureRiver(getRiverConf(db)).then(function() {
-    return elasticsearch.configureMapping(type, 'document', mapping);
-  }).then(function() {
-    logger.debug('Great! Elasticsearch seem to be well configured.');
-  }, function(err) {
-    logger.error(err);
-    logger.error('Warning! Elasticsearch seem to be misconfigured. Application may not work properly.');
-  });
-
   var DocumentSchema = new db.Schema({
     title:       { type: String, required: true },
     content:     { type: String },
@@ -122,6 +113,12 @@ module.exports = function(db) {
     link:        { type: String },
     owner:       { type: String, required: true },
     date:        { type: Date, default: Date.now }
+  });
+
+  DocumentSchema.static('configure', function() {
+    return elasticsearch.configureRiver(getRiverConf(db)).then(function() {
+      return elasticsearch.configureMapping(type, 'document', mapping);
+    });
   });
 
   DocumentSchema.static('extract', function(obj) {

@@ -26,7 +26,8 @@ var express    = require('express'),
     files      = require('./helpers').files,
     middleware = require('./middlewares'),
     appInfo    = require('../package.json'),
-    routes     = require('./routes');
+    routes     = require('./routes'),
+    Document   = require('./models').Document;
 
 var app = module.exports = express();
 
@@ -75,11 +76,19 @@ routes.api(app);
 // Set up Frontend routes
 routes.frontend(app);
 
-if (!module.parent) {
-  http.createServer(app).listen(app.get('port'), function() {
-    logger.info('%s web server listening on port %s (%s mode)',
-                app.get('info').name,
-                app.get('port'),
-                app.get('env'));
-  });
-}
+Document.configure().then(function() {
+  logger.debug('Great! Elasticsearch seem to be well configured.');
+  if (!module.parent) {
+    http.createServer(app).listen(app.get('port'), function() {
+      logger.info('%s web server listening on port %s (%s mode)',
+                  app.get('info').name,
+                  app.get('port'),
+                  app.get('env'));
+    });
+  }
+}, function(err) {
+  logger.error('Arghhh! Elasticsearch seem to be misconfigured. Application will not work properly.');
+  logger.error(err);
+  throw err;
+});
+
