@@ -7,6 +7,7 @@ angular.module('DocumentsModule', ['ngRoute', 'akoenig.deckgrid'])
     key: $routeParams.category,
     label: $routeParams.category
   };
+  $scope.title = 'titre: ' + $routeParams.category;
 
   $scope.url = '/api/document';
 
@@ -20,13 +21,15 @@ angular.module('DocumentsModule', ['ngRoute', 'akoenig.deckgrid'])
     console.log('Fetching documents...');
     $scope.busy = true;
     var params = $.param({
-      q: 'category:' + $scope.category.key
+      //q: 'category:' + $scope.category.key
     });
     var url = $scope.url + '?' + params;
     $http.get(url).success(function(data) {
       $scope.documents = data.hits.hits;
       $scope.documents.push({
-        title: "Test document"
+        fields: {
+          title: "Test document"
+        }
       });
       $scope.busy = false;
     });

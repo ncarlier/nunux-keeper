@@ -22,6 +22,7 @@ var extractHtml = function(doc) {
       return '<img' + p1 + 'data-src="' + p2 + '"';
     };
     doc.content = article.cache.body.replace(/<img([^>]+)src\s*=\s*['"]([^'"]+)['"]/gi, replacer);
+    if (doc.title === 'Undefined') doc.title = artice.title;
     extracted.resolve(doc);
   });
   return extracted.promise;

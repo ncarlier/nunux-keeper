@@ -24,9 +24,10 @@ describe('Check category API', function() {
 
   it('should create new category', function(done) {
     request.post({
-      url: url + '/' + label,
+      url: url,
       jar: true,
-      json: true
+      json: true,
+      body: {label: label}
     }, function(err, res, body) {
       if (err) return done(err);
       res.statusCode.should.equal(201);

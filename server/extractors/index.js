@@ -12,7 +12,7 @@ var getExtractor = function(ct) {
   switch (true) {
     case /^text\/html/.test(ct):
       return htmlExtractor;
-    case /^text\/vnd-curl/.test(ct):
+    case /^text\/vnd\.curl/.test(ct):
       return urlExtractor;
     case /^image\//.test(ct):
       return imageExtractor;

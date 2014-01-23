@@ -18,49 +18,23 @@
 </head>
 <body ng-app="KeeperApp">
   <div id="wrapper">
-    <div id="content" ng-view>
-    </div>
-
-    <div id="sidebar" ng-controller="SidebarCtrl">
-      <div id="logo">
-        <h1><%= info.name %></h1>
-      </div>
-      <div class="list-group">
-        <a href="#profile" target="_self" class="list-group-item" title="View profile [g p]" ng-class="{active: $root.currentPage == 'profile'}">
-          <span class="glyphicon glyphicon-user"></span>
-          Profile
-          <img src="http://www.gravatar.com/avatar/<%= user.gravatar %>?s=30" alt="<%= user.uid %>" title="<%= user.uid %>" />
-        </a>
-        <a href="#documents" target="_self" class="list-group-item" title="View all documents [g a]" ng-class="{active: $root.currentPage == 'all'}">
-          <span class="glyphicon glyphicon-th"></span>
-          All
-        </a>
-        <a href="#documents?category=none" target="_self" class="list-group-item" title="View archived items [g u]" ng-class="{active: $root.currentPage == 'uncategorized'}">
-          <span class="glyphicon glyphicon-inbox"></span>
-          Uncategorized
-        </a>
-        <a
-          href="#documents/?category={{ category.key }}"
-          title="{{ category.label }}"
-          class="list-group-item"
-          target="_self"
-          ng-repeat="category in categories"
-          ng-class="{active: $root.currentPage == category.key}">
-          <span class="glyphicon glyphicon-tag"></span>
-          {{ category.label }}
-          <span class="glyphicon glyphicon-cog setup" ng-click="setupCategory(category)"></span>
-        </a>
-        <a class="list-group-item pointer" title="Add a new category">
-          <span class="glyphicon glyphicon-plus"></span>
-          Add a category
-        </a>
-      </div>
-      <!-- Copyright -->
-      <div id="copyright">
-        <p>&copy; 2014 NUNUX.org</p>
-      </div>
-    </div><! -- end sidebar -->
+    <ng-view id="content"></ng-view>
+    <app-sidebar id="sidebar" ng-controller="SidebarCtrl"></app-sidebar>
   </div><!-- end wrapper -->
+
+<script type="text/ng-template" id="templates/category/edit.html">
+  <form role="form">
+    <div class="form-group">
+      <label for="categoryLabel">Label</label>
+      <input type="text" class="form-control" id="categoryLabel" placeholder="Enter category label" ng-model="category.label">
+    </div>
+    <div class="form-group">
+      <label for="categoryColor">Color</label>
+      <input type="color" id="categoryColor" value="#fad345" ng-model="category.color">
+      <p class="help-block">Color in the sidebar.</p>
+    </div>
+  </form>
+</script>
 
 <% if (env == 'production') {%>
 <script src="javascripts/reader.min.js"></script>
@@ -77,6 +51,7 @@
 
 <script src="javascripts/app.js"></script>
 <script src="javascripts/modules/dialog.js"></script>
+<script src="javascripts/modules/category.js"></script>
 <script src="javascripts/modules/documents.js"></script>
 <script src="javascripts/modules/profile.js"></script>
 <script src="javascripts/modules/sidebar.js"></script>

@@ -10,6 +10,7 @@ angular.module('ui.dialog', [])
     backdrop: true,
     success: {label: 'OK', fn: null},
     cancel: {label: 'Close', fn: null},
+    delete: {label: 'Delete', fn: null},
     controller: null, //just like route controller declaration
     backdropClass: "modal-backdrop",
     footerTemplate: null,
@@ -107,8 +108,15 @@ angular.module('ui.dialog', [])
       callFn.call(this);
       scope.$modalClose();
     };
+    scope.$modalDelete = function () {
+      var callFn = options.delete.fn || closeFn;
+      callFn.call(this);
+      scope.$modalClose();
+    };
+
     scope.$modalSuccessLabel = options.success.label;
     scope.$modalCancelLabel = options.cancel.label;
+    scope.$modalDeleteLabel = options.delete.label;
 
     if (options.controller) {
       locals = angular.extend({$scope: scope}, passedInLocals);

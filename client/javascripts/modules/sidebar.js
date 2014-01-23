@@ -1,15 +1,40 @@
 'use strict';
 
 angular.module('SidebarModule', [])
-.controller('SidebarCtrl', function ($scope, $rootScope, $http, $location, $dialog) {
-  $scope.refresh = function() {
-    $http.get('/api/category').success(function (data) {
-      $scope.categories = data;
-    });
-  };
+.directive('appSidebar', function($location) {
+  return {
+    restrict: 'E',
+    templateUrl: '/views/sidebar.html',
+    link: function postLink(scope, element, attrs, controller) {
+      // Watch for the $location
+      scope.$watch(function() {
+        return $location.url();
+      }, function(newValue, oldValue) {
+        var target = newValue.replace(/^\//g, '#');
+        $('a.list-group-item', element).each(function(k, a) {
+          var $a = angular.element(a),
+            href = $a.attr('href'),
+            pattern, regexp;
 
-  $scope.$on('app.event.category.edit', $scope.refresh);
-  $scope.$on('app.event.category.remove', $scope.refresh);
+          if (href) {
+            pattern = href.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&"),
+            regexp = new RegExp('^' + pattern + '$', ['i']);
+
+            if(regexp.test(target)) {
+              $a.addClass('active');
+            } else {
+              $a.removeClass('active');
+            }
+          }
+        });
+      });
+    }
+  };
+})
+.controller('SidebarCtrl', function ($scope, $categoryService, $location, $dialog, $timeout) {
+  $categoryService.fetch().then(function(categories) {
+    $scope.categories = categories;
+  });;
 
   // Key bindings...
   Mousetrap.bind(['g h'], function() {
@@ -44,10 +69,50 @@ angular.module('SidebarModule', [])
     });
   });
 
-  $scope.setupCategory = function(category) {
-    alert(category.key);
-    return false;
+  $scope.createCategoryDialog = function() {
+    $scope.category = {};
+    $dialog('templates/category/edit.html', {
+      id: 'createCategoryDialog',
+      title: 'Create new category',
+      backdrop: true,
+      scope: $scope,
+      footerTemplate:
+        '<button class="btn" ng-click="$modalCancel()">{{$modalCancelLabel}}</button>' +
+        '<button class="btn btn-primary" ng-click="$modalSuccess()">{{$modalSuccessLabel}}</button>',
+      success: {label: 'create', fn: function() {
+        $categoryService.create($scope.category);
+      }}
+    });
   };
 
-  $scope.refresh();
+  $scope.editCategoryDialog = function(category) {
+    var backup = angular.copy(category);
+    $scope.category = category;
+    $dialog('templates/category/edit.html', {
+      id: 'editCategoryDialog',
+      title: 'Edit category: ' + category.label,
+      backdrop: true,
+      scope: $scope,
+      footerTemplate:
+        '<button class="btn btn-danger pull-left" ng-click="$modalDelete()">{{$modalDeleteLabel}}</button>' +
+        '<button class="btn" ng-click="$modalCancel()">{{$modalCancelLabel}}</button>' +
+        '<button class="btn btn-primary" ng-click="$modalSuccess()">{{$modalSuccessLabel}}</button>',
+      success: {label: 'update', fn: function() {
+        $categoryService.update($scope.category)
+        .catch(function() {
+          category.label = backup.label;
+          category.color = backup.color;
+        });
+      }},
+      cancel: {label: 'cancel', fn: function() {
+        category.label = backup.label;
+        category.color = backup.color;
+      }},
+      delete: {label: 'delete', fn: function() {
+        $categoryService.delete($scope.category);
+      }}
+    });
+  };
+
+  $scope.isUserCategory = $categoryService.isUserCategory;
 });

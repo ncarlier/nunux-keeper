@@ -19,7 +19,7 @@
 
 'use strict';
 
-angular.module('KeeperApp', ['ngRoute', 'SidebarModule', 'DocumentsModule', 'ProfileModule', 'ui.dialog'])
+angular.module('KeeperApp', ['ngRoute', 'CategoryModule', 'SidebarModule', 'DocumentsModule', 'ProfileModule', 'ui.dialog'])
 .config(['$routeProvider', function($routeProvider) {
   $routeProvider
   .when('/documents', {

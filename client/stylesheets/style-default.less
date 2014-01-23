@@ -117,23 +117,63 @@ body {
 /* Documents                                                                     */
 /*********************************************************************************/
 #documents {
-  header {
+  position: relative;
+  height: 100%;
+  > header {
     .navbar {
       border-radius: 0;
       padding: 0 1em;
     }
   }
-  .deckgrid {
-    margin: 100px auto;
-    padding: 10px;
-    width: 1000px;
-    .column {
-      float:left;
+  > section.grid {
+    width: 250px;
+    background: darkgrey;
+    overflow: auto;
+    position: absolute;
+    bottom: 0;
+    top: 52px;
+    h1 {
+      text-align: center;
+      font-style: italic;
+      font-size: 20px;
+      margin: 0;
+      padding-top: 10px;
+    }
+    .document {
+      background-color: #DCDCDC;
+      padding: 10px;
+      margin: 10px;
+      box-shadow: 2px 2px 5px #777;
+      color: #444;
+      position: relative;
+      cursor: pointer;
+      .doc-title {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        left: 10px;
+        background: rgba(255, 255, 255, 0.5);
+        h3 {
+          font-size: 16px;
+          margin: 0;
+          padding: 5px;
+          font-weight: bold;
+        }
+      }
     }
   }
-  .deckgrid[deckgrid]::before {
-    content: '5 .column.size-1-5';
-    display:none;
+  > section.detail {
+    padding: 5px;
+    background: cadetblue;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    top: 52px;
+    left: 250px;
+    h1 {
+      margin: 0;
+      text-align: center;
+    }
   }
 }
 
@@ -193,7 +233,7 @@ body {
     }
   }
   tr:hover a.delete {
-      display: inline-block;
+    display: inline-block;
   }
   td {
     border: none !important;

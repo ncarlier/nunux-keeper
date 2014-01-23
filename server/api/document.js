@@ -32,10 +32,6 @@ module.exports = {
    * Search documents.
    */
   search: function(req, res, next) {
-    if (!req.query.q) {
-      return next(new errors.BadRequest());
-    }
-
     Document.search(req.user.uid, req.query.q)
     .then(function(data) {
       res.json(data);

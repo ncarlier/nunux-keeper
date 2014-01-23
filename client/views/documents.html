@@ -13,13 +13,17 @@
         </button>
       </form>
     </nav>
-    <h1>{{ category.label }}</h1>
   </header>
-  <section>
+  <section class="grid">
     <div class="loading" ng-show="busy">
       <span class="glyphicon glyphicon-refresh"><p>LOADING...</p></span>
     </div>
+    <h1>~ {{ title }} ~</h1>
     <div deckgrid source="documents" cardTemplate="templates/document-card.html" class="deckgrid"></div>
+  </section>
+  <section class="detail">
+    <h1>title</h1>
+    <p>dldldldlldld dldlldl</p>
   </section>
 </div>
 
@@ -30,7 +34,7 @@
     </div>
 
     <div class="doc-title">
-      <h3>{{ card.title }}</h3>
+      <h3>{{ card.fields.title }}</h3>
     </div>
   </div>
 </script>

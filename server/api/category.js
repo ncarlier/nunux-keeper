@@ -63,16 +63,19 @@ module.exports = {
    * Post new category.
    */
   create: function(req, res, next) {
-    var label = sanitize(req.params.label).trim();
+    if (!req.body.label) {
+      return next(new errors.BadRequest('Category label is undefined.'));
+    }
+    var label = sanitize(req.body.label).trim();
     label = sanitize(label).entityEncode();
     // Sanitize and validate query params
-    var color = req.query.color || '#fff';
+    var color = req.body.color || '#fff';
     if (!validators.isHexColor(color)) {
       return next(new errors.BadRequest('Bad color value.'));
     }
 
     var category = {
-      key:   convertToUserKey(req.params.label),
+      key:   convertToUserKey(req.body.label),
       owner: req.user.uid,
       label: label,
       color: color

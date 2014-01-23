@@ -61,20 +61,34 @@ var mapping = {
  * @returns {Object} query DSL
  */
 var buildQuery = function(owner, q) {
-  return {
-    fields: ['title'],
-    query: {
-      filtered: {
-        query: {
-          query_string: {
-            fields: ['title'],
-            query: q
-          }
-        },
-        filter : { term : { owner : owner } }
+  if (!q) {
+    return {
+      fields: ['title'],
+      query: {
+        filtered: {
+          query: {
+            match_all: {}
+          },
+          filter : { term : { owner : owner } }
+        }
       }
-    }
-  };
+    };
+  } else {
+    return {
+      fields: ['title'],
+      query: {
+        filtered: {
+          query: {
+            query_string: {
+              fields: ['title'],
+              query: q
+            }
+          },
+          filter : { term : { owner : owner } }
+        }
+      }
+    };
+  }
 };
 
 /**
@@ -131,7 +145,7 @@ module.exports = function(db) {
   DocumentSchema.static('persist', function(doc) {
     logger.debug('Creating document "%s" for %s ...', doc.title, doc.owner);
     // Filter title
-    doc.title = doc.title.trim();
+    doc.title = doc.title ? doc.title.trim() : 'Undefined';
     // TODO filter categories
     doc.categories = _.filter(doc.categories, function(cat) { return /^user|system\:/.test(cat); });
     return this.create(doc).then(function(_doc) {
