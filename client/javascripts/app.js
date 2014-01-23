@@ -19,7 +19,14 @@
 
 'use strict';
 
-angular.module('KeeperApp', ['ngRoute', 'CategoryModule', 'SidebarModule', 'DocumentsModule', 'ProfileModule', 'ui.dialog'])
+angular.module('KeeperApp', [
+  'ngRoute',
+  'CategoryModule',
+  'SidebarModule',
+  'NavbarModule',
+  'DocumentsModule',
+  'ProfileModule',
+  'ui.dialog'])
 .config(['$routeProvider', function($routeProvider) {
   $routeProvider
   .when('/documents', {
@@ -36,7 +43,7 @@ angular.module('KeeperApp', ['ngRoute', 'CategoryModule', 'SidebarModule', 'Docu
 }])
 .filter('fromNow', function() {
   return function(dateString) {
-    return moment(new Date(dateString)).fromNow();
+    return moment(new Date(dateString)).fromNow(true);
   };
 })
 .filter('date', function() {

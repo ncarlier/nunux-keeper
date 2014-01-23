@@ -1,82 +1,11 @@
-<div class="manage">
+<div id="profile">
   <header>
-    <h1>
-      <div class="glyphicon glyphicon-th-large" onclick="$('#wrapper').toggleClass('open');" title="Show main menu"></div>
-      <a>Manage Subscriptions</a>
-    </h1>
+    <app-navbar></app-navbar>
   </header>
   <section>
-    <div class="alert" ng-show="message" ng-class="message.clazz">{{message.text}}</div>
-    <div class="row">
-      <div class="col-xs-11 col-md-5">
-        <form name="addSubscription">
-          <fieldset>
-            <legend>Subscribe</legend>
-            <input type="url" name="url" ng-model="newFeedUrl" placeholder="Type RSS URL here" required/>
-            <span class="help-block">e.g., http://rss.cnn.com/rss/edition.rss</span>
-            <button class="btn btn-default" ng-click="subscribe(newFeedUrl)">
-              <span class="glyphicon glyphicon-plus"></span>
-              Subscribe
-            </button>
-          </fieldset>
-        </form>
-      </div>
-      <div class="col-xs-11 col-md-5">
-        <form action="/api/subscription" ng-upload>
-          <fieldset>
-            <legend>Import subscriptions</legend>
-            <input type="file" name="opml" accept="text/xml" required />
-            <span class="help-block">Import an OPML file.</span>
-            <button type="submit" class="btn btn-default" upload-submit="uploadComplete(content, completed)" >
-              <span class="glyphicon glyphicon-upload"></span>
-              Import
-            </button>
-          </fieldset>
-        </form>
-      </div>
-    </div>
+    <img src="{{gravatarUrl}}" alt="{{user.uid}}" title="{{user.uid}}" />
 
-    <table class="table table-striped table-hover">
-      <thead>
-        <tr>
-          <th class="feed">
-            <a href="" ng-click="predicate = 'title'; reverse=!reverse">Feed</a>
-          </th>
-          <th class="status">
-            <a href="" ng-click="predicate = 'status'; reverse=!reverse">Status</a>
-          </th>
-          <th class="date">
-            <a href="" ng-click="predicate = 'updateDate'; reverse=!reverse">Update date</a>
-          </th>
-        </tr>
-      </thead>
-      <tbody class="feed-list">
-      <tr ng-repeat="feed in subscriptions | orderBy:predicate:reverse">
-        <td class="feed">
-          {{ feed.title }}
-          <a href="" class="delete" title="Remove subscription" ng-click="unSubscribe(feed)">
-            <span class="glyphicon glyphicon-trash"></span>
-          </a>
-          <div>
-            <a href="{{ feed.xmlurl }}"       class="flag rss"      target="_blank" title="{{ feed.xmlurl }}">rss</a>
-            <a href="{{ feed.htmlurl }}"      class="flag html"     target="_blank" title="{{ feed.htmlurl }}">html</a>
-            <a href="#timeline/{{ feed.id }}" class="flag timeline" title="Go to timeline">timeline</a>
-            <a href="{{ getHubUrl(feed) }}"   class="flag pshb"     target="_blank" title="PubSubHubbub supported" ng-show="feed.hub">pubsubhubbud</a>
-          </div>
-        </td>
-        <td>
-          <span class="label label-{{getStatusClass(feed)}}" title="{{getStatusDesc(feed)}}">{{getStatusLabel(feed.status)}}</span>
-        </td>
-        <td>
-          {{ feed.updateDate | fromNow }}
-        </td>
-      </tr>
-      <tr class="no-subs" ng-show="!subscriptions.length">
-        <td colspan="3">
-          <strong>No subscription.</strong> Maybe is the time to add some.
-        </td>
-      </tr>
-      </tbody>
-    </table>
+    <h1>{{ user.username }}</h1>
+    <p>Member since {{ user.date | fromNow }}</p>
   </section>
 </div>

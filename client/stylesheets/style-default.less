@@ -90,6 +90,13 @@ body {
   top: 0;
   right: 0;
   left: 0;
+  header {
+    nav.navbar {
+      border-radius: 0;
+      padding: 0 1em;
+      margin-bottom: 0;
+    }
+  }
 }
 
 #mobile-menu-btn {
@@ -119,12 +126,6 @@ body {
 #documents {
   position: relative;
   height: 100%;
-  > header {
-    .navbar {
-      border-radius: 0;
-      padding: 0 1em;
-    }
-  }
   > section.grid {
     width: 250px;
     background: darkgrey;
@@ -178,65 +179,19 @@ body {
 }
 
 /*********************************************************************************/
-/* Manage                                                                        */
+/* Profile                                                                       */
 /*********************************************************************************/
-.manage {
-  width: 100%;
-  height: 100%;
-  background-color: #fff;
-  > header {
-    margin: 0;
-    padding: 10px;
-    height: 25px;
-    background: @reader-main-color;
-    h1 {
-      margin: 0;
-      font-size: 24px;
-      word-break: break-all;
-      a {
-        color: @reader-text-color;
-        text-decoration: none;
-      }
-      div {
-        display: none;
-        color: white;
-        cursor: pointer;
-      }
-    }
-  }
+#profile {
   > section {
-    background: @reader-alt-color;
-    overflow: auto;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    margin-top: 50px;
-    width: 100%;
-    .row {
-      margin: 0;
+    padding: 10px;
+    img {
+      float: left;
+      padding: 10px;
     }
-    table {
-      text-align: center;
-      .feed {
-        text-align: left;
-      }
-      .date, .status {
-        text-align: center;
-      }
-      a {
-        word-break: break-all;
-      }
-      a.delete {
-        color: #B92B2B;
-        display: none;
-      }
+    h1 {
+      font-size: 24px;
+      margin: 10px;
     }
-  }
-  tr:hover a.delete {
-    display: inline-block;
-  }
-  td {
-    border: none !important;
   }
 }
 

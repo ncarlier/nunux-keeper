@@ -15,6 +15,10 @@
   <link rel="apple-touch-icon-precomposed" sizes="72x72" href="icons/apple-touch-icon-72-precomposed.png">
   <link rel="apple-touch-icon-precomposed" href="icons/apple-touch-icon-57-precomposed.png">
   <link rel="shortcut icon" href="icons/favicon.png">
+  <script>
+    window.user = <%- JSON.stringify(user) %>;
+    window.gravatar = <%- JSON.stringify(gravatar) %>;
+  </script>
 </head>
 <body ng-app="KeeperApp">
   <div id="wrapper">
@@ -55,6 +59,7 @@
 <script src="javascripts/modules/documents.js"></script>
 <script src="javascripts/modules/profile.js"></script>
 <script src="javascripts/modules/sidebar.js"></script>
+<script src="javascripts/modules/navbar.js"></script>
 <% } %>
 </body>
 </html>

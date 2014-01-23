@@ -31,7 +31,9 @@ angular.module('SidebarModule', [])
     }
   };
 })
-.controller('SidebarCtrl', function ($scope, $categoryService, $location, $dialog, $timeout) {
+.controller('SidebarCtrl', function ($window, $scope, $categoryService, $location, $dialog, $timeout) {
+  $scope.user = $window.user;
+  $scope.gravatarUrl = 'http://www.gravatar.com/avatar/' + $window.gravatar;
   $categoryService.fetch().then(function(categories) {
     $scope.categories = categories;
   });;
