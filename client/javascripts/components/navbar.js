@@ -8,6 +8,9 @@ angular.module('NavbarModule', [])
     controller: 'NavbarCtrl'
   };
 })
-.controller('NavbarCtrl', function ($scope, $categoryService, $location, $dialog, $timeout) {
+.controller('NavbarCtrl', function ($scope, $rootScope, $categoryService, $location, $dialog, $timeout) {
   $scope.sample = 'sample';
+  $scope.toggleMenu = function() {
+    $rootScope.mainMenuStatus = $rootScope.mainMenuStatus === 'open' ? '' : 'open';
+  }
 });
