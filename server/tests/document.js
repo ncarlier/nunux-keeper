@@ -91,6 +91,21 @@ describe('Check document API', function() {
     });
   });
 
+  it('should found previous document', function(done) {
+    request.get({
+      url:  url + '/' + docId,
+      jar:  true,
+      json: true
+    }, function (err, res, body) {
+      if (err) return done(err);
+      res.statusCode.should.equal(200);
+      body.should.have.properties('_id', 'date');
+      body.owner.should.equal(uid);
+      done();
+    });
+  });
+
+
   it('should update previous created document (HTML body)', function(done) {
     var title   = 'Updated sample simple HTML document',
         content = '<p>updated sample</P><img src="' + imageUrl + '"/>',

@@ -126,8 +126,12 @@ body {
 #documents {
   position: relative;
   height: 100%;
-  > section.grid {
-    width: 250px;
+  div.one-col {
+    width: 250px !important;
+  }
+  div.grid {
+    //width: 250px;
+    width: 100%;
     background: darkgrey;
     overflow: auto;
     position: absolute;
@@ -140,7 +144,7 @@ body {
       margin: 0;
       padding-top: 10px;
     }
-    .document {
+    .document-card {
       background-color: #DCDCDC;
       padding: 10px;
       margin: 10px;
@@ -148,6 +152,12 @@ body {
       color: #444;
       position: relative;
       cursor: pointer;
+      &.new {
+        opacity: 0.5;
+      }
+      &.new:hover {
+        opacity: 1;
+      }
       .doc-title {
         position: absolute;
         bottom: 10px;
@@ -161,19 +171,40 @@ body {
           font-weight: bold;
         }
       }
+      .doc-picture {
+        height: 150px;
+        width: 200px;
+      }
+      .glyphicon-plus {
+        font-size: 75px;
+        text-align: center;
+        padding-top: 15px;
+        color: #B8B8B8;
+      }
     }
   }
-  > section.detail {
+  .document {
     padding: 5px;
-    background: cadetblue;
+    background: #EEE;
     position: absolute;
     right: 0;
     bottom: 0;
     top: 52px;
     left: 250px;
-    h1 {
-      margin: 0;
-      text-align: center;
+    overflow: auto;
+    > header {
+      margin-bottom: 5px;
+      h1 {
+        margin: 0;
+        text-align: center;
+        font-size: 2em;
+        font-style: italic;
+      }
+      h1:before { content: '~ ' };
+      h1:after { content: ' ~' };
+      button {
+        margin: 5px;
+      }
     }
   }
 }

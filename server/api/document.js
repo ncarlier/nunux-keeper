@@ -18,14 +18,13 @@ module.exports = {
     .then(function(doc) {
       if (doc) {
         if (doc.owner !== req.user.uid) {
-          return when.reject(new errors.Forbidden());
+          return next(new errors.Forbidden());
         }
-        return when.resolve(doc);
+        return res.json(doc);
       } else {
-        return when.reject(new errors.NotFound('Document not found.'));
+        return next(new errors.NotFound('Document not found.'));
       }
-    })
-    .then(res.json, next);
+    }, next);
   },
 
   /**

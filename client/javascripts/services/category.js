@@ -38,9 +38,9 @@ angular.module('CategoryModule', [])
       categories.push(cat);
       deferred.resolve(categories);
     })
-    .error(function() {
+    .error(function(err) {
       alert('Unable to create category!');
-      deferred.reject();
+      deferred.reject(err);
     });
     return deferred.promise;;
   };
@@ -52,9 +52,9 @@ angular.module('CategoryModule', [])
       categories[_getCategoryIndex(cat)] = cat;
       deferred.resolve(cat);
     })
-    .error(function() {
+    .error(function(err) {
       alert('Unable to update category!');
-      deferred.reject();
+      deferred.reject(err);
     });
     return deferred.promise;;
   };
@@ -67,9 +67,9 @@ angular.module('CategoryModule', [])
       if (index >= 0) categories.splice(index, 1);
       deferred.resolve(cat);
     })
-    .error(function() {
+    .error(function(err) {
       alert('Unable to delete category!');
-      deferred.reject();
+      deferred.reject(err);
     });
     return deferred.promise;;
   };

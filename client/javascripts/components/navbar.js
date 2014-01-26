@@ -4,7 +4,8 @@ angular.module('NavbarModule', [])
 .directive('appNavbar', function($location) {
   return {
     restrict: 'E',
-    templateUrl: '/views/navbar.html'
+    templateUrl: 'templates/components/navbar.html',
+    controller: 'NavbarCtrl'
   };
 })
 .controller('NavbarCtrl', function ($scope, $categoryService, $location, $dialog, $timeout) {

@@ -4,7 +4,8 @@ angular.module('SidebarModule', [])
 .directive('appSidebar', function($location) {
   return {
     restrict: 'E',
-    templateUrl: '/views/sidebar.html',
+    templateUrl: 'templates/components/sidebar.html',
+    controller: 'SidebarCtrl',
     link: function postLink(scope, element, attrs, controller) {
       // Watch for the $location
       scope.$watch(function() {
@@ -61,7 +62,7 @@ angular.module('SidebarModule', [])
   });
   Mousetrap.bind(['?'], function() {
     $scope.$apply(function() {
-      $dialog('/views/keybindings.html', {
+      $dialog('templates/dialog/keybindings.html', {
         id: 'keyBindingsDialog',
         title: 'Keyboard shortcuts',
         backdrop: true,
@@ -73,7 +74,7 @@ angular.module('SidebarModule', [])
 
   $scope.createCategoryDialog = function() {
     $scope.category = {};
-    $dialog('templates/category/edit.html', {
+    $dialog('templates/dialog/category/edit.html', {
       id: 'createCategoryDialog',
       title: 'Create new category',
       backdrop: true,
@@ -90,7 +91,7 @@ angular.module('SidebarModule', [])
   $scope.editCategoryDialog = function(category) {
     var backup = angular.copy(category);
     $scope.category = category;
-    $dialog('templates/category/edit.html', {
+    $dialog('templates/dialog/category/edit.html', {
       id: 'editCategoryDialog',
       title: 'Edit category: ' + category.label,
       backdrop: true,

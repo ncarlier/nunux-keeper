@@ -22,6 +22,7 @@
 angular.module('KeeperApp', [
   'ngRoute',
   'CategoryModule',
+  'DocumentModule',
   'SidebarModule',
   'NavbarModule',
   'DocumentsModule',
@@ -30,12 +31,10 @@ angular.module('KeeperApp', [
 .config(['$routeProvider', function($routeProvider) {
   $routeProvider
   .when('/documents', {
-    templateUrl: 'views/documents.html',
-    controller: 'DocumentsCtrl'
+    templateUrl: 'templates/views/documents.html',
   })
   .when('/profile', {
-    templateUrl: 'views/profile.html',
-    controller: 'ProfileCtrl'
+    templateUrl: 'templates/views/profile.html',
   })
   .otherwise({
     redirectTo: '/documents'

@@ -23,10 +23,32 @@
 <body ng-app="KeeperApp">
   <div id="wrapper">
     <ng-view id="content"></ng-view>
-    <app-sidebar id="sidebar" ng-controller="SidebarCtrl"></app-sidebar>
+    <app-sidebar id="sidebar"></app-sidebar>
   </div><!-- end wrapper -->
 
-<script type="text/ng-template" id="templates/category/edit.html">
+<script type="text/ng-template" id="templates/views/profile.html">
+<div id="profile">
+  <header>
+    <app-navbar></app-navbar>
+  </header>
+  <section>
+    <app-profile></app-profile>
+  </section>
+</div>
+</script>
+
+<script type="text/ng-template" id="templates/views/documents.html">
+<div id="documents">
+  <header>
+    <app-navbar></app-navbar>
+  </header>
+  <section>
+    <app-documents></app-documents>
+  </section>
+</div>
+</script>
+
+<script type="text/ng-template" id="templates/dialog/category/edit.html">
   <form role="form">
     <div class="form-group">
       <label for="categoryLabel">Label</label>
@@ -49,17 +71,19 @@
 <script src="lib/humane-js/humane.min.js"></script>
 <script src="lib/mousetrap/mousetrap.min.js"></script>
 <script src="lib/angular/angular.js"></script>
+<script src="lib/angular-sanitize/angular-sanitize.js"></script>
 <script src="lib/angular-route/angular-route.js"></script>
 <script src="lib/ngUpload/ng-upload.min.js"></script>
 <script src="lib/angular-deckgrid/angular-deckgrid.js"></script>
 
 <script src="javascripts/app.js"></script>
-<script src="javascripts/modules/dialog.js"></script>
-<script src="javascripts/modules/category.js"></script>
-<script src="javascripts/modules/documents.js"></script>
-<script src="javascripts/modules/profile.js"></script>
-<script src="javascripts/modules/sidebar.js"></script>
-<script src="javascripts/modules/navbar.js"></script>
+<script src="javascripts/ui/dialog.js"></script>
+<script src="javascripts/services/category.js"></script>
+<script src="javascripts/services/document.js"></script>
+<script src="javascripts/components/documents.js"></script>
+<script src="javascripts/components/profile.js"></script>
+<script src="javascripts/components/sidebar.js"></script>
+<script src="javascripts/components/navbar.js"></script>
 <% } %>
 </body>
 </html>
