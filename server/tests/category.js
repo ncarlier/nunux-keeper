@@ -7,7 +7,7 @@ var should     = require('should'),
 describe('Check category API', function() {
   var url = mockServer.getRealm() + '/api/category',
       uid = 'foo@bar.com',
-      key = 'user:sample-category',
+      key = 'user-sample-category',
       label = 'Sample  Category :) ';
 
   before(function(done) {
@@ -88,7 +88,7 @@ describe('Check category API', function() {
       body.should.be.an.instanceOf(Array);
       body.length.should.be.above(2);
       body[0].should.have.property('key');
-      body[0].key.should.equal('system:trash');
+      body[0].key.should.equal('system-trash');
       done();
     });
   });

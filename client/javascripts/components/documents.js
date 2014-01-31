@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('DocumentsModule', ['ngRoute', 'akoenig.deckgrid', 'ngSanitize'])
+angular.module('DocumentsModule', ['ngRoute', 'akoenig.deckgrid'])
 .directive('appDocuments', function($location) {
   return {
     restrict: 'E',
@@ -8,57 +8,37 @@ angular.module('DocumentsModule', ['ngRoute', 'akoenig.deckgrid', 'ngSanitize'])
     controller: 'DocumentsCtrl'
   };
 })
-.directive('appDocument', function($location) {
-  return {
-    restrict: 'E',
-    templateUrl: 'templates/components/document.html'
-  };
-})
-.directive('contenteditable', function() {
-  return {
-    require: 'ngModel',
-    link: function(scope, elm, attrs, ctrl) {
-      // view -> model
-      elm.bind('blur', function() {
-        scope.$apply(function() {
-          ctrl.$setViewValue(elm.html());
-        });
-      });
-
-      // model -> view
-      ctrl.$render = function() {
-        elm.html(ctrl.$viewValue);
-      };
-
-      ctrl.$render();
-    }
-  };
-})
 .controller('DocumentsCtrl', function ($scope, $routeParams, $categoryService, $documentService) {
+  var m, search = false;
   switch (true) {
-    case !$routeParams.category:
+    case !$routeParams.q:
       $scope.title = 'All';
-      break;
-    case 'none' === $routeParams.category:
+    break;
+    case '_missing_:category' === $routeParams.q:
       $scope.title = 'Uncategorized';
-      break;
+    break;
+    case (m = $routeParams.q.match(/^category:([a-z\-]+)$/)) != null:
+      $scope.category = $categoryService.get(m[1]);
+    break;
     default:
-      $scope.category = $categoryService.get($routeParams.category);
-      $scope.title = $scope.category.label;
+      $scope.title = 'Search';
+      search = true;
   }
 
   $scope.fetch = function() {
     $scope.documents = [];
-    $documentService.fetch()
+    $documentService.fetch($routeParams.q)
     .then(function(documents) {
       $scope.documents = documents;
-      // Add creation card...
-      $scope.documents.unshift({
-        create: true,
-        fields: {
-          title: 'Create new document...'
-        }
-      });
+      if (!search) {
+        // Add creation card...
+        $scope.documents.unshift({
+          create: true,
+          fields: {
+            title: 'Create new document...'
+          }
+        });
+      }
     });
   };
 
@@ -79,30 +59,16 @@ angular.module('DocumentsModule', ['ngRoute', 'akoenig.deckgrid', 'ngSanitize'])
     }
   };
 
-  $scope.saveDocument = function() {
-    if ($scope.doc._id) {
-      $documentService.update($scope.doc)
-      .then(function(doc) {
-        $scope.doc = doc;
-        alert("Updated.");
-      });
-    } else {
-      $documentService.create($scope.doc)
-      .then(function(doc) {
-        $scope.doc = doc;
-        alert("Created: " + $scope.doc._id)
-      });
-    }
+  $scope.removeDocument = function() {
+    _.remove($scope.documents, function(doc) { return $scope.doc._id === doc._id; });
+    delete $scope.doc;
   };
 
-  $scope.deleteDocument = function() {
-    if (confirm("Delete this document? " + $scope.doc.title)) {
-      $documentService.delete($scope.doc)
-      .then(function(doc) {
-        $scope.doc = null;
-        alert("Deleted: " + doc._id);
-      });
-    }
+  $scope.addDocument = function(doc) {
+    $scope.documents.push({
+      _id: doc._id,
+      fields: doc
+    });
   };
 
   $scope.fetch();

@@ -1,6 +1,185 @@
 # NUNUX Keeper
 
+> Keep control on what you find.
+
+Nunux Keeper allow you to save articles or medias you found on internet in one place. And this place can be yours.
+
 ## Features
+
+* Connect with your Google account (OpenID) or with Mozilla Persona
+* Save, classify and index documents.
+* A document can be an html page, notes, images and more!
+* Documents attached medias are also saved.
+* Search a document with powerfull full text queries.
+* Access from your mobile or your computer. It's full responsive.
+* Build your own client application thaks to the RESTFul JSON API.
+
+## Roadmap
+
+* Create an awsome bookmarklet to easyly save web content during surfing;
+* Share a document using plugins. Share by mail, QRcode, other web sites;
+* Add the ability to choose a different storage system (ftp, remoteStorage, dropbox, etc.);
+* Add a user quota for local storage;
+* Add some user dashboard with stats;
+
+## Under the hood
+
+The backend is using Node.js. All documents are stored in a MongoDB and are indexed with ElasticSearch using the MongoDB river. Redis is optionnal, but can be used to provide a message queuing system to download medias in background.
+
+The frontend is using AngularJS and for the visual is using LESS with Twitter Bootstrap 3.
+
+## Installation (the -not so- hard way)
+
+This installation procedure is from skratch. You can find below an easiest installation procedure thanks to Docker!
+
+### Prerequisites
+
+* [Git](http://git-scm.com/)
+* [Node.js](http://nodejs.org/) ~v0.10.0
+* [MongoDB](http://www.mongodb.org/) ~v2.4
+* [Elasticsearch](http://nodejs.org/) v0.90.10
+* [Redis](http://redis.io/) ~v2.8.0 (optional)
+
+#### Install Git, Node.JS, MongoDB and Redis (on Debian)
+
+    sudo aptitude install git nodejs mongodb-server redis-server
+
+#### Install Elasticsearch (and MongoDB river)
+
+    sudo aptitude install openjdk-7-jre wget
+    ES_HOME /opt/Elasticsearcharch
+    (cd /tmp && wget https://download.elasticsearch.org/elasticsearch/elasticsearchsticsearch/elasticsearch-0.90.10.tar.gz -O pkg.tar.gz && tar zxf pkg.tar.gz && mv elasticsearch-* $ES_HOME)
+    $ES_HOME/bin/plugin -install elasticsearch/elasticsearch-mapper-attachments/1.9.0
+    $ES_HOME/bin/plugin -install com.github.richardwilly98.elasticsearch/elasticsearch-river-mongodb/1.7.3
+
+#### Install Grunt
+
+    sudo npm install -g grunt-cli
+
+### Install the Keeper
+
+    mkdir -p /opt/node/keeper &&keeper cd $_
+    git clone git@github.com:ncarlier/nunux-keeper.git
+    cd keeper
+    npm install
+
+### Run the Keeper
+
+See "etc/default/keeper-server" for environment configuration.
+
+    npm start
+
+Open your browser, go to http://localhost:3000 and enjoy!
+
+## Installation (the cool way)
+
+### Prerequisites
+
+* [Git](http://git-scm.com/)
+* [Docker](http://www.docker.io/)
+
+or a cool docker hosting service.
+
+### Start the Keeper
+
+    # Get Keeper sources
+    git clone git@github.com:ncarlier/nunux-keeper.git &&cd keeper
+    # Createreate share volumes
+    docker run -v ~/src/keeper:/opt/keeper -v ~/var/keeper:/var/opt/keeper -name KEEPER_VOLUMES busybox true
+    # Build docker image
+    docker build -runm -t nunux/keeper .
+    # Start the container
+    docker run -rm -link mongodbgo-elastic:db -volumes-from KEEPER_VOLUMES -i -t -p 3000:3000 nunux/keeper /usr/bin/supervisord
+    # Enjoy!
+
+--------------------------------------------------------Enjoy-----------------------
+
+NUNUX Keeper
+
+Copyright (c) 2014 Nicolas CARLIER (https://github.com/ncarlier)
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+## Features
+
+* Save document
+  * Text
+    If content type is HTML, then text is sanitize using readability.
+    And medias will be downloaded localy (async).
+  * URL
+    If content type is HTML, see above.
+    If content type is an image, then image will be downloaded (async).
+  * Image
+* Manage categories:
+  * Create/edit/delete category
+  * Colorize category
+  * System categories:
+    * "Public" to expose document into user public page
+    * "Trash" to remove multiples documents
+* Share document:
+  * Plugins:
+    * Mail
+    * QRcode
+    * SAAS
+* Full text indexation
+* Media downloader jobs
+* Bookmarklet
+* Login with Google OpenID or Mozilla Persona
+* RESTFul JSON API
+* TDD
+* User quotas
+* User stats
+* Remote file system (pulgins: ftp, dropbox, etc...)
+
+## Stack
+
+* Node.js
+* MongoDB
+* ElasticSearch
+* Redis (optional)
+
+## Too see
+
+- Plugins (downloader and viewer)
+- Font Awesome
+- Less / Sass
+- Twitter Bootstrap 3
+- Coffee Script?
+- DART ?
+- Vagrant
+- Docker
+
+-------------------------------------------------------------------------------
+
+NUNUX Keeper
+
+Copyright (c) 2014 Nicolas CARLIER (https://github.com/ncarlier)
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
 
 * Save document
   * Text

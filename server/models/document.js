@@ -80,7 +80,7 @@ var buildQuery = function(owner, q) {
         filtered: {
           query: {
             query_string: {
-              fields: ['title'],
+              fields: ['title^5', 'category^4', 'content'],
               query: q
             }
           },
@@ -97,7 +97,7 @@ var buildQuery = function(owner, q) {
  * @returns {Promise} Promise with doc in params
  */
 var downloadResources = function(doc) {
-  var m, urls = [], rex = /<img[^>]+src="?([^"\s]+)"?\s*\/>/g;
+  var m, urls = [], rex = /<img[^>]+src="?([^"\s]+)"?/g;
   while (m = rex.exec(doc.content)) {
     urls.push(m[1]);
   }
@@ -147,7 +147,11 @@ module.exports = function(db) {
     // Filter title
     doc.title = doc.title ? doc.title.trim() : 'Undefined';
     // TODO filter categories
-    doc.categories = _.filter(doc.categories, function(cat) { return /^user|system\:/.test(cat); });
+    if (_.isArray(doc.categories)) {
+      doc.categories = _.filter(doc.categories, function(cat) { return /^(user|system)-/.test(cat); });
+    } else if (_.isString(doc.categories)) {
+      doc.categories = [doc.categories];
+    }
     return this.create(doc).then(function(_doc) {
       logger.info('Document created: %j', _doc);
       if (doc.attachment) {
@@ -169,7 +173,13 @@ module.exports = function(db) {
     // Filter title
     if (update.title) update.title = update.title.trim();
     // TODO filter categories
-    if (update.categories) update.categories = _.filter(update.categories, function(cat) { return /^user|system\:/.test(cat); });
+    if (update.categories) {
+      if (_.isArray(update.categories)) {
+        update.categories = _.filter(update.categories, function(cat) { return /^(user|system)-/.test(cat); });
+      } else if (_.isString(update.categories)) {
+        update.categories = [update.categories];
+      }
+    }
     update.date = new Date();
     // Filter updatable attributes.
     update = _.pick(update, 'title', 'date', 'categories', 'content');

@@ -13,7 +13,8 @@
     "mousetrap": "~1.4.5",
     "angular-deckgrid": "~0.2.1",
     "angular-route": "~1.2.7",
-    "angular-sanitize": "~1.2.10"
+    "angular-sanitize": "~1.2.10",
+    "lodash": "~2.4.1"
   },
   "exportsOverride": {
     "bootstrap": {

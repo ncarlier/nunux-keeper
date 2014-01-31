@@ -2,11 +2,11 @@
   <button type="button" class="btn btn-default navbar-btn" title="Show main menu" ng-click="toggleMenu()">
     <div class="glyphicon glyphicon-th-large" ></div>
   </button>
-  <form class="navbar-form navbar-right" role="search">
+  <form class="navbar-form navbar-right" role="search" ng-submit="search(query)">
     <div class="input-group">
-      <input type="text" class="form-control">
+      <input type="text" class="form-control" ng-model="query">
       <span class="input-group-btn">
-        <button class="btn btn-default" type="button">
+        <button class="btn btn-default" type="submit">
           <div class="glyphicon glyphicon-search" ></div>
         </button>
       </span>

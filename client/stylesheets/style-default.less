@@ -152,6 +152,15 @@ body {
       font-size: 20px;
       margin: 0;
       padding-top: 10px;
+      color: #777;
+    }
+    .no-result {
+      font-size: 2em;
+      font-weight: bold;
+      color: #777;
+      text-align: center;
+      display: block;
+      margin-top: 10%;
     }
     .document-card {
       background-color: #DCDCDC;
@@ -193,7 +202,6 @@ body {
     }
   }
   .document {
-    padding: 5px;
     background: #EEE;
     position: absolute;
     right: 0;
@@ -202,18 +210,54 @@ body {
     left: 250px;
     overflow: auto;
     > header {
-      margin-bottom: 5px;
+      padding: 10px;
+      background: #E0E0E0;
       h1 {
         margin: 0;
+        padding: 10px;
         text-align: center;
         font-size: 2em;
         font-style: italic;
       }
-      h1:before { content: '~ ' };
-      h1:after { content: ' ~' };
-      button {
-        margin: 5px;
+      ul.categories {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        li {
+          display: inline-flex;
+          form {
+            width: 175px;
+          }
+        }
+        li.category {
+          color: #FFF;
+          position: relative;
+          padding: 0 10px;
+          margin-right: 10px;
+          font-weight: bold;
+          border-radius: 2px;
+          line-height: 27px;
+          span {
+            display: none;
+          }
+        }
+        li.editing {
+          border-right: 25px solid;
+          span {
+            display: block;
+            position: absolute;
+            top: 0;
+            right: -24px;
+            cursor: pointer;
+            width: 24px;
+            line-height: 24px;
+            text-align: center;
+          }
+        }
       }
+    }
+    > article {
+      padding: 10px;
     }
   }
 }

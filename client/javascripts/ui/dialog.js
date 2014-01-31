@@ -9,7 +9,7 @@ angular.module('ui.dialog', [])
     title: 'Default Title',
     backdrop: true,
     success: {label: 'OK', fn: null},
-    cancel: {label: 'Close', fn: null},
+    cancel: {label: 'Cancel', fn: null},
     delete: {label: 'Delete', fn: null},
     controller: null, //just like route controller declaration
     backdropClass: "modal-backdrop",

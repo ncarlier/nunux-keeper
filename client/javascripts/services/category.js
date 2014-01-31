@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('CategoryModule', [])
+angular.module('CategoryService', [])
 .factory('$categoryService', ['$q', '$http', function ($q, $http) {
   var url = '/api/category',
     categories = [];
@@ -75,7 +75,7 @@ angular.module('CategoryModule', [])
   };
 
   var isUserCategory = function(category) {
-    return /^user:/.test(category.key);
+    return /^user-/.test(category.key);
   };
 
   return {
@@ -85,6 +85,6 @@ angular.module('CategoryModule', [])
     update: updateCategory,
     delete: deleteCategory,
     isUserCategory: isUserCategory,
-    categories: categories
+    getCategories: function() { return categories; }
   };
 }]);

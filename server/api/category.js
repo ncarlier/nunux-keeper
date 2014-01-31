@@ -14,7 +14,7 @@ var convertToUserKey = function(str) {
   // Remove unwanted caracters
   result = result.replace(/[^a-z0-9 _-]/g, '').trim();
   // replace spaces by a dash
-  return 'user:' + result.replace(/(\s+)/g, '-');
+  return 'user-' + result.replace(/(\s+)/g, '-');
 };
 
 module.exports = {
@@ -47,11 +47,11 @@ module.exports = {
     .then(function(data) {
       // Insert system's categories.
       data.unshift({
-        key:   'system:public',
+        key:   'system-public',
         label: 'Public category'
       });
       data.unshift({
-        key:   'system:trash',
+        key:   'system-trash',
         label: 'Trash bin'
       });
 

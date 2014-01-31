@@ -15,13 +15,15 @@ var extractHtml = function(doc) {
   readability(doc.content, function(err, article) {
     if (err) return extracted.reject(err);
     // Filter images URLs
-    var replacer = function(match, p1, p2, offset, string) {
+    var filterImg = function(match, p1, p2, offset, string) {
       if (!/^https?|file|ftps?/i.test(p2)) {
         p2 = url.resolve(doc.link, p2);
       }
-      return '<img' + p1 + 'data-src="' + p2 + '"';
+      return '<img' + p1 + 'src="' + p2 + '"';
     };
-    doc.content = article.cache.body.replace(/<img([^>]+)src\s*=\s*['"]([^'"]+)['"]/gi, replacer);
+    doc.content = article.cache.body
+    .replace(/<img([^>]+)src\s*=\s*['"]([^'"]+)['"]/gi, filterImg)
+    .replace(/(class\s*=\s*['"][^'"]+['"])/gi, '');
     if (doc.title === 'Undefined') doc.title = article.title;
     extracted.resolve(doc);
   });

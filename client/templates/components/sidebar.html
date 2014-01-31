@@ -1,6 +1,6 @@
 <div class="sidebar">
   <div id="logo">
-    <h1>Keeper</h1>
+    <h1>keeper</h1>
   </div>
   <div class="list-group">
     <a href="#profile" target="_self" class="list-group-item" title="View profile [g p]" >
@@ -8,16 +8,16 @@
       Profile
       <img ng-src="{{gravatarUrl}}?s=35" alt="{{user.uid}}" title="{{user.uid}}" />
     </a>
-    <a href="#documents" target="_self" class="list-group-item" title="View all documents [g a]" >
+    <a href="#document" target="_self" class="list-group-item" title="View all documents [g a]" >
       <span class="glyphicon glyphicon-th"></span>
       All
     </a>
-    <a href="#documents?category=none" target="_self" class="list-group-item" title="View archived items [g u]" >
+    <a href="#document?q=_missing_:category" target="_self" class="list-group-item" title="View archived items [g u]" >
       <span class="glyphicon glyphicon-inbox"></span>
       Uncategorized
     </a>
     <a
-      href="#documents?category={{ category.key }}"
+      href="#document?q=category%3A{{ category.key }}"
       title="{{ category.label }}"
       class="list-group-item"
       target="_self"

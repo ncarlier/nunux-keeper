@@ -5,6 +5,18 @@
     <button type="button" class="btn btn-success btn-xs pull-right" ng-show="editing" ng-click="saveDocument(doc)">save</button>
     <button type="button" class="btn btn-primary btn-xs pull-right" ng-show="!editing" ng-click="editing = true">edit</button>
     <h1 contenteditable="{{ editing }}" ng-model="doc.title"></h1>
+    <ul class="categories">
+      <li app-category-tag="cat" ng-repeat="cat in doc.categories" class="category" ng-class="{'editing': editing}"></li>
+      <li>
+      <form class="add-category" ng-if="editing">
+        <select class="form-control input-sm"
+          ng-model="selected"
+          ng-change="addCategory(selected.key)"
+          ng-options="cat.label for cat in categories" >
+        </select>
+      </form>
+      </li>
+    </ul>
   </header>
   <article contenteditable="{{ editing }}" ng-bind-html="doc.content" ng-model="doc.content" class="readable">
   </article>

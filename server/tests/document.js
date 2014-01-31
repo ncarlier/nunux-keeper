@@ -65,7 +65,7 @@ describe('Check document API', function() {
     var title   = 'Sample simple HTML document',
         content = '<p>sample</P><img src="' + imageUrl + '"/>',
         expectedContent = '<p>sample</p><img data-src="' + imageUrl + '" />',
-        categories = ['system:public', 'user:test', 'bad'];
+        categories = ['system-public', 'user-test', 'bad'];
 
     request.post({
       url: url,
@@ -110,7 +110,7 @@ describe('Check document API', function() {
     var title   = 'Updated sample simple HTML document',
         content = '<p>updated sample</P><img src="' + imageUrl + '"/>',
         expectedContent = '<p>updated sample</p><img data-src="' + imageUrl + '" />',
-        categories = ['system:trash'];
+        categories = ['system-trash'];
 
     request.put({
       url: url + '/' + docId,
@@ -128,7 +128,7 @@ describe('Check document API', function() {
       body.title.should.equal(title);
       body.content.should.equal(expectedContent);
       body.categories.should.have.length(1);
-      body.categories.should.include('system:trash');
+      body.categories.should.include('system-trash');
       done();
     });
   });

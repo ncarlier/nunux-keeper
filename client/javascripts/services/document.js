@@ -1,25 +1,17 @@
 'use strict';
 
-angular.module('DocumentModule', [])
+angular.module('DocumentService', [])
 .factory('$documentService', ['$q', '$http', function ($q, $http) {
   var url = '/api/document';
 
-  var fetchDocuments = function() {
+  var fetchDocuments = function(query) {
     var params = $.param({
-      //q: 'category:' + $scope.category.key
+      q: query
     });
     var deferred = $q.defer();
     $http.get(url + '?' + params)
     .success(function (data) {
       var documents = data.hits.hits;
-      // Add test doc...
-      documents.push({
-        fields: {
-          title: "Test document",
-          illustration: "test"
-        }
-      });
-
       deferred.resolve(documents);
     })
     .error(deferred.reject);

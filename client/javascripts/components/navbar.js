@@ -8,9 +8,15 @@ angular.module('NavbarModule', [])
     controller: 'NavbarCtrl'
   };
 })
-.controller('NavbarCtrl', function ($scope, $rootScope, $categoryService, $location, $dialog, $timeout) {
-  $scope.sample = 'sample';
+.controller('NavbarCtrl', function ($scope, $rootScope, $location, $routeParams) {
+  if ($routeParams.q) {
+    $scope.query = decodeURIComponent($routeParams.q);
+  }
   $scope.toggleMenu = function() {
     $rootScope.mainMenuStatus = $rootScope.mainMenuStatus === 'open' ? '' : 'open';
-  }
+  };
+
+  $scope.search = function(query) {
+    $location.url('/document?q=' + encodeURIComponent(query));
+  };
 });
