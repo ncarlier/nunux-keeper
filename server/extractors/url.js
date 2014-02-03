@@ -1,8 +1,8 @@
-var logger     = require('../helpers').logger,
+var when       = require('when'),
+    logger     = require('../helpers').logger,
     errors     = require('../helpers').errors,
     validators = require('../helpers').validators,
-    request    = require('request'),
-    when       = require('when');
+    request    = require('request');
 
 /**
  * URL content extractor.
@@ -27,15 +27,13 @@ module.exports = {
     request.head(doc.link, function (err, res) {
       if (err) return result.reject(err);
       doc.contentType = res.headers['content-type'];
-      if (module.parent.exports.support(doc.contentType)) {
-        // Get HTTP content...
-        module.parent.exports.get(doc.contentType).extract(doc)
-        .then(extracted.resolve, extracted.reject);
-      } else {
-        // HTTP content not supported. Just store URL.
-        doc.content = "NOT SUPPORTED";
-        extracted.resolve(doc);
-      }
+      doc.attachment = {
+        name: doc.link,
+        stream: request.get(doc.link)
+      };
+      // Get HTTP content...
+      module.parent.exports.get(doc.contentType).extract(doc)
+      .then(extracted.resolve, extracted.reject);
     });
 
     return extracted.promise;

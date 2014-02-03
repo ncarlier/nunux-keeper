@@ -8,7 +8,6 @@ var logger = require('../helpers').logger,
 module.exports = {
   /**
    * Extract content of a document.
-   * Do nothing exept sanitize body.
    * @param {Document} doc
    * @return {Promise} Promise of the document with extracted content.
    */

@@ -61,10 +61,36 @@ describe('Check document API', function() {
     });
   });
 
+  it('should create new documents (JSON uploaded file)', function(done) {
+    this.timeout(5000);
+    var title = '-- Not used here --',
+        file  = path.join(__dirname, 'assets', 'import.json')
+
+    var r = request.post({
+      url: url,
+      jar: true,
+      qs:  {title: title}
+    }, function(err, res, body) {
+      if (err) return done(err);
+      res.statusCode.should.equal(201);
+      //console.log(body);
+      body = JSON.parse(body);
+      body.should.have.length(2);
+      body[0].should.have.property('_id');
+      body[0].should.have.property('date');
+      body[0].title.should.equal('Sample Google Reader item');
+      body[0].owner.should.equal(uid);
+      body[0].contentType.should.match(/^text\/html/);
+      done();
+    });
+    var form = r.form();
+    form.append('my_file', fs.createReadStream(file));
+  });
+
   it('should create new document (HTML body)', function(done) {
     var title   = 'Sample simple HTML document',
         content = '<p>sample</P><img src="' + imageUrl + '"/>',
-        expectedContent = '<p>sample</p><img data-src="' + imageUrl + '" />',
+        expectedContent = '<p>sample</p><img src="' + imageUrl + '" />',
         categories = ['system-public', 'user-test', 'bad'];
 
     request.post({
@@ -79,6 +105,7 @@ describe('Check document API', function() {
       if (err) return done(err);
       res.statusCode.should.equal(201);
       body = JSON.parse(body);
+      docId = body._id;
       body.should.have.properties('_id', 'date');
       body.title.should.equal(title);
       body.owner.should.equal(uid);
@@ -86,7 +113,6 @@ describe('Check document API', function() {
       body.categories.should.not.include('bad');
       body.content.should.equal(expectedContent);
       body.contentType.should.equal('text/html');
-      docId = body._id;
       done();
     });
   });
@@ -109,7 +135,7 @@ describe('Check document API', function() {
   it('should update previous created document (HTML body)', function(done) {
     var title   = 'Updated sample simple HTML document',
         content = '<p>updated sample</P><img src="' + imageUrl + '"/>',
-        expectedContent = '<p>updated sample</p><img data-src="' + imageUrl + '" />',
+        expectedContent = '<p>updated sample</p><img src="' + imageUrl + '" />',
         categories = ['system-trash'];
 
     request.put({
@@ -133,8 +159,8 @@ describe('Check document API', function() {
     });
   });
 
-  it('should create new document (HTML file)', function(done) {
-    var title = 'Sample uploaded HTML document',
+  it('should create new document (HTML streamed file)', function(done) {
+    var title = 'Sample streamed HTML document',
         file  = path.join(__dirname, 'assets', 'gpl.html')
 
     fs.createReadStream(file).pipe(request.post({
@@ -155,7 +181,57 @@ describe('Check document API', function() {
     }));
   });
 
+  it('should create new document (HTML uploaded file)', function(done) {
+    var title = 'Sample uploaded HTML document',
+        file  = path.join(__dirname, 'assets', 'gpl.html')
+
+    var r = request.post({
+      url: url,
+      jar: true,
+      qs:  {title: title}
+    }, function(err, res, body) {
+      if (err) return done(err);
+      res.statusCode.should.equal(201);
+      //console.log(body);
+      body = JSON.parse(body);
+      body.should.have.property('_id');
+      body.should.have.property('date');
+      body.title.should.equal(title);
+      body.owner.should.equal(uid);
+      body.contentType.should.match(/^text\/html/);
+      done();
+    });
+
+    var form = r.form();
+    form.append('my_file', fs.createReadStream(file));
+  });
+
+  it('should create new document (Image uploaded file)', function(done) {
+    var title = 'Sample uploaded image  document',
+        file  = path.join(__dirname, 'assets', 'oss.png')
+
+    var r = request.post({
+      url: url,
+      jar: true,
+      qs:  {title: title}
+    }, function(err, res, body) {
+      if (err) return done(err);
+      res.statusCode.should.equal(201);
+      //console.log(body);
+      body = JSON.parse(body);
+      body.should.have.property('_id');
+      body.should.have.property('date');
+      body.title.should.equal(title);
+      body.owner.should.equal(uid);
+      body.contentType.should.match(/^image\/png/);
+      done();
+    });
+    var form = r.form();
+    form.append('my_file', fs.createReadStream(file));
+  });
+
   it('should create new document (HTML URL)', function(done) {
+    this.timeout(5000);
     var title   = 'Sample online HTML document',
         content = 'http://reader.nunux.org';
 
@@ -180,7 +256,7 @@ describe('Check document API', function() {
   });
 
   it('should create new document (Image URL)', function(done) {
-    var title   = 'Sample online image document';
+    var title = 'Sample online image document';
 
     request.post({
       url: url,
@@ -193,14 +269,15 @@ describe('Check document API', function() {
     }, function(err, res, body) {
       if (err) return done(err);
       res.statusCode.should.equal(201);
+      console.log(body);
       body = JSON.parse(body);
+      docId = body._id;
       body.should.have.properties('_id', 'date');
       body.title.should.equal(title);
       body.owner.should.equal(uid);
       var file = files.chpath(uid, 'documents', body._id, files.getHashName(imageUrl));
       fs.existsSync(file).should.be.true;
       body.contentType.should.equal('image/png');
-      docId = body._id;
       done();
     });
   });

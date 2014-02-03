@@ -30,7 +30,8 @@
     "fs-extra": "~0.8.1",
     "commander": "~2.1.0",
     "redis": "~0.10.0",
-    "hiredis": "~0.1.16"
+    "hiredis": "~0.1.16",
+    "JSONStream": "~0.7.1"
   },
   "devDependencies": {
     "mocha": "~1.12.0",

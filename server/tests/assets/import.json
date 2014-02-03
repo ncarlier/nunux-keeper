@@ -1,0 +1,62 @@
+{
+  "id" : "user/foo/state/com.google/starred",
+  "title" : "Liste de suivi de Foo dans Google Reader",
+  "author" : "foo",
+  "updated" : 1363855367,
+  "direction" : "ltr",
+  "items" : [ {
+    "crawlTimeMsec" : "1363855367944",
+    "timestampUsec" : "1363855367944934",
+    "id" : "tag:google.com,2005:reader/item/d84289108714a4c1",
+    "categories" : [ "user/foo/state/com.google/read", "user/foo/state/com.google/starred", "user/foo/state/com.google/fresh", "FAI" ],
+    "title" : "Sample Google Reader item",
+    "published" : 1363854648,
+    "updated" : 1363854648,
+    "alternate" : [ {
+      "href" : "http://www.nunux.org",
+      "type" : "text/html"
+    } ],
+    "canonical" : [ {
+      "href" : "http://www.nunux.org"
+    } ],
+    "content" : {
+      "direction" : "ltr",
+      "content" : "<p>Bla bla bla</p>"
+    },
+    "author" : "Foo",
+    "comments" : [ ],
+    "annotations" : [ ],
+    "origin" : {
+      "streamId" : "feed/http://foo.bar?format=xml",
+      "title" : "Foo",
+      "htmlUrl" : "http://foo.bar"
+    }
+  }, {
+    "crawlTimeMsec" : "1363724911776",
+    "timestampUsec" : "1363724911776304",
+    "id" : "tag:google.com,2005:reader/item/0529d5fc6dbb5365",
+    "categories" : [ "user/foo/state/com.google/read", "user/foo/state/com.google/starred", "user/01859988697443284327/state/com.google/fresh", "internet hacks", "evernote", "google reader", "json", "python" ],
+    "title" : "Another Google Reader item",
+    "published" : 1363719703,
+    "updated" : 1363719703,
+    "alternate" : [ {
+      "href" : "http://www.nunux.org",
+      "type" : "text/html"
+    } ],
+    "canonical" : [ {
+      "href" : "http://www.nunux.org"
+    } ],
+    "content" : {
+      "direction" : "ltr",
+      "content" : "<p>Bla bla bla</p>"
+    },
+    "author" : "Foo",
+    "comments" : [ ],
+    "annotations" : [ ],
+    "origin" : {
+      "streamId" : "feed/http://foo.bar?format=xml",
+      "title" : "Foo",
+      "htmlUrl" : "http://foo.bar"
+    }
+  }]
+}

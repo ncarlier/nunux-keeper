@@ -1,7 +1,8 @@
 var defaultExtractor = require('./default'),
     htmlExtractor    = require('./html'),
-    urlExtractor     = require('./url');
-    imageExtractor   = require('./image');
+    urlExtractor     = require('./url'),
+    fileExtractor    = require('./file'),
+    jsonExtractor    = require('./json');
 
 /**
  * Get proper extractor regarding content-type.
@@ -12,12 +13,14 @@ var getExtractor = function(ct) {
   switch (true) {
     case /^text\/html/.test(ct):
       return htmlExtractor;
+    case /^application\/json/.test(ct):
+      return jsonExtractor;
     case /^text\/vnd\.curl/.test(ct):
       return urlExtractor;
-    case /^image\//.test(ct):
-      return imageExtractor;
+    case /^multipart\/form-data/.test(ct):
+      return fileExtractor;
     default:
-      return defaultExtractor;
+      return null;
   }
 }
 
@@ -27,7 +30,9 @@ var getExtractor = function(ct) {
  */
 module.exports = {
   /** @see getExtractor */
-  get: getExtractor,
+  get: function(contentType) {
+    return getExtractor(contentType) || defaultExtractor;
+  },
   /**
    * Test if content type is supported.
    */

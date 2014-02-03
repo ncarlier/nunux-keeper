@@ -113,6 +113,29 @@ var downloadResources = function(doc) {
 };
 
 /**
+ * Save a document attachment to the owner tmp directory.
+ * @param {Document} document
+ * @returns {Promise} Promise of the doc with his attachment.
+ */
+var saveAttachment = function(doc) {
+  if (!doc.attachment) {
+    return when.resolve(doc);
+  }
+
+  return files.chmkdir(doc.owner, 'tmp')
+  .then(function(dir) {
+    var path = files.chpath(dir, files.getHashName(doc.attachment.name));
+    return files.chwrite(doc.attachment.stream, path);
+  })
+  .then(function(file) {
+    logger.debug('Attachment saved: ', file);
+    doc.attachment = file;
+    return when.resolve(doc);
+  }, when.reject);
+};
+
+
+/**
  * Document object model.
  * @module document
  */
@@ -124,6 +147,7 @@ module.exports = function(db) {
     content:     { type: String },
     contentType: { type: String, required: true },
     categories:  { type: [String] },
+   // attachments: { type: [String] },
     link:        { type: String },
     owner:       { type: String, required: true },
     date:        { type: Date, default: Date.now }
@@ -143,6 +167,7 @@ module.exports = function(db) {
   });
 
   DocumentSchema.static('persist', function(doc) {
+    var self = this;
     logger.debug('Creating document "%s" for %s ...', doc.title, doc.owner);
     // Filter title
     doc.title = doc.title ? doc.title.trim() : 'Undefined';
@@ -152,7 +177,11 @@ module.exports = function(db) {
     } else if (_.isString(doc.categories)) {
       doc.categories = [doc.categories];
     }
-    return this.create(doc).then(function(_doc) {
+    return self.saveAttachment(doc)
+    .then(function(_doc) {
+      return self.create(_doc);
+    })
+    .then(function(_doc) {
       logger.info('Document created: %j', _doc);
       if (doc.attachment) {
         // Move attachment to document directory...
@@ -196,6 +225,8 @@ module.exports = function(db) {
   });
 
   DocumentSchema.static('downloadResources', downloadResources);
+
+  DocumentSchema.static('saveAttachment', saveAttachment);
 
   DocumentSchema.static('del', function(doc) {
     logger.info('Deleting document #%s "%s" of %s ...', doc._id, doc.title, doc.owner);

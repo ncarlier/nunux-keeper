@@ -1,5 +1,4 @@
 var when   = require('when'),
-    fs     = require('fs-extra'),
     url    = require('url'),
     logger = require('../helpers').logger,
     validators  = require('../helpers').validators,
@@ -39,7 +38,7 @@ module.exports = {
    * Extract HTML content a document.
    * HTML can be :
    * - refered as a link (@see doc.link or doc.content)
-   * - attached as a file (@see doc.files)
+   * - attached as a file (@see doc.attachment)
    * - in the body (@see doc.content)
    * @param {Document} doc
    * @return {Promise} Promise of the document with extracted HTML.
@@ -47,19 +46,22 @@ module.exports = {
   extract: function(doc) {
     logger.debug('Using html extractor.');
 
-    if (doc.content && doc.content !== '') {
+    if (doc.attachment) {
+      var extracted = when.defer();
+      var bufs = [];
+      doc.attachment.stream.on('data', function(d){ bufs.push(d); });
+      doc.attachment.stream.on('end', function() {
+        doc.content = Buffer.concat(bufs).toString();
+        doc.attachment = null;
+        extractHtml(doc).then(extracted.resolve, extracted.reject);
+      });
+      return extracted.promise;
+    } else if (doc.content && doc.content !== '') {
       // extract content
       if (validators.isUrl(doc.content)) {
         doc.link = doc.content;
       }
       return extractHtml(doc);
-    } else if (doc.files) {
-      // no content, check if it's a file...
-      var file = doc.files[0];
-      return nodefn.call(fs.readFile, file.path).then(function(data) {
-        doc.content = data;
-        return extractHtml(doc);
-      }, when.reject);
     } else if (doc.link) {
       // no content, check if it's a link...
       doc.content = doc.link;
