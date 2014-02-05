@@ -10,9 +10,8 @@ angular.module('DocumentService', [])
     });
     var deferred = $q.defer();
     $http.get(url + '?' + params)
-    .success(function (data) {
-      var documents = data.hits.hits;
-      deferred.resolve(documents);
+    .success(function(data) {
+      deferred.resolve(data.hits);
     })
     .error(deferred.reject);
 

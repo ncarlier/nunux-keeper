@@ -1,5 +1,5 @@
 /**
- * @license AngularJS v1.2.11-build.2193+sha.7f4edaf
+ * @license AngularJS v1.2.12-build.2222+sha.c5f69e3
  * (c) 2010-2014 Google, Inc. http://angularjs.org
  * License: MIT
  */
@@ -68,7 +68,7 @@ function minErr(module) {
       return match;
     });
 
-    message = message + '\nhttp://errors.angularjs.org/1.2.11-build.2193+sha.7f4edaf/' +
+    message = message + '\nhttp://errors.angularjs.org/1.2.12-build.2222+sha.c5f69e3/' +
       (module ? module + '/' : '') + code;
     for (i = 2; i < arguments.length; i++) {
       message = message + (i == 2 ? '?' : '&') + 'p' + (i-2) + '=' +
@@ -851,7 +851,7 @@ function shallowCopy(src, dst) {
   for(var key in src) {
     // shallowCopy is only ever called by $compile nodeLinkFn, which has control over src
     // so we don't need to worry about using our custom hasOwnProperty here
-    if (src.hasOwnProperty(key) && key.charAt(0) !== '$' && key.charAt(1) !== '$') {
+    if (src.hasOwnProperty(key) && !(key.charAt(0) === '$' && key.charAt(1) === '$')) {
       dst[key] = src[key];
     }
   }
@@ -1834,11 +1834,11 @@ function setupModuleLoader(window) {
  * - `codeName` – `{string}` – Code name of the release, such as "jiggling-armfat".
  */
 var version = {
-  full: '1.2.11-build.2193+sha.7f4edaf',    // all of these placeholder strings will be replaced by grunt's
+  full: '1.2.12-build.2222+sha.c5f69e3',    // all of these placeholder strings will be replaced by grunt's
   major: 1,    // package task
   minor: 2,
-  dot: 11,
-  codeName: 'cryptocurrency-hyperdeflation'
+  dot: 12,
+  codeName: 'snapshot'
 };
 
 
@@ -2134,6 +2134,9 @@ function jqLitePatchJQueryRemove(name, dispatchThis, filterElems, getterIfNoArgu
 function JQLite(element) {
   if (element instanceof JQLite) {
     return element;
+  }
+  if (isString(element)) {
+    element = trim(element);
   }
   if (!(this instanceof JQLite)) {
     if (isString(element) && element.charAt(0) != '<') {
@@ -5890,7 +5893,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
           hasTranscludeDirective = true;
 
           // Special case ngIf and ngRepeat so that we don't complain about duplicate transclusion.
-          // This option should only be used by directives that know how to how to safely handle element transclusion,
+          // This option should only be used by directives that know how to safely handle element transclusion,
           // where the transcluded nodes are added or replaced after linking.
           if (!directive.$$tlb) {
             assertNoDuplicate('transclusion', nonTlbTranscludeDirective, directive, $compileNode);
@@ -6405,9 +6408,13 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
                 linkNode = $compileNode[0];
 
             if (beforeTemplateLinkNode !== beforeTemplateCompileNode) {
+              var oldClasses = beforeTemplateLinkNode.className;
               // it was cloned therefore we have to clone as well.
               linkNode = jqLiteClone(compileNode);
               replaceWith(linkRootElement, jqLite(beforeTemplateLinkNode), linkNode);
+
+              // Copy in CSS classes from original node
+              safeAddClass(jqLite(linkNode), oldClasses);
             }
             if (afterTemplateNodeLinkFn.transclude) {
               childBoundTranscludeFn = createBoundTranscludeFn(scope, afterTemplateNodeLinkFn.transclude);
@@ -7881,13 +7888,18 @@ function $HttpProvider() {
 }
 
 function createXhr(method) {
-  // IE8 doesn't support PATCH method, but the ActiveX object does
-  /* global ActiveXObject */
-  return (msie <= 8 && lowercase(method) === 'patch')
-      ? new ActiveXObject('Microsoft.XMLHTTP')
-      : new window.XMLHttpRequest();
-}
+    //if IE and the method is not RFC2616 compliant, or if XMLHttpRequest
+    //is not available, try getting an ActiveXObject. Otherwise, use XMLHttpRequest
+    //if it is available
+    if (msie <= 8 && (!method.match(/^(get|post|head|put|delete|options)$/i) ||
+      !window.XMLHttpRequest)) {
+      return new window.ActiveXObject("Microsoft.XMLHTTP");
+    } else if (window.XMLHttpRequest) {
+      return new window.XMLHttpRequest();
+    }
 
+    throw minErr('$httpBackend')('noxhr', "This browser does not support XMLHttpRequest.");
+}
 
 /**
  * @ngdoc object
@@ -7982,7 +7994,20 @@ function createHttpBackend($browser, createXhr, $browserDefer, callbacks, rawDoc
       }
 
       if (responseType) {
-        xhr.responseType = responseType;
+        try {
+          xhr.responseType = responseType;
+        } catch (e) {
+          // WebKit added support for the json responseType value on 09/03/2013
+          // https://bugs.webkit.org/show_bug.cgi?id=73648. Versions of Safari prior to 7 are
+          // known to throw when setting the value "json" as the response type. Other older
+          // browsers implementing the responseType 
+          //
+          // The json response type can be ignored if not supported, because JSON payloads are
+          // parsed on the client-side regardless.
+          if (responseType !== 'json') {
+            throw e;
+          }
+        }
       }
 
       xhr.send(post || null);
@@ -9304,7 +9329,7 @@ function $LogProvider(){
    * @name ng.$logProvider#debugEnabled
    * @methodOf ng.$logProvider
    * @description
-   * @param {string=} flag enable or disable debug level messages
+   * @param {boolean=} flag enable or disable debug level messages
    * @returns {*} current value if used as getter or itself (chaining) if used as setter
    */
   this.debugEnabled = function(flag) {
@@ -10760,7 +10785,7 @@ function $ParseProvider() {
  *   constructed via `$q.reject`, the promise will be rejected instead.
  * - `reject(reason)` – rejects the derived promise with the `reason`. This is equivalent to
  *   resolving it with a rejection constructed via `$q.reject`.
- * - `notify(value)` - provides updates on the status of the promises execution. This may be called
+ * - `notify(value)` - provides updates on the status of the promise's execution. This may be called
  *   multiple times before the promise is either resolved or rejected.
  *
  * **Properties**
@@ -10910,7 +10935,7 @@ function qFactory(nextTick, exceptionHandler) {
 
 
       reject: function(reason) {
-        deferred.resolve(reject(reason));
+        deferred.resolve(createInternalRejectedPromise(reason));
       },
 
 
@@ -11067,6 +11092,12 @@ function qFactory(nextTick, exceptionHandler) {
    * @returns {Promise} Returns a promise that was already resolved as rejected with the `reason`.
    */
   var reject = function(reason) {
+    var result = defer();
+    result.reject(reason);
+    return result.promise;
+  };
+
+  var createInternalRejectedPromise = function(reason) {
     return {
       then: function(callback, errback) {
         var result = defer();
@@ -12127,7 +12158,7 @@ function $RootScopeProvider(){
        * onto the {@link ng.$exceptionHandler $exceptionHandler} service.
        *
        * @param {string} name Event name to emit.
-       * @param {...*} args Optional set of arguments which will be passed onto the event listeners.
+       * @param {...*} args Optional one or more arguments which will be passed onto the event listeners.
        * @return {Object} Event object (see {@link ng.$rootScope.Scope#methods_$on}).
        */
       $emit: function(name, args) {
@@ -12195,7 +12226,7 @@ function $RootScopeProvider(){
        * onto the {@link ng.$exceptionHandler $exceptionHandler} service.
        *
        * @param {string} name Event name to broadcast.
-       * @param {...*} args Optional set of arguments which will be passed onto the event listeners.
+       * @param {...*} args Optional one or more arguments which will be passed onto the event listeners.
        * @return {Object} Event object, see {@link ng.$rootScope.Scope#methods_$on}
        */
       $broadcast: function(name, args) {
@@ -14087,7 +14118,7 @@ function filterFilter() {
           (function(path) {
             if (typeof expression[path] == 'undefined') return;
             predicates.push(function(value) {
-              return search(path == '$' ? value : getter(value, path), expression[path]);
+              return search(path == '$' ? value : (value && value[path]), expression[path]);
             });
           })(key);
         }
@@ -17440,7 +17471,6 @@ function classDirective(name, selector) {
          expect(ps.get(1).getAttribute('class')).toBe('');
          element(by.model('style')).clear();
          element(by.model('style')).sendKeys('red');
-         browser.debugger();
          expect(ps.get(1).getAttribute('class')).toBe('red');
        });
 

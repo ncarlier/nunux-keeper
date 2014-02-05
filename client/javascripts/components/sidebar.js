@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('SidebarModule', [])
+angular.module('SidebarModule', ['angular-md5'])
 .directive('appSidebar', function($location) {
   return {
     restrict: 'E',
@@ -32,12 +32,28 @@ angular.module('SidebarModule', [])
     }
   };
 })
-.controller('SidebarCtrl', function ($window, $scope, $categoryService, $location, $dialog, $timeout) {
+.controller('SidebarCtrl', function ($window, $scope, $categoryService, $location, $dialog, $timeout, md5) {
   $scope.user = $window.user;
-  $scope.gravatarUrl = 'http://www.gravatar.com/avatar/' + $window.gravatar;
+  $scope.gravatarUrl = 'http://www.gravatar.com/avatar/' + md5.createHash($scope.user.uid.toLowerCase());
   $categoryService.fetch().then(function(categories) {
     $scope.categories = categories;
-  });;
+  });
+
+  $scope.$on('app.event.hits', function(event, data) {
+    if (!data.query) {
+      $scope.total = data.total;
+    } else if (data.query === '_missing_:category') {
+      $scope.uncatTotal = data.total;
+    } else {
+      var m = data.query.match(/category:([a-z0-9_-]+)/);
+      if (m) {
+        var cat = $categoryService.get(m[1]);
+        if (cat) {
+          cat.total = data.total;
+        }
+      }
+    }
+  });
 
   // Key bindings...
   Mousetrap.bind(['g h'], function() {

@@ -17,7 +17,6 @@
   <link rel="shortcut icon" href="icons/favicon.png">
   <script>
     window.user = <%- JSON.stringify(user) %>;
-    window.gravatar = <%- JSON.stringify(gravatar) %>;
   </script>
 </head>
 <body ng-app="KeeperApp">
@@ -74,11 +73,13 @@
 <script src="lib/angular/angular.js"></script>
 <script src="lib/angular-sanitize/angular-sanitize.js"></script>
 <script src="lib/angular-route/angular-route.js"></script>
+<script src="lib/angular-md5/angular-md5.js"></script>
 <script src="lib/ngUpload/ng-upload.min.js"></script>
 <script src="lib/angular-deckgrid/angular-deckgrid.js"></script>
 
 <script src="javascripts/app.js"></script>
 <script src="javascripts/ui/dialog.js"></script>
+<script src="javascripts/ui/helpers.js"></script>
 <script src="javascripts/services/category.js"></script>
 <script src="javascripts/services/document.js"></script>
 <script src="javascripts/components/documents.js"></script>

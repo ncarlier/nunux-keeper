@@ -54,6 +54,11 @@ angular.module('KeeperApp', [
 .filter('escape', function() {
   return window.encodeURIComponent;
 })
+.filter('unsafe', function($sce) {
+  return function(val) {
+    return $sce.trustAsHtml(val);
+  };
+})
 .filter('prefix', function() {
   return function(input, prefix) {
     return input ? prefix + ' ' + input : '';

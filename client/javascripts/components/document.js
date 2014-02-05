@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('DocumentModule', ['ngRoute', 'ngSanitize'])
+angular.module('DocumentModule', ['ngRoute', 'ngSanitize', 'ui.helpers'])
 .directive('appDocument', function($location) {
   return {
     restrict: 'E',
@@ -27,20 +27,22 @@ angular.module('DocumentModule', ['ngRoute', 'ngSanitize'])
     link: link
   };
 })
-.directive('contenteditable', function() {
+.directive('contenteditable', function($compile) {
   return {
     require: 'ngModel',
     link: function(scope, elm, attrs, ctrl) {
       // view -> model
       elm.bind('blur', function() {
         scope.$apply(function() {
-          ctrl.$setViewValue(elm.html());
+          ctrl.$setViewValue($('> div', elm).html());
         });
       });
 
       // model -> view
       ctrl.$render = function() {
-        elm.html(ctrl.$viewValue);
+        var $content = $('<div>').html(ctrl.$viewValue);
+        $content = $compile($content)(scope);
+        elm.html($content);
       };
 
       ctrl.$render();

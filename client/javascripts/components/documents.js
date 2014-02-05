@@ -8,7 +8,7 @@ angular.module('DocumentsModule', ['ngRoute', 'akoenig.deckgrid'])
     controller: 'DocumentsCtrl'
   };
 })
-.controller('DocumentsCtrl', function ($scope, $routeParams, $categoryService, $documentService) {
+.controller('DocumentsCtrl', function ($rootScope, $scope, $routeParams, $categoryService, $documentService) {
   var m, search = false;
   switch (true) {
     case !$routeParams.q:
@@ -28,8 +28,8 @@ angular.module('DocumentsModule', ['ngRoute', 'akoenig.deckgrid'])
   $scope.fetch = function() {
     $scope.documents = [];
     $documentService.fetch($routeParams.q)
-    .then(function(documents) {
-      $scope.documents = documents;
+    .then(function(data) {
+      $scope.documents = data.hits;
       if (!search) {
         // Add creation card...
         $scope.documents.unshift({
@@ -39,6 +39,10 @@ angular.module('DocumentsModule', ['ngRoute', 'akoenig.deckgrid'])
           }
         });
       }
+      $rootScope.$broadcast('app.event.hits', {
+        query: $routeParams.q,
+        total: data.total
+      });
     });
   };
 

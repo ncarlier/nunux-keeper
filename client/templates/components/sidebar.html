@@ -11,20 +11,22 @@
     <a href="#document" target="_self" class="list-group-item" title="View all documents [g a]" >
       <span class="glyphicon glyphicon-th"></span>
       All
+      <span class="badge">{{ total }}</span>
     </a>
     <a href="#document?q=_missing_:category" target="_self" class="list-group-item" title="View archived items [g u]" >
       <span class="glyphicon glyphicon-inbox"></span>
       Uncategorized
+      <span class="badge">{{ uncatTotal }}</span>
     </a>
     <a
-      href="#document?q=category%3A{{ category.key }}"
+      href="#document?q=category:{{ category.key }}"
       title="{{ category.label }}"
       class="list-group-item"
       target="_self"
-      ng-repeat="category in categories"
-      ng-class="{active: $root.currentPage == category.key}">
+      ng-repeat="category in categories">
       <span class="glyphicon glyphicon-tag" style="color: {{category.color}}"></span>
       {{ category.label }}
+      <span class="badge">{{ category.total }}</span>
       <span class="glyphicon glyphicon-cog setup" ng-click="editCategoryDialog(category); $event.stopPropagation()" ng-show="isUserCategory(category)"></span>
     </a>
     <a class="list-group-item pointer" title="Add a new category" ng-click="createCategoryDialog(); $event.stopPropagation()">
