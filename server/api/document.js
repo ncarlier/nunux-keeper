@@ -31,7 +31,7 @@ module.exports = {
    * Search documents.
    */
   search: function(req, res, next) {
-    Document.search(req.user.uid, req.query.q)
+    Document.search(req.user.uid, req.query)
     .then(function(data) {
       res.json(data);
     }, next);

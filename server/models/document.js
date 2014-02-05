@@ -60,35 +60,31 @@ var mapping = {
  * @param {String} q query
  * @returns {Object} query DSL
  */
-var buildQuery = function(owner, q) {
-  if (!q) {
-    return {
-      fields: ['title'],
-      query: {
-        filtered: {
-          query: {
-            match_all: {}
-          },
-          filter : { term : { owner : owner } }
+var buildQuery = function(owner, params) {
+  var from = params.from ? params.from : 0,
+      size = params.size ? params.size : 20,
+      q = {
+        fields: ['title', 'contentType', 'category'],
+        from: from,
+        size: size,
+        query: {
+          filtered: {
+            query: { match_all: {} },
+            filter : { term : { owner : owner } }
+          }
         }
-      }
-    };
-  } else {
-    return {
-      fields: ['title'],
-      query: {
-        filtered: {
-          query: {
-            query_string: {
-              fields: ['title^5', 'category^4', 'content'],
-              query: q
-            }
-          },
-          filter : { term : { owner : owner } }
-        }
+      };
+
+  if (params.q) {
+    q.query.filtered.query = {
+      query_string: {
+        fields: ['title^5', 'category^4', 'content'],
+        query: params.q
       }
     };
   }
+
+  return q;
 };
 
 /**
@@ -237,8 +233,8 @@ module.exports = function(db) {
     });
   });
 
-  DocumentSchema.static('search', function(uid, q) {
-    return elasticsearch.search(type, buildQuery(uid, q));
+  DocumentSchema.static('search', function(uid, params) {
+    return elasticsearch.search(type, buildQuery(uid, params));
   });
 
   return db.model('Document', DocumentSchema);
