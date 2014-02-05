@@ -1,7 +1,8 @@
-var when    = require('when'),
-    request = require('request'),
-    files   = require('../helpers').files,
-    logger  = require('../helpers').logger;
+var when       = require('when'),
+    request    = require('request'),
+    files      = require('../helpers').files,
+    validators = require('../helpers').validators,
+    logger     = require('../helpers').logger;
 
 
 /**
@@ -12,6 +13,9 @@ var when    = require('when'),
  */
 var download = function(urls, dest) {
   var down = function(url) {
+    if (!validators.isUrl(url)) {
+      return when.resolve('Bad URL: ' + url);
+    }
     var to = files.chpath(dest, files.getHashName(url));
     logger.debug('Downloading %s to %s...', url, to);
     return files.chwrite(request(url), to);

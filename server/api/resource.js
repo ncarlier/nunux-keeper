@@ -28,7 +28,7 @@ module.exports = {
 
       file = files.chpath(req.user.uid, 'documents', doc._id.toString(), req.params.key);
       logger.debug('Sending file: ' + file);
-      res.sendfile(file, next);
+      res.sendfile(file);
     }, next);
   }
 };

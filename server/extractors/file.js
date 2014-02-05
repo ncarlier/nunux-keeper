@@ -11,6 +11,10 @@ var when     = require('when'),
 var importFile = function(file, doc) {
   logger.debug('Saving file %s for user %s ...', file.name, doc.owner);
   doc.contentType = file.type;
+  var ext = file.name.split('.').pop();
+  if (doc.contentType === 'application/octet-stream' && ext === 'json') {
+    doc.contentType = 'application/json';
+  }
   doc.attachment = {
     name: file.name,
     stream: fs.createReadStream(file.path)
