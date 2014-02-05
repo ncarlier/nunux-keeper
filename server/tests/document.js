@@ -89,8 +89,8 @@ describe('Check document API', function() {
 
   it('should create new document (HTML body)', function(done) {
     var title   = 'Sample simple HTML document',
-        content = '<p>sample</P><img src="' + imageUrl + '"/>',
-        expectedContent = '<p>sample</p><img src="' + imageUrl + '" />',
+        content = '<p>sample</P><img src="' + imageUrl + '"/><img class="test" app-src="test" src = "test" alt="test" />',
+        expectedContent = '<p>sample</p><img app-src="' + imageUrl + '" /><img app-src="test" alt="test" />',
         categories = ['system-public', 'user-test', 'bad'];
 
     request.post({
@@ -135,7 +135,7 @@ describe('Check document API', function() {
   it('should update previous created document (HTML body)', function(done) {
     var title   = 'Updated sample simple HTML document',
         content = '<p>updated sample</P><img src="' + imageUrl + '"/>',
-        expectedContent = '<p>updated sample</p><img src="' + imageUrl + '" />',
+        expectedContent = '<p>updated sample</p><img app-src="' + imageUrl + '" />',
         categories = ['system-trash'];
 
     request.put({

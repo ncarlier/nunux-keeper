@@ -13,16 +13,29 @@ var extractHtml = function(doc) {
   var extracted = when.defer();
   readability(doc.content, function(err, article) {
     if (err) return extracted.reject(err);
-    // Filter images URLs
-    var filterImg = function(match, p1, p2, offset, string) {
-      if (!/^https?|file|ftps?/i.test(p2)) {
+    // Filter images idata-src attribute:
+    // - remove 'src' attribute of images with 'app-src'
+    var filterAppImgSrc = function(match, offset, string) {
+      return match.replace(/\s+src\s*=\s*['"][^'"]+['"]/, '');
+    };
+
+    // Filter images src attribute:
+    // - Create absolute URL
+    // - replace 'src' attribute by 'app-src'
+    var filterImgSrc = function(match, p1, p2, offset, string) {
+      // Ignore app-src directives
+      if (/app\-$/i.test(p1)) return match;
+      // Create absolute URL if not
+      if (!/^https?|file|ftps?/i.test(p2) && doc.link) {
         p2 = url.resolve(doc.link, p2);
       }
-      return '<img' + p1 + 'src="' + p2 + '"';
+      // Replace 'src' attribute by 'app-src'
+      return '<img' + p1 + 'app-src="' + p2 + '"';
     };
     doc.content = article.cache.body
-    .replace(/<img([^>]+)src\s*=\s*['"]([^'"]+)['"]/gi, filterImg)
-    .replace(/(class\s*=\s*['"][^'"]+['"])/gi, '');
+    .replace(/<img[^>]+app\-src[^>\/]+\/>/gi, filterAppImgSrc)
+    .replace(/<img([^>]+)src\s*=\s*['"]([^'"]+)['"]/gi, filterImgSrc)
+    .replace(/\s+class\s*=\s*['"][^'"]+['"]/gi, '');
     if (doc.title === 'Undefined') doc.title = article.title;
     extracted.resolve(doc);
   });
