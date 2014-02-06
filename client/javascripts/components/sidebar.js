@@ -36,7 +36,13 @@ angular.module('SidebarModule', ['angular-md5'])
   $scope.user = $window.user;
   $scope.gravatarUrl = 'http://www.gravatar.com/avatar/' + md5.createHash($scope.user.uid.toLowerCase());
   $categoryService.fetch().then(function(categories) {
-    $scope.categories = categories;
+    $scope.categories = [];
+    _.each(categories, function(cat) {
+      if (cat.key === 'system-trash') cat.icon = 'glyphicon-trash';
+      else if (cat.key === 'system-public') cat.icon = 'glyphicon-globe';
+      else cat.icon = 'glyphicon-tag';
+      $scope.categories.push(cat);
+    });
   });
 
   $scope.$on('app.event.hits', function(event, data) {

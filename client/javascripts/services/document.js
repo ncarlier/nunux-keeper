@@ -64,14 +64,14 @@ angular.module('DocumentService', [])
     return deferred.promise;;
   };
 
-  var deleteDocument = function(doc) {
+  var trashDocuments = function() {
     var deferred = $q.defer();
-    $http.delete(url + '/' + doc._id, doc)
+    $http.delete(url)
     .success(function() {
-      deferred.resolve(doc);
+      deferred.resolve();
     })
     .error(function(err) {
-      alert('Unable to delete document!');
+      alert('Unable to trash documents!');
       deferred.reject(err);
     });
     return deferred.promise;;
@@ -82,6 +82,6 @@ angular.module('DocumentService', [])
     get: getDocument,
     create: createDocument,
     update: updateDocument,
-    delete: deleteDocument
+    trash: trashDocuments
   };
 }]);

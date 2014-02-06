@@ -1,17 +1,16 @@
 <div class="documents grid" ng-class="{'one-col': doc }">
   <h1>{{ title || category.label }}</h1>
   <div deckgrid source="documents" cardTemplate="templates/components/document-card.html" class="deckgrid"></div>
-  <span ng-if="documents.length == 0" class="no-result">No document found.</span>
+  <span ng-if="documents.length == 0" class="no-result">{{ emptyMessage }}</span>
 </div>
 
 <app-document ng-if="doc"></app-document>
 
 <script type="text/ng-template" id="templates/components/document-card.html">
-<div class="document-card" ng-class="{new: card.create}" title="{{card.fields.title}}" ng-click="mother.showDocument(card._id)">
-  <div class="doc-picture" ng-class="{'glyphicon glyphicon-plus': card.create}">
-      <img src="" data-ng-src="http://placehold.it/200x150" class="animation-fade" data-imageloaded data-loadedclass="animation-faded" ng-show="card.fields.illustration">
+<div class="document-card" title="{{card.fields.title}}" ng-click="mother.clickOnCard(card)">
+  <div class="doc-picture glyphicon" ng-class="card.icon">
+      <img src="" data-ng-src="http://placehold.it/200x150" class="animation-fade" data-imageloaded data-loadedclass="animation-faded" ng-if="card.fields.illustration">
   </div>
-
   <div class="doc-title">
     <h3>{{ card.fields.title }}</h3>
   </div>

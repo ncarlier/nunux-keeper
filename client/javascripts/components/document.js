@@ -15,7 +15,6 @@ angular.module('DocumentModule', ['ngRoute', 'ngSanitize', 'ui.helpers'])
     scope.$watch(attrs.appCategoryTag, function(value) {
       scope.key = value;
       category = $categoryService.get(scope.key);
-      category.color = category.color ? category.color : '#1F4164';
       scope.label = category.label;
       element.css('background-color', category.color);
       element.css('border-color', $filter('lighten')(category.color, 20));
@@ -77,16 +76,6 @@ angular.module('DocumentModule', ['ngRoute', 'ngSanitize', 'ui.helpers'])
         $scope.doc = doc;
         $scope.addDocument(doc);
         $scope.editing = false;
-      });
-    }
-  };
-
-  $scope.deleteDocument = function() {
-    if (confirm("Delete this document? " + $scope.doc.title)) {
-      $documentService.delete($scope.doc)
-      .then(function(doc) {
-        $scope.editing = false;
-        $scope.removeDocument(doc);
       });
     }
   };

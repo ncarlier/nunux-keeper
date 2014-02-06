@@ -147,7 +147,7 @@ module.exports = {
    * Delete one or more documents.
    */
   del: function(req, res, next) {
-    var ids;
+    var ids = null;
 
     if (req.params.id) {
       if (!validators.isDocId(req.params.id)) {
@@ -156,8 +156,6 @@ module.exports = {
       ids = [req.params.id];
     } else if (req.body && _.isArray(req.body)) {
       ids = req.body;
-    } else {
-      return next(new errors.BadRequest());
     }
 
     var deleteDocument = function(id) {
@@ -172,8 +170,23 @@ module.exports = {
       });
     };
 
-    when.map(ids, deleteDocument).then(function() {
-      res.send(205);
-    }, next);
+    if (ids) {
+      // Delete defined ids
+      when.map(ids, deleteDocument).then(function() {
+        res.send(205);
+      }, next);
+    } else {
+      logger.info('Emptying trash bin of %s ...', req.user.uid);
+      // Empty trash bin category
+      Document.find({ owner: req.user.uid, categories: 'system-trash' }).exec()
+      .then(function(docs) {
+        return when.map(docs, function(doc) {
+          Document.del(doc)
+        });
+      })
+      .then(function() {
+        res.send(205);
+      }, next);
+    }
   }
 };

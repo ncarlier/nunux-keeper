@@ -18,7 +18,11 @@ angular.module('CategoryService', [])
     var deferred = $q.defer();
     $http.get(url)
     .success(function (data) {
-      categories = data;
+      _.each(data, function(cat) {
+        if (cat.key === 'system-trash') cat.color = '#D2322D';
+        else if (cat.key === 'system-public') cat.color = '#1F4164';
+        categories.push(cat);
+      });
       deferred.resolve(categories);
     })
     .error(deferred.reject);
