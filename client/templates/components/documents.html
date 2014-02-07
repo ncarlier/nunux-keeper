@@ -1,19 +1,31 @@
-<div class="documents grid" ng-class="{'one-col': doc }">
+<div class="documents" ng-class="{'one-col': doc}">
   <h1>{{ title || category.label }}</h1>
-  <div deckgrid source="documents" cardTemplate="templates/components/document-card.html" class="deckgrid"></div>
+  <ul>
+    <li title="Create new document..." ng-click="showNewDocument()" ng-if="!trash && !search">
+    <div class="doc-picture glyphicon glyphicon-plus" ></div>
+    <div class="doc-title"><h3>Create new document</h3></div>
+    </li>
+
+    <li title="Empty trash bin!" ng-click="trashDocuments()" ng-if="trash && documents.length">
+    <div class="doc-picture glyphicon glyphicon-trash" ></div>
+    <div class="doc-title"><h3>Empty trash bin!</h3></div>
+    </li>
+
+    <li ng-repeat="doc in documents" title="{{ doc.fields.title }}" ng-click="showDocument(doc._id)">
+    <div class="doc-picture glyphicon glyphicon-file" >
+      <img src="" data-ng-src="http://placehold.it/200x150" ng-if="doc.fields.illustration">
+    </div>
+    <div class="doc-title">
+      <h3>{{ doc.fields.title }}</h3>
+    </div>
+    </li>
+
+    <li ng-if="isnext" class="next">
+      <a ng-click="next()">Fetch next documents</a>
+    </li>
+  </ul>
   <span ng-if="documents.length == 0" class="no-result">{{ emptyMessage }}</span>
 </div>
 
 <app-document ng-if="doc"></app-document>
-
-<script type="text/ng-template" id="templates/components/document-card.html">
-<div class="document-card" title="{{card.fields.title}}" ng-click="mother.clickOnCard(card)">
-  <div class="doc-picture glyphicon" ng-class="card.icon">
-      <img src="" data-ng-src="http://placehold.it/200x150" class="animation-fade" data-imageloaded data-loadedclass="animation-faded" ng-if="card.fields.illustration">
-  </div>
-  <div class="doc-title">
-    <h3>{{ card.fields.title }}</h3>
-  </div>
-</div>
-</script>
 

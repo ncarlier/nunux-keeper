@@ -140,7 +140,7 @@ body {
   div.one-col {
     width: 250px !important;
   }
-  div.grid {
+  div.documents {
     //width: 250px;
     width: 100%;
     background: darkgrey;
@@ -164,7 +164,23 @@ body {
       display: block;
       margin-top: 10%;
     }
-    .document-card {
+    .next {
+      text-align: center;
+      a {
+        font-weight: bold;
+        cursor: pointer;
+        color: #444;
+      }
+      a:hover {
+        text-decoration: none;
+      }
+    }
+    ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    li {
       background-color: #DCDCDC;
       padding: 10px;
       margin: 10px;
@@ -172,6 +188,8 @@ body {
       color: #444;
       position: relative;
       cursor: pointer;
+      width: 220px;
+      display: inline-block;
       .doc-title {
         position: absolute;
         bottom: 10px;

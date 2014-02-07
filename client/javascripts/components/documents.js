@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('DocumentsModule', ['ngRoute', 'akoenig.deckgrid'])
+angular.module('DocumentsModule', ['ngRoute'])
 .directive('appDocuments', function($location) {
   return {
     restrict: 'E',
@@ -9,8 +9,9 @@ angular.module('DocumentsModule', ['ngRoute', 'akoenig.deckgrid'])
   };
 })
 .controller('DocumentsCtrl', function ($rootScope, $scope, $routeParams, $categoryService, $documentService) {
-  var m, search = false;
+  var m, size = 20;
   $scope.emptyMessage = 'No documents found.';
+  $scope.search = false;
   switch (true) {
     case !$routeParams.q:
       $scope.title = 'All';
@@ -29,34 +30,25 @@ angular.module('DocumentsModule', ['ngRoute', 'akoenig.deckgrid'])
     break;
     default:
       $scope.title = 'Search';
-      search = true;
-  }
+      $scope.search = true;
+  };
 
+  $scope.documents = [];
+  $scope.from = 0;
+  $scope.isnext = false;
   $scope.fetch = function() {
-    $scope.documents = [];
-    $documentService.fetch($routeParams.q)
+    $documentService.fetch($routeParams.q, $scope.from, size)
     .then(function(data) {
+      if (data.hits.length == size && $scope.from + size < data.total) {
+        $scope.from += size;
+        $scope.isnext = true;
+      } else {
+        $scope.isnext = false;
+      }
+
       _.each(data.hits, function(doc) {
-        doc.icon = 'glyphicon-file';
         $scope.documents.push(doc);
       });
-      if ($scope.trash && $scope.documents.length) {
-        // Add creation card...
-        $scope.documents.unshift({
-          icon: 'glyphicon-trash',
-          fields: {
-            title: 'Empty trash bin!'
-          }
-        });
-      } else if (!$scope.trash && !search) {
-        // Add creation card...
-        $scope.documents.unshift({
-          icon: 'glyphicon-plus',
-          fields: {
-            title: 'Create new document...'
-          }
-        });
-      }
 
       $rootScope.$broadcast('app.event.hits', {
         query: $routeParams.q,
@@ -65,16 +57,8 @@ angular.module('DocumentsModule', ['ngRoute', 'akoenig.deckgrid'])
     });
   };
 
-  $scope.clickOnCard = function(card) {
-    var type = card.icon.split('-').pop();
-    switch (true) {
-      case type === 'trash':
-        return $scope.trashDocuments();
-      case type === 'plus':
-        return $scope.showNewDocuments();
-      default:
-        return $scope.showDocument(card._id);
-    }
+  $scope.next = function() {
+    $scope.fetch();
   };
 
   $scope.trashDocuments = function() {
@@ -87,7 +71,7 @@ angular.module('DocumentsModule', ['ngRoute', 'akoenig.deckgrid'])
     }
   };
 
-  $scope.showNewDocuments = function() {
+  $scope.showNewDocument = function() {
     $scope.editing = true;
     $scope.doc = {
       title: 'My new document',

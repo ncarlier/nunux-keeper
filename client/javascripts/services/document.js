@@ -4,9 +4,11 @@ angular.module('DocumentService', [])
 .factory('$documentService', ['$q', '$http', function ($q, $http) {
   var url = '/api/document';
 
-  var fetchDocuments = function(query) {
+  var fetchDocuments = function(query, from, size) {
     var params = $.param({
-      q: query
+      q: query,
+      from: from,
+      size: size
     });
     var deferred = $q.defer();
     $http.get(url + '?' + params)
