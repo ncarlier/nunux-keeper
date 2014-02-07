@@ -52,6 +52,12 @@ This installation procedure is from skratch. You can find below an easiest insta
     $ES_HOME/bin/plugin -install elasticsearch/elasticsearch-mapper-attachments/1.9.0
     $ES_HOME/bin/plugin -install com.github.richardwilly98.elasticsearch/elasticsearch-river-mongodb/1.7.3
 
+Connect to mongodb and enabled replicaset:
+
+    $ mongo
+    > cfg = { "_id" : "rs0", "version" : 1, "members" : [ { "_id" : 0, "host" : "localhost:27017" } ] }
+    > rs.initiate(cfg)
+
 #### Install Grunt
 
     sudo npm install -g grunt-cli
