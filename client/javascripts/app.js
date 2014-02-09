@@ -28,7 +28,7 @@ angular.module('KeeperApp', [
   'DocumentsModule',
   'DocumentModule',
   'ProfileModule',
-  'ui.dialog'])
+  'ui.bootstrap'])
 .config(['$routeProvider', function($routeProvider) {
   $routeProvider
   .when('/document', {

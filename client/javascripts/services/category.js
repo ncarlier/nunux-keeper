@@ -18,6 +18,7 @@ angular.module('CategoryService', [])
     var deferred = $q.defer();
     $http.get(url)
     .success(function (data) {
+      categories = [];
       _.each(data, function(cat) {
         if (cat.key === 'system-trash') cat.color = '#D2322D';
         else if (cat.key === 'system-public') cat.color = '#1F4164';
@@ -69,7 +70,7 @@ angular.module('CategoryService', [])
     .success(function() {
       var index = _getCategoryIndex(category);
       if (index >= 0) categories.splice(index, 1);
-      deferred.resolve(cat);
+      deferred.resolve(category);
     })
     .error(function(err) {
       alert('Unable to delete category!');

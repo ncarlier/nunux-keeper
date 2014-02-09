@@ -32,18 +32,20 @@ angular.module('SidebarModule', ['angular-md5'])
     }
   };
 })
-.controller('SidebarCtrl', function ($window, $scope, $categoryService, $location, $dialog, $timeout, md5) {
+.controller('SidebarCtrl', function ($window, $scope, $categoryService, $modal, $log, $location, $timeout, md5) {
   $scope.user = $window.user;
   $scope.gravatarUrl = 'http://www.gravatar.com/avatar/' + md5.createHash($scope.user.uid.toLowerCase());
-  $categoryService.fetch().then(function(categories) {
-    $scope.categories = [];
-    _.each(categories, function(cat) {
-      if (cat.key === 'system-trash') cat.icon = 'glyphicon-trash';
-      else if (cat.key === 'system-public') cat.icon = 'glyphicon-globe';
-      else cat.icon = 'glyphicon-tag';
-      $scope.categories.push(cat);
+  var refresh = function() {
+    $categoryService.fetch().then(function(categories) {
+      $scope.categories = [];
+      _.each(categories, function(cat) {
+        if (cat.key === 'system-trash') cat.icon = 'glyphicon-trash';
+        else if (cat.key === 'system-public') cat.icon = 'glyphicon-globe';
+        else cat.icon = 'glyphicon-tag';
+        $scope.categories.push(cat);
+      });
     });
-  });
+  };
 
   $scope.$on('app.event.hits', function(event, data) {
     if (!data.query) {
@@ -96,48 +98,56 @@ angular.module('SidebarModule', ['angular-md5'])
 
   $scope.createCategoryDialog = function() {
     $scope.category = {};
-    $dialog('templates/dialog/category/edit.html', {
-      id: 'createCategoryDialog',
-      title: 'Create new category',
-      backdrop: true,
-      scope: $scope,
-      footerTemplate:
-        '<button class="btn" ng-click="$modalCancel()">{{$modalCancelLabel}}</button>' +
-        '<button class="btn btn-primary" ng-click="$modalSuccess()">{{$modalSuccessLabel}}</button>',
-      success: {label: 'create', fn: function() {
-        $categoryService.create($scope.category);
-      }}
+    var modalInstance = $modal.open({
+      templateUrl: 'templates/dialog/category/edit.html',
+      controller: 'CategoryEditionModalCtrl'
+    });
+
+    modalInstance.result.then(refresh, function(reason) {
+      $log.info('Category creation modal dismissed: ' + reason);
     });
   };
 
   $scope.editCategoryDialog = function(category) {
     var backup = angular.copy(category);
     $scope.category = category;
-    $dialog('templates/dialog/category/edit.html', {
-      id: 'editCategoryDialog',
-      title: 'Edit category: ' + category.label,
-      backdrop: true,
-      scope: $scope,
-      footerTemplate:
-        '<button class="btn btn-danger pull-left" ng-click="$modalDelete()">{{$modalDeleteLabel}}</button>' +
-        '<button class="btn" ng-click="$modalCancel()">{{$modalCancelLabel}}</button>' +
-        '<button class="btn btn-primary" ng-click="$modalSuccess()">{{$modalSuccessLabel}}</button>',
-      success: {label: 'update', fn: function() {
-        $categoryService.update($scope.category)
-        .catch(function() {
-          category.label = backup.label;
-          category.color = backup.color;
-        });
-      }},
-      cancel: {label: 'cancel', fn: function() {
-        category.label = backup.label;
-        category.color = backup.color;
-      }},
-      delete: {label: 'delete', fn: function() {
-        $categoryService.delete($scope.category);
-      }}
+    var modalInstance = $modal.open({
+      templateUrl: 'templates/dialog/category/edit.html',
+      controller: 'CategoryEditionModalCtrl'
+    });
+
+    modalInstance.result.then(refresh, function(reason) {
+      category.label = backup.label;
+      category.color = backup.color;
+      $log.info('Category edition modal dismissed: ' + reason);
     });
   };
 
   $scope.isUserCategory = $categoryService.isUserCategory;
+  refresh();
+})
+.controller('CategoryEditionModalCtrl', function ($scope, $modalInstance, $categoryService) {
+  var errHandler = function(err) {
+    alert('Error: ' + err);
+    $modalInstance.dismiss('Error: ' + err);
+  };
+
+  $scope.ok = function () {
+    if ($scope.category.key) {
+      $categoryService.update($scope.category)
+      .then($modalInstance.close, errHandler);
+    } else {
+      $categoryService.create($scope.category)
+      .then($modalInstance.close, errHandler);
+    }
+  };
+
+  $scope.delete = function () {
+    $categoryService.delete($scope.category)
+    .then($modalInstance.close, errHandler);
+  };
+
+  $scope.cancel = function () {
+    $modalInstance.dismiss('cancel');
+  };
 });

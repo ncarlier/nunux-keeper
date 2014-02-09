@@ -9,12 +9,13 @@
     "moment": "~2.0.0",
     "jquery": "~2.0.2",
     "humane-js": "~3.1.0",
-    "ngUpload": "~0.3.8",
     "mousetrap": "~1.4.5",
     "angular-route": "~1.2.7",
     "angular-sanitize": "~1.2.10",
     "lodash": "~2.4.1",
-    "angular-md5": "~0.1.7"
+    "angular-md5": "~0.1.7",
+    "angular-ui-bootstrap-bower": "~0.10.0",
+    "ng-file-upload": "~1.2.7"
   },
   "exportsOverride": {
     "bootstrap": {
@@ -34,9 +35,6 @@
     },
     "humane-js": {
       "": "*.js"
-    },
-    "ngUpload": {
-      "": "ng-upload.*"
     },
     "mousetrap": {
       "": "*.js"

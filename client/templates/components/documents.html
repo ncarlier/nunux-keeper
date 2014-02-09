@@ -1,7 +1,7 @@
 <div class="documents" ng-class="{'one-col': doc}">
   <h1>{{ title || category.label }}</h1>
   <ul>
-    <li title="Create new document..." ng-click="showNewDocument()" ng-if="!trash && !search">
+    <li title="Create new document..." ng-click="showDocumentCreationDialog()" ng-if="!trash && !search">
     <div class="doc-picture glyphicon glyphicon-plus" ></div>
     <div class="doc-title"><h3>Create new document</h3></div>
     </li>
@@ -28,4 +28,43 @@
 </div>
 
 <app-document ng-if="doc"></app-document>
+
+<script type="text/ng-template" id="templates/dialog/document/create.html">
+<div class="modal-header">
+  <h3>
+    Create new document
+    <span ng-if="category" ng-style="{color: category.color}"> in {{ category.label }}</span>
+  </h3>
+</div>
+<div class="modal-body">
+<accordion close-others="true">
+  <accordion-group heading="Create original document" is-open="openStatus.default">
+    <p>Open document creation form.</p>
+    <button class="btn btn-primary" ng-click="ok()" >Open</button>
+  </accordion-group>
+  <accordion-group heading="Get online document" is-open="openStatus.url">
+    <form name="urlForm" ng-submit="ok()" novalidate>
+      <div class="form-group" ng-class="{true: 'has-error', false: 'has-success'}[urlForm.url.$invalid]">
+        <label for="documentUrl">URL</label>
+        <input type="url" name="url" class="form-control" id="documentUrl" ng-model="url" required />
+      </div>
+      <button class="btn btn-primary" type="submit" ng-disabled="!urlForm.$valid">Get</button>
+    </form>
+  </accordion-group>
+  <accordion-group heading="Upload document" is-open="openStatus.file">
+    <form name="fileForm" ng-submit="ok()" novalidate>
+      <div class="form-group" ng-class="{true: 'has-error', false: 'has-success'}[fileForm.file.$invalid]">
+        <label for="documentFile">File</label>
+        <input id="documentFile" type="file" name="file" ng-file-select="onFileSelect($files)" required />
+      </div>
+      <button class="btn btn-primary" type="submit" ng-disabled="!fileForm.$valid || !files">Upload</button>
+    </form>
+  </accordion-group>
+</accordion>
+<p>{{openStatus}}</p>
+</div>
+<div class="modal-footer">
+  <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+</div>
+</script>
 

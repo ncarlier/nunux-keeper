@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('DocumentsModule', ['ngRoute'])
+angular.module('DocumentsModule', ['ngRoute', 'angularFileUpload'])
 .directive('appDocuments', function($location) {
   return {
     restrict: 'E',
@@ -8,7 +8,7 @@ angular.module('DocumentsModule', ['ngRoute'])
     controller: 'DocumentsCtrl'
   };
 })
-.controller('DocumentsCtrl', function ($rootScope, $scope, $routeParams, $categoryService, $documentService) {
+.controller('DocumentsCtrl', function ($rootScope, $scope, $routeParams, $categoryService, $documentService, $modal, $log) {
   var m, size = 20;
   $scope.emptyMessage = 'No documents found.';
   $scope.search = false;
@@ -71,21 +71,37 @@ angular.module('DocumentsModule', ['ngRoute'])
     }
   };
 
-  $scope.showNewDocument = function() {
-    $scope.editing = true;
-    $scope.doc = {
-      title: 'My new document',
-      content: '<p>what\'s up ?</p>',
-      contentType:'text/html',
-      categories: $scope.category ? [$scope.category.key] : []
-    };
-  };
-
   $scope.showDocument = function(id) {
     $scope.editing = false;
     $documentService.get(id)
     .then(function(doc) {
       $scope.doc = doc;
+    });
+  };
+
+  $scope.showDocumentCreationDialog = function() {
+    var modalInstance = $modal.open({
+      templateUrl: 'templates/dialog/document/create.html',
+      controller: 'DocumentCreationModalCtrl',
+      resolve: {
+        category: function () {
+          return $scope.category;
+        }
+      }
+    });
+
+    modalInstance.result.then(function(doc) {
+      if (doc._id == null) {
+        $scope.editing = true;
+        $scope.doc = doc;
+      } else {
+        $scope.documents.unshift({
+          _id: doc._id,
+          fields: doc
+        });
+      }
+    }, function (reason) {
+      $log.info('Document creation modal dismissed: ' + reason);
     });
   };
 
@@ -102,4 +118,51 @@ angular.module('DocumentsModule', ['ngRoute'])
   };
 
   $scope.fetch();
+})
+.controller('DocumentCreationModalCtrl', function ($log, $scope, $modalInstance, $upload, $documentService, category) {
+  $scope.openStatus = {
+    'default': true,
+    url: false,
+    file: false
+  };
+  $scope.category = category;
+
+  $scope.onFileSelect = function($files) {
+    $scope.files = $files;
+  };
+
+  var errHandler = function(err) {
+    alert('Error: ' + err);
+    $modalInstance.dismiss('Error: ' + err);
+  };
+
+  $scope.ok = function() {
+    var doc = {
+      categories: $scope.category ? [$scope.category.key] : []
+    };
+
+    if ($scope.openStatus.url) {
+      if (!this.urlForm.$valid) return;
+      doc.content = this.url;
+      doc.contentType = 'text/vnd.curl';
+      $documentService.create(doc)
+      .then($modalInstance.close, errHandler);
+    } else if ($scope.openStatus.file) {
+      if (!this.fileForm.$valid || !$scope.files) return;
+      doc.file = $scope.files[0];
+      doc.contentType = 'multipart/form-data';
+      $documentService.create(doc)
+      .then($modalInstance.close, errHandler);
+    } else {
+      return alert("doc");
+      doc.title = 'My new document';
+      doc.content = '<p>what\'s up ?</p>';
+      doc.contentType = 'text/html';
+      $modalInstance.close(doc);
+    }
+  };
+
+  $scope.cancel = function() {
+    $modalInstance.dismiss('cancel');
+  };
 });

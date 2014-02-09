@@ -50,6 +50,10 @@ body {
   height: 100%;
   width: 250px;
   overflow: auto;
+  .sidebar {
+    position: relative;
+    padding-bottom: 10px;
+  }
   .list-group-item {
     font-size: 1.2em;
     border: none;
@@ -295,31 +299,12 @@ body {
   }
 }
 
-.flag {
-  color: #FFF;
-  font-size: 0.8em;
-  text-decoration: none;
-  padding: 0 4px;
-  font-variant: small-caps;
-  font-weight: bold;
-  &.rss {
-    background-color: #F0721E;
-  }
-  &.html {
-    background-color: #409AB6;
-  }
-  &.timeline {
-    background-color: #364050;
-  }
-  &.pshb {
-    background-color: #E46EE4;
-  }
-}
-
-.pointer {
+/*********************************************************************************/
+/* Class                                                                         */
+/*********************************************************************************/
+.pointer, .accordion-toggle {
   cursor: pointer;
 }
-
 
 //*********************************************************************************/
 /* Keyboard shortcut                                                             */
@@ -386,10 +371,3 @@ body {
   }
 }
 
-#userProfileDialog {
-  p {
-    display: inline-block;
-    vertical-align: top;
-  }
-  a {text-decoration: none; }
-}
