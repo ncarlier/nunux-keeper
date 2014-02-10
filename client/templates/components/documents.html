@@ -1,7 +1,7 @@
 <div class="documents" ng-class="{'one-col': doc}">
   <h1>{{ title || category.label }}</h1>
   <ul>
-    <li title="Create new document..." ng-click="showDocumentCreationDialog()" ng-if="!trash && !search">
+    <li title="Create new document..." ng-click="showDocumentCreationDialog()" ng-if="!trash && !isSearch">
     <div class="doc-picture glyphicon glyphicon-plus" ></div>
     <div class="doc-title"><h3>Create new document</h3></div>
     </li>

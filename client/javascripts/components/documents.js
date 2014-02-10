@@ -11,7 +11,7 @@ angular.module('DocumentsModule', ['ngRoute', 'angularFileUpload'])
 .controller('DocumentsCtrl', function ($rootScope, $scope, $routeParams, $categoryService, $documentService, $modal, $log) {
   var m, size = 20;
   $scope.emptyMessage = 'No documents found.';
-  $scope.search = false;
+  $scope.isSearch = false;
   switch (true) {
     case !$routeParams.q:
       $scope.title = 'All';
@@ -30,7 +30,7 @@ angular.module('DocumentsModule', ['ngRoute', 'angularFileUpload'])
     break;
     default:
       $scope.title = 'Search';
-      $scope.search = true;
+      $scope.isSearch = true;
   };
 
   $scope.documents = [];
