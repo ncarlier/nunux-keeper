@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('DocumentModule', ['ngRoute', 'ngSanitize', 'ui.helpers'])
+angular.module('DocumentModule', ['ngRoute', 'ngSanitize'])
 .directive('appDocument', function($location) {
   return {
     restrict: 'E',

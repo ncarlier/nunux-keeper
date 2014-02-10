@@ -79,6 +79,17 @@ angular.module('CategoryService', [])
     return deferred.promise;;
   };
 
+  var addDocument = function(key, docId) {
+    var deferred = $q.defer();
+    $http.put(url + '/' + category.key + '/document/' + docId)
+    .success(deferred.resolve)
+    .error(function(err) {
+      alert('Unable to add document ' + docId + ' to category ' + key);
+      deferred.reject(err);
+    });
+    return deferred.promise;;
+  };
+
   var isUserCategory = function(category) {
     return /^user-/.test(category.key);
   };
@@ -89,6 +100,7 @@ angular.module('CategoryService', [])
     create: createCategory,
     update: updateCategory,
     delete: deleteCategory,
+    addDocument: addDocument,
     isUserCategory: isUserCategory,
     getCategories: function() { return categories; }
   };

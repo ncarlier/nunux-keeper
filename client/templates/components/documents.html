@@ -11,7 +11,8 @@
     <div class="doc-title"><h3>Empty trash bin!</h3></div>
     </li>
 
-    <li ng-repeat="doc in documents" title="{{ doc.fields.title }}" ng-click="showDocument(doc._id)">
+    <li ng-repeat="doc in documents" id="{{ doc._id }}" title="{{ doc.fields.title }}"
+        ng-click="showDocument(doc._id)" ng-class="doc.clazz" draggable dragdata="getDraggableData(doc)">
     <div class="doc-picture glyphicon glyphicon-file" >
       <img src="" data-ng-src="http://placehold.it/200x150" ng-if="doc.fields.illustration">
     </div>

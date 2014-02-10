@@ -179,6 +179,9 @@ body {
         text-decoration: none;
       }
     }
+    .active {
+      background: @k-panel-bg-color;
+    }
     ul {
       margin: 0;
       padding: 0;
@@ -194,6 +197,7 @@ body {
       cursor: pointer;
       width: 220px;
       display: inline-block;
+      transition: all 0.2s ease;
       .doc-title {
         position: absolute;
         bottom: 10px;
@@ -304,6 +308,14 @@ body {
 /*********************************************************************************/
 .pointer, .accordion-toggle {
   cursor: pointer;
+}
+
+.drag {
+  opacity: 0.5;
+}
+
+.over {
+  border: dashed 1px !important;
 }
 
 //*********************************************************************************/

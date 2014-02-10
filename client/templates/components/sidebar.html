@@ -20,9 +20,11 @@
     </a>
     <a
       href="#document?q=category:{{ category.key }}"
+      id="cat${{ category.key }}"
       title="{{ category.label }}"
       class="list-group-item"
       target="_self"
+      droppable drop="handleDropOnCategory"
       ng-repeat="category in categories">
       <span class="glyphicon" ng-class="category.icon"></span>
       {{ category.label }}

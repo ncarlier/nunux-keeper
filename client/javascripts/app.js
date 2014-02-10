@@ -28,6 +28,7 @@ angular.module('KeeperApp', [
   'DocumentsModule',
   'DocumentModule',
   'ProfileModule',
+  'ui.helpers',
   'ui.bootstrap'])
 .config(['$routeProvider', function($routeProvider) {
   $routeProvider

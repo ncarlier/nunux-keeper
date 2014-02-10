@@ -32,7 +32,7 @@ angular.module('SidebarModule', ['angular-md5'])
     }
   };
 })
-.controller('SidebarCtrl', function ($window, $scope, $categoryService, $modal, $log, $location, $timeout, md5) {
+.controller('SidebarCtrl', function ($window, $scope, $categoryService, $documentService, $modal, $log, $location, $timeout, md5) {
   $scope.user = $window.user;
   $scope.gravatarUrl = 'http://www.gravatar.com/avatar/' + md5.createHash($scope.user.uid.toLowerCase());
   var refresh = function() {
@@ -121,6 +121,25 @@ angular.module('SidebarModule', ['angular-md5'])
       category.color = backup.color;
       $log.info('Category edition modal dismissed: ' + reason);
     });
+  };
+
+  $scope.handleDropOnCategory = function(id, data) {
+    var doc = JSON.parse(data),
+        key = id.split('$').pop();
+    if (!doc.categories) {
+      doc.categories = [];
+    }
+    if (!_.contains(doc.categories, key)) {
+      doc.categories.push(key);
+      $documentService.update(doc)
+      .then(function(doc) {
+        $log.info('Category "'+ key +'" added to document: ' + doc._id);
+      }, function(err) {
+        alert('Error: ' + err);
+      });
+    } else {
+      $log.debug('Category "'+ key +'" already in document. Ignore.');
+    }
   };
 
   $scope.isUserCategory = $categoryService.isUserCategory;

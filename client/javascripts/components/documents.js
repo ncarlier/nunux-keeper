@@ -72,6 +72,9 @@ angular.module('DocumentsModule', ['ngRoute', 'angularFileUpload'])
   };
 
   $scope.showDocument = function(id) {
+    _.each($scope.documents, function(doc) {
+      doc.clazz = doc._id == id ? 'active' : '';
+    });
     $scope.editing = false;
     $documentService.get(id)
     .then(function(doc) {
@@ -115,6 +118,14 @@ angular.module('DocumentsModule', ['ngRoute', 'angularFileUpload'])
       _id: doc._id,
       fields: doc
     });
+  };
+
+  $scope.getDraggableData = function(doc) {
+    var data = {
+      _id: doc._id,
+      categories: doc.fields.category
+    };
+    return JSON.stringify(data);
   };
 
   $scope.fetch();
