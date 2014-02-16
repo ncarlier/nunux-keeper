@@ -29,7 +29,8 @@
       <span class="glyphicon" ng-class="category.icon"></span>
       {{ category.label }}
       <span class="badge">{{ category.total }}</span>
-      <span class="glyphicon glyphicon-cog setup" ng-click="editCategoryDialog(category); $event.stopPropagation()" ng-show="isUserCategory(category)"></span>
+      <span class="glyphicon glyphicon-cog setup" ng-click="editCategoryDialog(category); $event.stopPropagation()" ng-show="category.is_user"></span>
+      <span class="msg-overlay" ng-class="{displayed: category.event}">{{ category.eventMsg }}</span>
     </a>
     <a class="list-group-item pointer" title="Add a new category" ng-click="createCategoryDialog(); $event.stopPropagation()">
       <span class="glyphicon glyphicon-plus"></span>

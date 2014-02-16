@@ -8,7 +8,7 @@ angular.module('DocumentsModule', ['ngRoute', 'angularFileUpload'])
     controller: 'DocumentsCtrl'
   };
 })
-.controller('DocumentsCtrl', function ($rootScope, $scope, $routeParams, $categoryService, $documentService, $modal, $log) {
+.controller('DocumentsCtrl', function ($rootScope, $scope, $routeParams, $categoryService, $documentService, $modal, $log, $timeout) {
   var m, size = 20;
   $scope.emptyMessage = 'No documents found.';
   $scope.isSearch = false;
@@ -71,7 +71,7 @@ angular.module('DocumentsModule', ['ngRoute', 'angularFileUpload'])
     }
   };
 
-  $scope.showDocument = function(id) {
+  $scope.openDocument = function(id) {
     _.each($scope.documents, function(doc) {
       doc.clazz = doc._id == id ? 'active' : '';
     });
@@ -79,7 +79,14 @@ angular.module('DocumentsModule', ['ngRoute', 'angularFileUpload'])
     $documentService.get(id)
     .then(function(doc) {
       $scope.doc = doc;
+      $timeout(function() {
+        $scope.doc.opened = true;
+      }, 300);
     });
+  };
+
+  $scope.closeDocument = function() {
+    delete $scope.doc;
   };
 
   $scope.showDocumentCreationDialog = function() {
@@ -131,12 +138,10 @@ angular.module('DocumentsModule', ['ngRoute', 'angularFileUpload'])
   $scope.fetch();
 })
 .controller('DocumentCreationModalCtrl', function ($log, $scope, $modalInstance, $upload, $documentService, category) {
-  $scope.openStatus = {
-    'default': true,
-    url: false,
-    file: false
-  };
   $scope.category = category;
+  var doc = {
+    categories: $scope.category ? [$scope.category.key] : []
+  };
 
   $scope.onFileSelect = function($files) {
     $scope.files = $files;
@@ -147,30 +152,27 @@ angular.module('DocumentsModule', ['ngRoute', 'angularFileUpload'])
     $modalInstance.dismiss('Error: ' + err);
   };
 
-  $scope.ok = function() {
-    var doc = {
-      categories: $scope.category ? [$scope.category.key] : []
-    };
+  $scope.postSimple = function() {
+    doc.title = 'My new document';
+    doc.content = '<p>what\'s up ?</p>';
+    doc.contentType = 'text/html';
+    $modalInstance.close(doc);
+  };
 
-    if ($scope.openStatus.url) {
-      if (!this.urlForm.$valid) return;
-      doc.content = this.url;
-      doc.contentType = 'text/vnd.curl';
-      $documentService.create(doc)
-      .then($modalInstance.close, errHandler);
-    } else if ($scope.openStatus.file) {
-      if (!this.fileForm.$valid || !$scope.files) return;
-      doc.file = $scope.files[0];
-      doc.contentType = 'multipart/form-data';
-      $documentService.create(doc)
-      .then($modalInstance.close, errHandler);
-    } else {
-      return alert("doc");
-      doc.title = 'My new document';
-      doc.content = '<p>what\'s up ?</p>';
-      doc.contentType = 'text/html';
-      $modalInstance.close(doc);
-    }
+  $scope.postUrl = function() {
+    if (!this.urlForm.$valid) return;
+    doc.content = this.url;
+    doc.contentType = 'text/vnd.curl';
+    $documentService.create(doc)
+    .then($modalInstance.close, errHandler);
+  };
+
+  $scope.postFile = function() {
+    if (!this.fileForm.$valid || !$scope.files) return;
+    doc.file = $scope.files[0];
+    doc.contentType = 'multipart/form-data';
+    $documentService.create(doc)
+    .then($modalInstance.close, errHandler);
   };
 
   $scope.cancel = function() {

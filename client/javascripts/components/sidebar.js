@@ -36,14 +36,9 @@ angular.module('SidebarModule', ['angular-md5'])
   $scope.user = $window.user;
   $scope.gravatarUrl = 'http://www.gravatar.com/avatar/' + md5.createHash($scope.user.uid.toLowerCase());
   var refresh = function() {
-    $categoryService.fetch().then(function(categories) {
-      $scope.categories = [];
-      _.each(categories, function(cat) {
-        if (cat.key === 'system-trash') cat.icon = 'glyphicon-trash';
-        else if (cat.key === 'system-public') cat.icon = 'glyphicon-globe';
-        else cat.icon = 'glyphicon-tag';
-        $scope.categories.push(cat);
-      });
+    $categoryService.getAll()
+    .then(function(categories) {
+      $scope.categories = categories;
     });
   };
 
@@ -129,10 +124,20 @@ angular.module('SidebarModule', ['angular-md5'])
     if (!doc.categories) {
       doc.categories = [];
     }
+    if (_.isString(doc.categories)) {
+      doc.categories = [doc.categories];
+    }
     if (!_.contains(doc.categories, key)) {
       doc.categories.push(key);
       $documentService.update(doc)
       .then(function(doc) {
+        var cat = _.findWhere($scope.categories, {key: key});
+        cat.eventMsg = '+1';
+        cat.event = true;
+        $timeout(function() {
+          cat.event = false;
+        }, 2000);
+
         $log.info('Category "'+ key +'" added to document: ' + doc._id);
       }, function(err) {
         alert('Error: ' + err);
@@ -142,7 +147,6 @@ angular.module('SidebarModule', ['angular-md5'])
     }
   };
 
-  $scope.isUserCategory = $categoryService.isUserCategory;
   refresh();
 })
 .controller('CategoryEditionModalCtrl', function ($scope, $modalInstance, $categoryService) {

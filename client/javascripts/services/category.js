@@ -14,14 +14,24 @@ angular.module('CategoryService', [])
     return -1;
   };
 
-  var fetchCategories = function() {
+  var fetch = function() {
     var deferred = $q.defer();
     $http.get(url)
     .success(function (data) {
       categories = [];
       _.each(data, function(cat) {
-        if (cat.key === 'system-trash') cat.color = '#D2322D';
-        else if (cat.key === 'system-public') cat.color = '#1F4164';
+        cat.is_user = true;
+        if (cat.key === 'system-trash') {
+          cat.color = '#D2322D';
+          cat.icon = 'glyphicon-trash';
+          cat.is_user = false;
+        } else if (cat.key === 'system-public') {
+          cat.color = '#1F4164';
+          cat.icon = 'glyphicon-globe';
+          cat.is_user = false;
+        } else {
+          cat.icon = 'glyphicon-tag';
+        }
         categories.push(cat);
       });
       deferred.resolve(categories);
@@ -40,6 +50,8 @@ angular.module('CategoryService', [])
     var deferred = $q.defer();
     $http.post(url, category)
     .success(function(cat) {
+      cat.icon = 'glyphicon-tag';
+      cat.is_user = true;
       categories.push(cat);
       deferred.resolve(categories);
     })
@@ -54,6 +66,8 @@ angular.module('CategoryService', [])
     var deferred = $q.defer();
     $http.put(url + '/' + category.key, category)
     .success(function(cat) {
+      cat.icon = 'glyphicon-tag';
+      cat.is_user = true;
       categories[_getCategoryIndex(cat)] = cat;
       deferred.resolve(cat);
     })
@@ -76,7 +90,7 @@ angular.module('CategoryService', [])
       alert('Unable to delete category!');
       deferred.reject(err);
     });
-    return deferred.promise;;
+    return deferred.promise;
   };
 
   var addDocument = function(key, docId) {
@@ -87,21 +101,24 @@ angular.module('CategoryService', [])
       alert('Unable to add document ' + docId + ' to category ' + key);
       deferred.reject(err);
     });
-    return deferred.promise;;
+    return deferred.promise;
   };
 
-  var isUserCategory = function(category) {
-    return /^user-/.test(category.key);
+  var getCategories = function() {
+    if (categories.length) {
+      var deferred = $q.defer();
+      deferred.resolve(categories);
+      return deferred.promise;
+    }
+    return fetch();
   };
 
   return {
-    fetch: fetchCategories,
     get: getCategory,
     create: createCategory,
     update: updateCategory,
     delete: deleteCategory,
     addDocument: addDocument,
-    isUserCategory: isUserCategory,
-    getCategories: function() { return categories; }
+    getAll: getCategories
   };
 }]);

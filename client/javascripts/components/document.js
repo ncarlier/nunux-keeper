@@ -49,19 +49,28 @@ angular.module('DocumentModule', ['ngRoute', 'ngSanitize'])
   };
 })
 .controller('DocumentCtrl', function ($scope, $categoryService, $documentService) {
-  $scope.categories = $categoryService.getCategories();
+  $categoryService.getAll().then(function(categories) {
+    $scope.categories = categories;
+  });
 
   $scope.addCategory = function(key) {
     if (!_.contains($scope.doc.categories, key)) {
       $scope.doc.categories.push(key);
     }
-  }
+  };
 
   $scope.removeCategory = function(key) {
     if (_.contains($scope.doc.categories, key)) {
       _.remove($scope.doc.categories, function(k) { return k == key; });
     }
-  }
+  };
+
+  $scope.cancelDocument = function() {
+    $scope.editing = false;
+    if (!$scope.doc._id) {
+      $scope.closeDocument();
+    }
+  };
 
   $scope.saveDocument = function() {
     if ($scope.doc._id) {

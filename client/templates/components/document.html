@@ -1,10 +1,13 @@
-<div class="document">
+<div class="document" ng-class="{open: doc.opened}">
   <header>
-    <button type="button" class="btn btn-default btn-xs pull-right" ng-show="editing" ng-click="editing = false">cancel</button>
-    <button type="button" class="btn btn-success btn-xs pull-right" ng-show="editing" ng-click="saveDocument(doc)">save</button>
-    <button type="button" class="btn btn-primary btn-xs pull-right" ng-show="!editing" ng-click="editing = true">edit</button>
+    <a class="close" ng-click="closeDocument()">
+      <span class="glyphicon glyphicon-remove-circle"></span>
+    </a>
+    <button type="button" class="btn btn-default btn-xs pull-left" ng-show="editing" ng-click="cancelDocument()">cancel</button>
+    <button type="button" class="btn btn-success btn-xs pull-left" ng-show="editing" ng-click="saveDocument(doc)">save</button>
+    <button type="button" class="btn btn-primary btn-xs pull-left" ng-show="!editing" ng-click="editing = true">edit</button>
     <h1 contenteditable="{{ editing }}" ng-model="doc.title"></h1>
-    <ul class="categories">
+    <ul class="categories" ng-show="editing || doc.categories.length">
       <li app-category-tag="cat" ng-repeat="cat in doc.categories" class="category" ng-class="{'editing': editing}"></li>
       <li>
       <form class="add-category" ng-if="editing">

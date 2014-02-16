@@ -83,6 +83,32 @@ body {
       float: right;
       margin-right: 5px;
     }
+    max-height: 0;
+    opacity: 0;
+    -webkit-transform: scale(0);
+    -ms-transform: scale(0);
+    -o-transform: scale(0);
+    transform: scale(0);
+    -webkit-animation: growHeight 500ms ease forwards;
+    -o-animation: growHeight 500ms ease forwards;
+    animation: growHeight 500ms ease forwards;
+  }
+  .msg-overlay {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    height: 100%;
+    width: 100%;
+    text-align: right;
+    transition: 500ms cubic-bezier(0.175, 0.885, 0.32, 1.275) all;
+    left: -100%;
+    color: #FFF;
+    font-weight: bold;
+    font-size: 2em;
+    padding-right: 15px;
+    &.displayed {
+      left: 0%;
+    }
   }
 }
 
@@ -225,16 +251,23 @@ body {
     }
   }
   .document {
-    background: #EEE;
+    //background: #EEE;
     position: absolute;
     right: 0;
     bottom: 0;
     top: 50px;
-    left: 250px;
+    left: 100%;
     overflow: auto;
+    -webkit-transition: 500ms cubic-bezier(0.175, 0.885, 0.32, 1.275) all;
+    -o-transition: 500ms cubic-bezier(0.175, 0.885, 0.32, 1.275) all;
+    transition: 500ms cubic-bezier(0.175, 0.885, 0.32, 1.275) all;
+    &.open {
+      left: 250px;
+    }
     > header {
       padding: 10px;
-      background: #E0E0E0;
+      background-color: #FAFAFA;
+      border-bottom: 1px solid #EBEBEB;
       h1 {
         margin: 0;
         padding: 10px;
@@ -306,7 +339,7 @@ body {
 /*********************************************************************************/
 /* Class                                                                         */
 /*********************************************************************************/
-.pointer, .accordion-toggle {
+.pointer, .nav-tabs > li > a {
   cursor: pointer;
 }
 
