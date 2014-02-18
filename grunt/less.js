@@ -2,7 +2,7 @@ module.exports = {
   compile: {
     options: {
       paths: ['client/stylesheets'],
-      yuicompress: true
+      cleancss: true
     },
     files: {
       'build/stylesheets/style.css': 'client/stylesheets/style.less',
