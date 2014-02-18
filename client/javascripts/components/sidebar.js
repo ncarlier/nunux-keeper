@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('SidebarModule', ['angular-md5'])
-.directive('appSidebar', function($location) {
+.directive('appSidebar', ['$location', function($location) {
   return {
     restrict: 'E',
     templateUrl: 'templates/components/sidebar.html',
@@ -31,146 +31,154 @@ angular.module('SidebarModule', ['angular-md5'])
       });
     }
   };
-})
-.controller('SidebarCtrl', function ($window, $scope, $categoryService, $documentService, $modal, $log, $location, $timeout, md5) {
-  $scope.user = $window.user;
-  $scope.gravatarUrl = 'http://www.gravatar.com/avatar/' + md5.createHash($scope.user.uid.toLowerCase());
-  var refresh = function() {
-    $categoryService.getAll()
-    .then(function(categories) {
-      $scope.categories = categories;
-    });
-  };
+}])
+.controller('SidebarCtrl', [
+  '$window', '$scope', '$categoryService', '$documentService',
+  '$modal', '$log', '$location', '$timeout', 'md5',
+  function ($window, $scope, $categoryService, $documentService,
+            $modal, $log, $location, $timeout, md5) {
+    $scope.user = $window.user;
+    $scope.gravatarUrl = 'http://www.gravatar.com/avatar/' + md5.createHash($scope.user.uid.toLowerCase());
+    var refresh = function() {
+      $categoryService.getAll()
+      .then(function(categories) {
+        $scope.categories = categories;
+      });
+    };
 
-  $scope.$on('app.event.hits', function(event, data) {
-    if (!data.query) {
-      $scope.total = data.total;
-    } else if (data.query === '_missing_:category') {
-      $scope.uncatTotal = data.total;
-    } else {
-      var m = data.query.match(/category:([a-z0-9_-]+)/);
-      if (m) {
-        var cat = $categoryService.get(m[1]);
-        if (cat) {
-          cat.total = data.total;
+    $scope.$on('app.event.hits', function(event, data) {
+      if (!data.query) {
+        $scope.total = data.total;
+      } else if (data.query === '_missing_:category') {
+        $scope.uncatTotal = data.total;
+      } else {
+        var m = data.query.match(/category:([a-z0-9_-]+)/);
+        if (m) {
+          var cat = $categoryService.get(m[1]);
+          if (cat) {
+            cat.total = data.total;
+          }
         }
       }
-    }
-  });
+    });
 
-  // Key bindings...
-  Mousetrap.bind(['g h'], function() {
-    $scope.$apply(function() {
-      $location.url('/');
-    });
-  });
-  Mousetrap.bind(['g p'], function() {
-    $scope.$apply(function() {
-      $location.url('/profile');
-    });
-  });
-  Mousetrap.bind(['g a'], function() {
-    $scope.$apply(function() {
-      $location.url('/documents');
-    });
-  });
-  Mousetrap.bind(['g u'], function() {
-    $scope.$apply(function() {
-      $location.url('/documents?category=none');
-    });
-  });
-  Mousetrap.bind(['?'], function() {
-    $scope.$apply(function() {
-      $dialog('templates/dialog/keybindings.html', {
-        id: 'keyBindingsDialog',
-        title: 'Keyboard shortcuts',
-        backdrop: true,
-        footerTemplate: '<button class="btn btn-primary" ng-click="$modalSuccess()">{{$modalSuccessLabel}}</button>',
-        success: {label: 'ok', fn: function() {}}
+    // Key bindings...
+    Mousetrap.bind(['g h'], function() {
+      $scope.$apply(function() {
+        $location.url('/');
       });
     });
-  });
-
-  $scope.createCategoryDialog = function() {
-    $scope.category = {};
-    var modalInstance = $modal.open({
-      templateUrl: 'templates/dialog/category/edit.html',
-      controller: 'CategoryEditionModalCtrl'
-    });
-
-    modalInstance.result.then(refresh, function(reason) {
-      $log.info('Category creation modal dismissed: ' + reason);
-    });
-  };
-
-  $scope.editCategoryDialog = function(category) {
-    var backup = angular.copy(category);
-    $scope.category = category;
-    var modalInstance = $modal.open({
-      templateUrl: 'templates/dialog/category/edit.html',
-      controller: 'CategoryEditionModalCtrl'
-    });
-
-    modalInstance.result.then(refresh, function(reason) {
-      category.label = backup.label;
-      category.color = backup.color;
-      $log.info('Category edition modal dismissed: ' + reason);
-    });
-  };
-
-  $scope.handleDropOnCategory = function(id, data) {
-    var doc = JSON.parse(data),
-        key = id.split('$').pop();
-    if (!doc.categories) {
-      doc.categories = [];
-    }
-    if (_.isString(doc.categories)) {
-      doc.categories = [doc.categories];
-    }
-    if (!_.contains(doc.categories, key)) {
-      doc.categories.push(key);
-      $documentService.update(doc)
-      .then(function(doc) {
-        var cat = _.findWhere($scope.categories, {key: key});
-        cat.eventMsg = '+1';
-        cat.event = true;
-        $timeout(function() {
-          cat.event = false;
-        }, 2000);
-
-        $log.info('Category "'+ key +'" added to document: ' + doc._id);
-      }, function(err) {
-        alert('Error: ' + err);
+    Mousetrap.bind(['g p'], function() {
+      $scope.$apply(function() {
+        $location.url('/profile');
       });
-    } else {
-      $log.debug('Category "'+ key +'" already in document. Ignore.');
-    }
-  };
+    });
+    Mousetrap.bind(['g a'], function() {
+      $scope.$apply(function() {
+        $location.url('/documents');
+      });
+    });
+    Mousetrap.bind(['g u'], function() {
+      $scope.$apply(function() {
+        $location.url('/documents?category=none');
+      });
+    });
+    Mousetrap.bind(['?'], function() {
+      $scope.$apply(function() {
+        $dialog('templates/dialog/keybindings.html', {
+          id: 'keyBindingsDialog',
+          title: 'Keyboard shortcuts',
+          backdrop: true,
+          footerTemplate: '<button class="btn btn-primary" ng-click="$modalSuccess()">{{$modalSuccessLabel}}</button>',
+          success: {label: 'ok', fn: function() {}}
+        });
+      });
+    });
 
-  refresh();
-})
-.controller('CategoryEditionModalCtrl', function ($scope, $modalInstance, $categoryService) {
-  var errHandler = function(err) {
-    alert('Error: ' + err);
-    $modalInstance.dismiss('Error: ' + err);
-  };
+    $scope.createCategoryDialog = function() {
+      $scope.category = {};
+      var modalInstance = $modal.open({
+        templateUrl: 'templates/dialog/category/edit.html',
+        controller: 'CategoryEditionModalCtrl'
+      });
 
-  $scope.ok = function () {
-    if ($scope.category.key) {
-      $categoryService.update($scope.category)
+      modalInstance.result.then(refresh, function(reason) {
+        $log.info('Category creation modal dismissed: ' + reason);
+      });
+    };
+
+    $scope.editCategoryDialog = function(category) {
+      var backup = angular.copy(category);
+      $scope.category = category;
+      var modalInstance = $modal.open({
+        templateUrl: 'templates/dialog/category/edit.html',
+        controller: 'CategoryEditionModalCtrl'
+      });
+
+      modalInstance.result.then(refresh, function(reason) {
+        category.label = backup.label;
+        category.color = backup.color;
+        $log.info('Category edition modal dismissed: ' + reason);
+      });
+    };
+
+    $scope.handleDropOnCategory = function(id, data) {
+      var doc = JSON.parse(data),
+      key = id.split('$').pop();
+      if (!doc.categories) {
+        doc.categories = [];
+      }
+      if (_.isString(doc.categories)) {
+        doc.categories = [doc.categories];
+      }
+      if (!_.contains(doc.categories, key)) {
+        doc.categories.push(key);
+        $documentService.update(doc)
+        .then(function(doc) {
+          var cat = _.findWhere($scope.categories, {key: key});
+          cat.eventMsg = '+1';
+          cat.event = true;
+          $timeout(function() {
+            cat.event = false;
+          }, 2000);
+
+          $log.info('Category "'+ key +'" added to document: ' + doc._id);
+        }, function(err) {
+          alert('Error: ' + err);
+        });
+      } else {
+        $log.debug('Category "'+ key +'" already in document. Ignore.');
+      }
+    };
+
+    refresh();
+  }
+])
+.controller('CategoryEditionModalCtrl', [
+  '$scope', '$modalInstance', '$categoryService',
+  function ($scope, $modalInstance, $categoryService) {
+    var errHandler = function(err) {
+      alert('Error: ' + err);
+      $modalInstance.dismiss('Error: ' + err);
+    };
+
+    $scope.ok = function () {
+      if ($scope.category.key) {
+        $categoryService.update($scope.category)
+        .then($modalInstance.close, errHandler);
+      } else {
+        $categoryService.create($scope.category)
+        .then($modalInstance.close, errHandler);
+      }
+    };
+
+    $scope.delete = function () {
+      $categoryService.delete($scope.category)
       .then($modalInstance.close, errHandler);
-    } else {
-      $categoryService.create($scope.category)
-      .then($modalInstance.close, errHandler);
-    }
-  };
+    };
 
-  $scope.delete = function () {
-    $categoryService.delete($scope.category)
-    .then($modalInstance.close, errHandler);
-  };
-
-  $scope.cancel = function () {
-    $modalInstance.dismiss('cancel');
-  };
-});
+    $scope.cancel = function () {
+      $modalInstance.dismiss('cancel');
+    };
+  }
+]);

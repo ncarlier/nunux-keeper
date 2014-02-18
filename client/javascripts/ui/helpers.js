@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ui.helpers', ['angular-md5'])
-.directive('appSrc', function(md5) {
+.directive('appSrc', ['md5', function(md5) {
 
   var link = function($scope, $element, $attributes) {
     if (!$scope.doc || !$scope.doc._id) return;
@@ -19,7 +19,7 @@ angular.module('ui.helpers', ['angular-md5'])
     restrict: 'A',
     link: link
   };
-})
+}])
 .directive('draggable', function() {
   return {
     scope: {
