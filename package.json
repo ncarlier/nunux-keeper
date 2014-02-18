@@ -2,7 +2,7 @@
   "author": "Nicolas Carlier (https://github.com/ncarlier/)",
   "name": "keeper",
   "version": "0.0.1",
-  "description": "Keep my web in my place.",
+  "description": "Keep control on what you find.",
   "license": "gplv3",
   "homepage": "http://keeper.nunux.org",
   "repository": {
@@ -11,7 +11,8 @@
   },
   "scripts": {
     "start": "node server/app",
-    "test": "grunt"
+    "test": "grunt",
+    "postinstall": "grunt install"
   },
   "dependencies": {
     "express": "3.3.x",
