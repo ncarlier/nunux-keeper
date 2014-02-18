@@ -10,5 +10,5 @@ module.exports = function() {
       req.rawBody += chunk;
     });
     req.on('end', next);
-  }
-}
+  };
+};

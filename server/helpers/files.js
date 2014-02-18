@@ -36,7 +36,7 @@ var mkdirs = function(p) {
  */
 var getChrootPath = function() {
   var p = path.normalize(path.join.apply(null, arguments));
-  if (p.indexOf(varDir) == 0) {
+  if (p.indexOf(varDir) === 0) {
     return p;
   } else {
     // logger.debug('Path "%s" will be chrooted in: %s', p, varDir);
@@ -64,7 +64,7 @@ var writeToChroot = function(stream, to) {
     logger.debug('Creating file: %s', to);
     var r = stream.pipe(writer);
     r.on('error', writed.reject);
-    r.on('close', function() {writed.resolve(to)});
+    r.on('close', function() {writed.resolve(to);});
   });
   return writed.promise;
 };

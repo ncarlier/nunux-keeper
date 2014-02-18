@@ -64,7 +64,7 @@ describe('Check document API', function() {
   it('should create new documents (JSON uploaded file)', function(done) {
     this.timeout(5000);
     var title = '-- Not used here --',
-        file  = path.join(__dirname, 'assets', 'import.json')
+        file  = path.join(__dirname, 'assets', 'import.json');
 
     var r = request.post({
       url: url,
@@ -161,7 +161,7 @@ describe('Check document API', function() {
 
   it('should create new document (HTML streamed file)', function(done) {
     var title = 'Sample streamed HTML document',
-        file  = path.join(__dirname, 'assets', 'gpl.html')
+        file  = path.join(__dirname, 'assets', 'gpl.html');
 
     fs.createReadStream(file).pipe(request.post({
       url: url,
@@ -183,7 +183,7 @@ describe('Check document API', function() {
 
   it('should create new document (HTML uploaded file)', function(done) {
     var title = 'Sample uploaded HTML document',
-        file  = path.join(__dirname, 'assets', 'gpl.html')
+        file  = path.join(__dirname, 'assets', 'gpl.html');
 
     var r = request.post({
       url: url,
@@ -208,7 +208,7 @@ describe('Check document API', function() {
 
   it('should create new document (Image uploaded file)', function(done) {
     var title = 'Sample uploaded image  document',
-        file  = path.join(__dirname, 'assets', 'oss.png')
+        file  = path.join(__dirname, 'assets', 'oss.png');
 
     var r = request.post({
       url: url,

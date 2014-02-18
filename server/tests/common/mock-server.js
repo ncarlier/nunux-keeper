@@ -12,15 +12,15 @@ var mockServer = http.createServer(app);
 
 mockServer.start = function(done) {
   mockServer.listen(app.get('port'), done);
-}
+};
 
 mockServer.stop = function(done) {
   mockServer.close(done);
-}
+};
 
 mockServer.getRealm = function() {
   return app.get('realm');
-}
+};
 
 module.exports = mockServer;
 

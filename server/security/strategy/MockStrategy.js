@@ -1,5 +1,3 @@
-"use strict";
-
 var passport = require('passport'),
     util = require('util');
 
@@ -14,10 +12,7 @@ util.inherits(MockStrategy, passport.Strategy);
 
 MockStrategy.prototype.authenticate = function authenticate(req) {
   if (this.passAuthentication) {
-    var user = {
-      uid: this.uid
-    }
-      , self = this;
+    var user = {uid: this.uid}, self = this;
     this.verify(user, function(err, resident) {
       if(err) {
         self.fail(err);
@@ -28,6 +23,6 @@ MockStrategy.prototype.authenticate = function authenticate(req) {
   } else {
     this.fail('Unauthorized');
   }
-}
+};
 
 module.exports = MockStrategy;

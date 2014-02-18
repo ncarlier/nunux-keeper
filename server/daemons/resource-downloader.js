@@ -71,7 +71,7 @@ app.on('nextresource', function() {
     files.chmkdir(path.dirname(resource.dest))
     .then(function() {
       logger.debug('Downloading resource %j...', resource);
-      return files.chwrite(request(resource.src), resource.dest)
+      return files.chwrite(request(resource.src), resource.dest);
     })
     .then(function() {
       logger.info('Resource %j downloaded.', resource);

@@ -10,7 +10,7 @@ var getElasticSearchUri = function() {
     return 'http://' + process.env.DB_PORT_9200_TCP_ADDR + ':9200';
   }
   return null;
-}
+};
 
 var uri = process.env.APP_ELASTICSEARCH_URI ||
           getElasticSearchUri() ||

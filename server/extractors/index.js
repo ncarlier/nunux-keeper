@@ -22,7 +22,7 @@ var getExtractor = function(ct) {
     default:
       return null;
   }
-}
+};
 
 /**
  * Content extractors.

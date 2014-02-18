@@ -181,7 +181,7 @@ module.exports = {
       Document.find({ owner: req.user.uid, categories: 'system-trash' }).exec()
       .then(function(docs) {
         return when.map(docs, function(doc) {
-          Document.del(doc)
+          return Document.del(doc);
         });
       })
       .then(function() {

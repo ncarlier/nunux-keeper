@@ -11,7 +11,7 @@ var getMongoDBDockerUri = function() {
     return 'mongodb://' + process.env.DB_PORT_27017_TCP_ADDR + '/keeper';
   }
   return null;
-}
+};
 
 var uri = process.env.APP_MONGO_URI ||
           process.env.DB_PORT_27017_TCP_ADDR ||
