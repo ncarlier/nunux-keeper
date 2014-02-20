@@ -21,5 +21,16 @@ module.exports = {
       'build/javascripts/**/*.js'
     ],
     dest: 'build/javascripts/keeper.min.js'
+  },
+  bookmarklet: {
+    src: [
+      'client/lib/jquery/jquery.min.js',
+      'client/lib/lodash/lodash.min.js',
+      'client/lib/angular/angular.min.js',
+      'build/javascripts/app-bm.js',
+      'build/javascripts/services/*.js'
+    ],
+    dest: 'build/javascripts/keeper-bm.min.js'
   }
+
 };

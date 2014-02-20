@@ -19,7 +19,7 @@
 
 'use strict';
 
-angular.module('KeeperBookmarklet', ['ui.helpers', 'DocumentService'])
+angular.module('KeeperBookmarklet', ['DocumentService'])
 .factory('$messenger', ['$window', function ($window) {
   var messages = [], onMessageClbk;
 
