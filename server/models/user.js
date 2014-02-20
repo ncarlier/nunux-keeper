@@ -22,7 +22,7 @@ module.exports = function(db) {
         // Return the user.
         logger.info('User %s authorized.', _user.uid);
         return when.resolve(_user);
-      } else if (autoGrantAccess) {
+      } else if (autoGrantAccess || user.uid === process.env.APP_ADMIN) {
         // Create the user.
         logger.info('User %s authorized. Will be created.', user.uid);
         return self.create(user);
