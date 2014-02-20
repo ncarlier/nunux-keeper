@@ -6,7 +6,8 @@ module.exports = {
     },
     files: {
       'build/stylesheets/style.css': 'client/stylesheets/style.less',
-      'build/stylesheets/welcome.css': 'client/stylesheets/welcome.less'
+      'build/stylesheets/welcome.css': 'client/stylesheets/welcome.less',
+      'build/stylesheets/bookmarklet.css': 'client/stylesheets/bookmarklet.less'
     }
   }
 };
