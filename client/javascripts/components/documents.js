@@ -114,6 +114,9 @@ angular.module('DocumentsModule', ['ngRoute', 'angularFileUpload'])
             fields: doc
           });
         }
+        $timeout(function() {
+          $scope.doc.opened = true;
+        }, 300);
       }, function (reason) {
         $log.info('Document creation modal dismissed: ' + reason);
       });

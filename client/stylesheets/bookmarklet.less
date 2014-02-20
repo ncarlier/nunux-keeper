@@ -1,0 +1,53 @@
+@import "../lib/bootstrap/variables.less";
+@import "../lib/bootstrap/glyphicons.less";
+@import "../lib/bootstrap/mixins.less";
+@import "../lib/bootstrap/buttons.less";
+@import "color.less";
+
+/*********************************************************************************/
+/* Body                                                                       */
+/*********************************************************************************/
+body {
+  margin: 0;
+  font-family: sans-serif;
+  background: @k-panel-bg-color;
+  color: @k-panel-text-color;
+}
+
+header {
+  background: @k-panel-fg-color;
+  h1 {
+    margin: 0;
+    text-align: center;
+    font-size: 16px;
+    span {
+      float: right;
+      padding-right: 5px;
+      cursor: pointer;
+    }
+  }
+}
+
+#content {
+  .dropzone {
+    padding: 10px;
+    margin: 10px;
+    box-shadow: inset 0 0 40px #000;
+    height: 100px;
+    text-align: center;
+    span {
+      font-size: 4em;
+      line-height: 85px;
+    }
+    &.over {
+      background: green;
+    }
+  }
+  button {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 40px;
+  }
+}
+

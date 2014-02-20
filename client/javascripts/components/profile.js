@@ -9,9 +9,10 @@ angular.module('ProfileModule', ['angular-md5'])
   };
 }])
 .controller('ProfileCtrl', [
-  '$scope', '$window', 'md5',
-  function ($scope, $window, md5) {
+  '$scope', '$window', '$location', 'md5',
+  function ($scope, $window, $location, md5) {
     $scope.user = $window.user;
     $scope.gravatarUrl = 'http://www.gravatar.com/avatar/' + md5.createHash($scope.user.uid.toLowerCase());
+    $scope.realm = $location.protocol() + '://' + $location.host() + ($location.port() === 80 ? '' : ':' + $location.port());
   }
 ]);

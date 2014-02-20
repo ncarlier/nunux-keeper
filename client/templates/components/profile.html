@@ -1,6 +1,20 @@
 <div class="profile">
-  <img ng-src="{{gravatarUrl}}" alt="{{user.uid}}" title="{{user.uid}}" />
-
-  <h1>{{ user.username || user.uid }}</h1>
-  <p>Member since {{ user.date | fromNow }}</p>
+  <header>
+    <span class="avatar">
+      <img ng-src="{{gravatarUrl}}" alt="{{user.uid}}" title="{{user.uid}} on Gravatar" />
+    </span>
+    <span>
+      <h1>{{ user.username || user.uid }}</h1>
+      <p>Member since {{ user.date | fromNow }}</p>
+    </span>
+  </header>
+  <hr/>
+  <section>
+    <h2>Bookmarklet</h2>
+    <p>Drag and drop the link bellow in your toolbar.</p>
+    <a href="javascript:(function(){K_REALM='{{ realm }}';K_SCR=document.createElement('SCRIPT');
+      K_SCR.type='text/javascript';K_SCR.src=K_REALM+'/bookmarklet.js';
+      document.getElementsByTagName('head')[0].appendChild(K_SCR)})();"
+      onclick="alert('Don\'t click on me, but drag me.');return false;" title="Drag me in your toolbar!" class="bookmarklet">Keep This!</a>
+  </section>
 </div>

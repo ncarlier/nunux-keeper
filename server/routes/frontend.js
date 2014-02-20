@@ -9,4 +9,5 @@ module.exports = function(app) {
   // Routes...
   app.get('/', contextHandler, controller.homepage);
   app.get('/welcome', contextHandler, controller.welcomepage);
+  app.get('/bookmarklet', contextHandler, controller.bookmarklet);
 };
