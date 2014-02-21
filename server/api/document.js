@@ -70,16 +70,6 @@ module.exports = {
       }
     })
     .then(function(_doc) {
-      // Download document(s) resources
-      if (_.isArray(_doc)) {
-        return when.map(_doc, function(item) {
-          return Document.downloadResources(item);
-        });
-      } else {
-        return Document.downloadResources(_doc);
-      }
-    })
-    .then(function(_doc) {
       if (_.isArray(_doc) && _doc.length === 1) {
         _doc = _doc[0];
       }

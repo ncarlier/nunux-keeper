@@ -42,13 +42,14 @@ var mapping = {
   document: {
     _source : {enabled : false},
     properties: {
-      title:       {type: 'string', store: 'yes'},
-      content:     {type: 'string', store: 'no'},
-      contentType: {type: 'string', store: 'yes', index: 'not_analyzed'},
-      owner:       {type: 'string', store: 'yes', index: 'not_analyzed'},
-      categories:  {type: 'string', store: 'yes', index: 'not_analyzed', index_name: 'category'},
-      link:        {type: 'string', store: 'yes'},
-      date:        {type: 'date',   store: 'yes', format: 'dateOptionalTime'}
+      title:        {type: 'string', store: 'yes'},
+      content:      {type: 'string', store: 'no'},
+      contentType:  {type: 'string', store: 'yes', index: 'not_analyzed'},
+      owner:        {type: 'string', store: 'yes', index: 'not_analyzed'},
+      categories:   {type: 'string', store: 'yes', index: 'not_analyzed', index_name: 'category'},
+      illustration: {type: 'string', store: 'yes', index: 'not_analyzed'},
+      link:         {type: 'string', store: 'yes'},
+      date:         {type: 'date',   store: 'yes', format: 'dateOptionalTime'}
     }
   }
 };
@@ -64,7 +65,7 @@ var buildQuery = function(owner, params) {
   var from = params.from ? params.from : 0,
       size = params.size ? params.size : 20,
       q = {
-        fields: ['title', 'contentType', 'category'],
+        fields: ['title', 'contentType', 'category', 'illustration'],
         from: from,
         size: size,
         query: {
@@ -118,18 +119,18 @@ var saveAttachment = function(doc) {
     return when.resolve(doc);
   }
 
+  var filename = files.getHashName(doc.attachment.name);
   return files.chmkdir(doc.owner, 'tmp')
   .then(function(dir) {
-    var path = files.chpath(dir, files.getHashName(doc.attachment.name));
+    var path = files.chpath(dir, filename);
     return files.chwrite(doc.attachment.stream, path);
   })
   .then(function(file) {
     logger.debug('Attachment saved: ', file);
-    doc.attachment = file;
+    doc.attachment = filename;
     return when.resolve(doc);
   }, when.reject);
 };
-
 
 /**
  * Document object model.
@@ -139,14 +140,15 @@ module.exports = function(db) {
   var type = 'documents';
 
   var DocumentSchema = new db.Schema({
-    title:       { type: String, required: true },
-    content:     { type: String },
-    contentType: { type: String, required: true },
-    categories:  { type: [String] },
-   // attachments: { type: [String] },
-    link:        { type: String },
-    owner:       { type: String, required: true },
-    date:        { type: Date, default: Date.now }
+    title:        { type: String, required: true },
+    content:      { type: String },
+    contentType:  { type: String, required: true },
+    categories:   { type: [String] },
+    attachment:   { type: String },
+    illustration: { type: String },
+    link:         { type: String },
+    owner:        { type: String, required: true },
+    date:         { type: Date, default: Date.now }
   });
 
   DocumentSchema.static('configure', function() {
@@ -173,16 +175,23 @@ module.exports = function(db) {
     } else if (_.isString(doc.categories)) {
       doc.categories = [doc.categories];
     }
-    return self.saveAttachment(doc)
+
+    // Save attachment into tmp directory
+    return saveAttachment(doc)
     .then(function(_doc) {
+      // Create Document in DB
       return self.create(_doc);
     })
     .then(function(_doc) {
       logger.info('Document created: %j', _doc);
+      // Download content ressources
+      return downloadResources(_doc);
+    })
+    .then(function(_doc) {
       if (doc.attachment) {
         // Move attachment to document directory...
         return files.chmkdir(doc.owner, type, _doc._id.toString()).then(function(dir) {
-          return files.chmv(doc.attachment, dir);
+          return files.chmv(files.chpath(doc.owner, 'tmp', doc.attachment), dir);
         }).then(function() {
           return when.resolve(_doc);
         });
@@ -214,15 +223,11 @@ module.exports = function(db) {
       if (update.content) {
         // Download document resources if contente changed
         logger.debug('Updating document\'s resources...');
-        return self.downloadResources(_doc);
+        return downloadResources(_doc);
       }
       return when.resolve(_doc);
     });
   });
-
-  DocumentSchema.static('downloadResources', downloadResources);
-
-  DocumentSchema.static('saveAttachment', saveAttachment);
 
   DocumentSchema.static('del', function(doc) {
     logger.info('Deleting document #%s "%s" of %s ...', doc._id, doc.title, doc.owner);

@@ -37,9 +37,22 @@ var extractHtml = function(doc) {
     .replace(/<img([^>]+)src\s*=\s*['"]([^'"]+)['"]/gi, filterImgSrc)
     .replace(/\s+class\s*=\s*['"][^'"]+['"]/gi, '');
     if (doc.title === 'Undefined') doc.title = article.title;
+    doc.illustration = extractIllustration(doc);
     extracted.resolve(doc);
   });
   return extracted.promise;
+};
+
+/**
+ * Extract illustration from document content.
+ * @param {Document} document
+ * @returns {String} doc illustration.
+ */
+var extractIllustration = function(doc) {
+  var rex = /<img[^>]+src="?([^"\s]+)"?/g,
+      m = rex.exec(doc.content);
+
+  return m ? m[1] : null;
 };
 
 /**

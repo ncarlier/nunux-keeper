@@ -2,19 +2,20 @@
   <h1>{{ title || category.label }}</h1>
   <ul>
     <li title="Create new document..." ng-click="showDocumentCreationDialog()" ng-if="!trash && !isSearch">
-    <div class="doc-picture glyphicon glyphicon-plus" ></div>
+    <div class="glyphicon glyphicon-plus" ></div>
     <div class="doc-title"><h3>Create new document</h3></div>
     </li>
 
     <li title="Empty trash bin!" ng-click="trashDocuments()" ng-if="trash && documents.length">
-    <div class="doc-picture glyphicon glyphicon-trash" ></div>
+    <div class="glyphicon glyphicon-trash" ></div>
     <div class="doc-title"><h3>Empty trash bin!</h3></div>
     </li>
 
     <li ng-repeat="doc in documents" id="{{ doc._id }}" title="{{ doc.fields.title }}"
         ng-click="openDocument(doc._id)" ng-class="doc.clazz" draggable dragdata="getDraggableData(doc)">
-    <div class="doc-picture glyphicon glyphicon-file" >
-      <img src="" data-ng-src="http://placehold.it/200x150" ng-if="doc.fields.illustration">
+    <div class="glyphicon glyphicon-file" ></div>
+    <div class="doc-illustration" ng-if="doc.fields.illustration">
+      <img src="" data-ng-src="{{doc.fields.illustration}}">
     </div>
     <div class="doc-title">
       <h3>{{ doc.fields.title }}</h3>

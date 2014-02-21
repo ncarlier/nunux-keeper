@@ -10,7 +10,7 @@ var _          = require('underscore'),
 
 describe('Check document API', function() {
   var url = mockServer.getRealm() + '/api/document',
-      imageUrl = 'http://reader.nunux.org/images/screenshots.png',
+      imageUrl = 'http://reader.nunux.org/images/screenshots.png?foo=bar',
       uid = 'foo@bar.com';
   var docId, hits;
 
@@ -105,14 +105,15 @@ describe('Check document API', function() {
       if (err) return done(err);
       res.statusCode.should.equal(201);
       body = JSON.parse(body);
-      docId = body._id;
       body.should.have.properties('_id', 'date');
+      docId = body._id;
       body.title.should.equal(title);
       body.owner.should.equal(uid);
       body.categories.should.have.length(2);
       body.categories.should.not.include('bad');
       body.content.should.equal(expectedContent);
       body.contentType.should.equal('text/html');
+      body.illustration.should.equal(imageUrl);
       done();
     });
   });
@@ -130,7 +131,6 @@ describe('Check document API', function() {
       done();
     });
   });
-
 
   it('should update previous created document (HTML body)', function(done) {
     var title   = 'Updated sample simple HTML document',
@@ -221,6 +221,7 @@ describe('Check document API', function() {
       body = JSON.parse(body);
       body.should.have.property('_id');
       body.should.have.property('date');
+      body.should.have.property('attachment');
       body.title.should.equal(title);
       body.owner.should.equal(uid);
       body.contentType.should.match(/^image\/png/);
@@ -269,14 +270,14 @@ describe('Check document API', function() {
     }, function(err, res, body) {
       if (err) return done(err);
       res.statusCode.should.equal(201);
-      console.log(body);
       body = JSON.parse(body);
       docId = body._id;
-      body.should.have.properties('_id', 'date');
+      body.should.have.properties('_id', 'date', 'attachment');
       body.title.should.equal(title);
       body.owner.should.equal(uid);
       var file = files.chpath(uid, 'documents', body._id, files.getHashName(imageUrl));
       fs.existsSync(file).should.be.true;
+      body.attachment.should.equal(files.getHashName(imageUrl));
       body.contentType.should.equal('image/png');
       done();
     });

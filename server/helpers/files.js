@@ -92,7 +92,8 @@ var moveInChroot = function(src, dest) {
 module.exports = {
   /** Get a hashed name. */
   getHashName: function(name) {
-    return crypto.createHash('md5').update(name).digest('hex') + path.extname(name);
+    var ext = path.extname(name).match(/^.[a-zA-Z0-9]+/)[0];
+    return crypto.createHash('md5').update(name).digest('hex') + (ext ? ext : '');
   },
   /** Get main chroot directory. */
   chpwd: function() { return varDir; },
