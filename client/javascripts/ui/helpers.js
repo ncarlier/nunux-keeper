@@ -9,8 +9,12 @@ angular.module('ui.helpers', ['angular-md5'])
     $attributes.$observe(
       'appSrc',
       function(newSource) {
-        var ext = newSource.split('.').pop();
-        $element[0].src = resourcePath + md5.createHash(newSource) + (ext ? '.' + ext : '');
+        // Clean query
+        var cleanName = newSource.replace(/\?.*$/, '');
+        // Extract extension
+        var ext = cleanName.split('.').pop();
+        if (ext) ext = ext.match(/^[a-zA-Z0-9]+/)[0];
+        $element[0].src = resourcePath + md5.createHash(cleanName) + (ext ? '.' + ext : '');
       }
     );
   };

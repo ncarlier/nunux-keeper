@@ -1,4 +1,5 @@
 var when       = require('when'),
+    nodefn     = require('when/node/function'),
     request    = require('request'),
     files      = require('../helpers').files,
     validators = require('../helpers').validators,

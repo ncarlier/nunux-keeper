@@ -22,4 +22,7 @@
   </header>
   <article contenteditable="{{ editing }}" ng-model="doc.content" class="readable">
   </article>
+  <div class="doc-image" ng-if="isImage(doc)">
+    <img src="" data-ng-src="/api/document/{{doc._id}}/resource/{{doc.attachment}}">
+  </div>
 </div>

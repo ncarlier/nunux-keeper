@@ -7,6 +7,8 @@ var when       = require('when'),
     validators = require('../helpers').validators,
     Document   = require('../models').Document;
 
+var oneDay = 86400000;
+
 module.exports = {
   /**
    * Get document's resource.
@@ -28,7 +30,7 @@ module.exports = {
 
       file = files.chpath(req.user.uid, 'documents', doc._id.toString(), req.params.key);
       logger.debug('Sending file: ' + file);
-      res.sendfile(file);
+      res.sendfile(file, {maxAge: oneDay});
     }, next);
   }
 };

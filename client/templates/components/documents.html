@@ -15,7 +15,7 @@
         ng-click="openDocument(doc._id)" ng-class="doc.clazz" draggable dragdata="getDraggableData(doc)">
     <div class="glyphicon glyphicon-file" ></div>
     <div class="doc-illustration" ng-if="doc.fields.illustration">
-      <img src="" data-ng-src="{{doc.fields.illustration}}">
+      <img src="" app-src="{{doc.fields.illustration}}">
     </div>
     <div class="doc-title">
       <h3>{{ doc.fields.title }}</h3>

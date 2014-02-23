@@ -47,6 +47,7 @@ var mapping = {
       contentType:  {type: 'string', store: 'yes', index: 'not_analyzed'},
       owner:        {type: 'string', store: 'yes', index: 'not_analyzed'},
       categories:   {type: 'string', store: 'yes', index: 'not_analyzed', index_name: 'category'},
+      attachment:   {type: 'string', store: 'yes', index: 'not_analyzed'},
       illustration: {type: 'string', store: 'yes', index: 'not_analyzed'},
       link:         {type: 'string', store: 'yes'},
       date:         {type: 'date',   store: 'yes', format: 'dateOptionalTime'}
@@ -65,7 +66,7 @@ var buildQuery = function(owner, params) {
   var from = params.from ? params.from : 0,
       size = params.size ? params.size : 20,
       q = {
-        fields: ['title', 'contentType', 'category', 'illustration'],
+        fields: ['title', 'contentType', 'category', 'illustration', 'attachment'],
         from: from,
         size: size,
         query: {
@@ -216,7 +217,7 @@ module.exports = function(db) {
     }
     update.date = new Date();
     // Filter updatable attributes.
-    update = _.pick(update, 'title', 'date', 'categories', 'content');
+    update = _.pick(update, 'title', 'date', 'categories', 'content', 'illustration');
     return self.findByIdAndUpdate(doc._id, update).exec()
     .then(function(_doc) {
       logger.info('Document updated: %j', _doc);

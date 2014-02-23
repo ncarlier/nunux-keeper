@@ -11,11 +11,12 @@
   },
   "scripts": {
     "start": "node server/app",
+    "debug": "node-inspector --web-port=3009 & node --debug server/app",
     "test": "grunt",
     "postinstall": "grunt install"
   },
   "dependencies": {
-    "express": "3.3.x",
+    "express": "~3.4.8",
     "request": "2.27.x",
     "ejs": "*",
     "less-middleware": "*",

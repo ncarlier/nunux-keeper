@@ -62,9 +62,14 @@ var writeToChroot = function(stream, to) {
     }
     writer = fs.createWriteStream(to);
     logger.debug('Creating file: %s', to);
-    var r = stream.pipe(writer);
-    r.on('error', writed.reject);
-    r.on('close', function() {writed.resolve(to);});
+    try {
+      var r = stream.pipe(writer);
+      r.on('error', writed.reject);
+      r.on('close', function() {writed.resolve(to);});
+    } catch(e) {
+      logger.error('Error during writeToChroot %s : %j', to, e);
+      writed.reject(e);
+    }
   });
   return writed.promise;
 };
@@ -84,17 +89,29 @@ var moveInChroot = function(src, dest) {
   return nodefn.call(fs.rename, src, dest);
 };
 
+/**
+ * Get a hashed name.
+ * The name can be a file name or an url.
+ * @param {String} name
+ * @returns {String} hash
+ */
+var getHashName = function(name) {
+  // Clean query if URL
+  var cleanName = name.replace(/\?.*$/,'');
+  // Extract extension
+  var ext = cleanName.split('.').pop();
+  if (ext) ext = ext.match(/^[a-zA-Z0-9]+/)[0];
+  // Return hash
+  return crypto.createHash('md5').update(cleanName).digest('hex') + (ext ? '.' + ext : '');
+};
 
 /**
  * File system helpers.
  * @module files
  */
 module.exports = {
-  /** Get a hashed name. */
-  getHashName: function(name) {
-    var ext = path.extname(name).match(/^.[a-zA-Z0-9]+/)[0];
-    return crypto.createHash('md5').update(name).digest('hex') + (ext ? ext : '');
-  },
+  /** @see getHashName() */
+  getHashName: getHashName,
   /** Get main chroot directory. */
   chpwd: function() { return varDir; },
   /** @see getChrootPath() */

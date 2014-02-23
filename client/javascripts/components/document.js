@@ -17,9 +17,11 @@ angular.module('DocumentModule', ['ngRoute', 'ngSanitize'])
       scope.$watch(attrs.appCategoryTag, function(value) {
         scope.key = value;
         category = $categoryService.get(scope.key);
-        scope.label = category.label;
-        element.css('background-color', category.color);
-        element.css('border-color', $filter('lighten')(category.color, 20));
+        if (category) {
+          scope.label = category.label;
+          element.css('background-color', category.color);
+          element.css('border-color', $filter('lighten')(category.color, 20));
+        }
       });
     }
     return {
@@ -52,11 +54,15 @@ angular.module('DocumentModule', ['ngRoute', 'ngSanitize'])
   };
 }])
 .controller('DocumentCtrl', [
-  '$scope', '$categoryService', '$documentService',
-  function ($scope, $categoryService, $documentService) {
+  '$scope', '$categoryService', '$documentService', '$timeout',
+  function ($scope, $categoryService, $documentService, $timeout) {
     $categoryService.getAll().then(function(categories) {
       $scope.categories = categories;
     });
+
+    $scope.isImage = function(doc) {
+      return /^image\//.test(doc.contentType);
+    };
 
     $scope.addCategory = function(key) {
       if (!_.contains($scope.doc.categories, key)) {
@@ -83,6 +89,9 @@ angular.module('DocumentModule', ['ngRoute', 'ngSanitize'])
         .then(function(doc) {
           $scope.doc = doc;
           $scope.editing = false;
+          $timeout(function() {
+            $scope.doc.opened = true;
+          }, 300);
         });
       } else {
         $documentService.create($scope.doc)
@@ -90,6 +99,9 @@ angular.module('DocumentModule', ['ngRoute', 'ngSanitize'])
           $scope.doc = doc;
           $scope.addDocument(doc);
           $scope.editing = false;
+          $timeout(function() {
+            $scope.doc.opened = true;
+          }, 300);
         });
       }
     };

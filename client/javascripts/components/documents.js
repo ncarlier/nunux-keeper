@@ -51,6 +51,10 @@ angular.module('DocumentsModule', ['ngRoute', 'angularFileUpload'])
         }
 
         _.each(data.hits, function(doc) {
+          if (/^image\//.test(doc.fields.contentType)) {
+            doc.fields.illustration = '/api/document/' + doc._id +
+              '/resource/' + doc.fields.attachment;
+          }
           $scope.documents.push(doc);
         });
 

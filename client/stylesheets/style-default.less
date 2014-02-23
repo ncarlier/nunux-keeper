@@ -80,6 +80,7 @@ body {
       top: 5px;
     }
     .setup {
+      display: none;
       float: right;
       margin-right: 5px;
     }
@@ -92,6 +93,11 @@ body {
     -webkit-animation: growHeight 500ms ease forwards;
     -o-animation: growHeight 500ms ease forwards;
     animation: growHeight 500ms ease forwards;
+    &:hover {
+      .setup {
+        display: block;
+      }
+    }
   }
   .msg-overlay {
     position: absolute;
@@ -244,6 +250,7 @@ body {
         height: 150px;
         width: 200px;
         overflow: hidden;
+        text-align: center;
         img {
           height: inherit;
         }
@@ -324,6 +331,9 @@ body {
     > article {
       padding: 10px;
       position: relative;
+    }
+    .doc-image img {
+      max-width: 100%;
     }
   }
 }

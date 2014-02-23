@@ -13,7 +13,17 @@ var extractHtml = function(doc) {
   var extracted = when.defer();
   readability(doc.content, function(err, article) {
     if (err) return extracted.reject(err);
-    // Filter images idata-src attribute:
+
+    // Filter blacklisted sites:
+    // - remove <a> or <img> targeting blacklisted sites
+    var filterBlacklistedSites = function(match, p1, offset, string) {
+      if (/^http[s]?:\/\/feeds.feedburner.com/i.test(p1)) {
+        return '';
+      }
+      return match;
+    };
+
+    // Filter images data-src attribute:
     // - remove 'src' attribute of images with 'app-src'
     var filterAppImgSrc = function(match, offset, string) {
       return match.replace(/\s+src\s*=\s*['"][^'"]+['"]/, '');
@@ -33,6 +43,8 @@ var extractHtml = function(doc) {
       return '<img' + p1 + 'app-src="' + p2 + '"';
     };
     doc.content = article.cache.body
+    .replace(/<a[^>]+href\s*=\s*['"]([^'"]+)['"]+[^>]*>(?:(?:[^<])|<(?!a))*<\/a>/gi, filterBlacklistedSites)
+    .replace(/<img[^>]+src\s*=\s*['"]([^'"]+)['"]+[^>]*>(?:(?:[^<])|<(?!img))*<\/img>/gi, filterBlacklistedSites)
     .replace(/<img[^>]+app\-src[^>\/]+\/>/gi, filterAppImgSrc)
     .replace(/<img([^>]+)src\s*=\s*['"]([^'"]+)['"]/gi, filterImgSrc)
     .replace(/\s+class\s*=\s*['"][^'"]+['"]/gi, '');

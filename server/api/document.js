@@ -122,6 +122,7 @@ module.exports = {
         return Document.extract(doc).then(function(_doc) {
           // Udpate content
           update.content = _doc.content;
+          update.illustration = _doc.illustration;
           return Document.update(doc, update);
         });
       }
