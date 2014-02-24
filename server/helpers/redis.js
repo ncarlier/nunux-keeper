@@ -1,9 +1,16 @@
 var redis   = require('redis');
 
-var uri = process.env.APP_REDIS_URI || 'redis://localhost:6379/5';
+var uri = null;
+if (process.env.REDIS_PORT) {
+  // Run with Docker
+  uri = process.env.REDIS_PORT.replace(/^tcp/, 'redis');
+  uri = uri + '/3';
+} else {
+  uri = process.env.APP_REDIS_URI || 'redis://localhost:6379/3';
+}
 
 var connect = function(str) {
-  var match = /^redis:\/\/(\w+):(\d+)\/(\d)$/.exec(str);
+  var match = /^redis:\/\/([a-z0-9\.]+):(\d+)\/(\d)$/.exec(str);
   if (!match) {
     throw new Error('Invalid redis uri: ' + str);
   }
