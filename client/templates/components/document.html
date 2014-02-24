@@ -7,6 +7,12 @@
     <button type="button" class="btn btn-success btn-xs pull-left" ng-show="editing" ng-click="saveDocument(doc)">save</button>
     <button type="button" class="btn btn-primary btn-xs pull-left" ng-show="!editing" ng-click="editing = true">edit</button>
     <h1 contenteditable="{{ editing }}" ng-model="doc.title"></h1>
+    <span class="doc-meta">
+      <span class="glyphicon glyphicon-time"></span>
+      <time>{{ doc.date | date }}</time>
+      <span class="glyphicon glyphicon-globe" ng-if="doc.link"></span>
+      <a href="{{doc.link}}" title="View source" ng-if="doc.link">{{ doc.link | domain }}</a>
+    </span>
     <ul class="categories" ng-show="editing || doc.categories.length">
       <li app-category-tag="cat" ng-repeat="cat in doc.categories" class="category" ng-class="{'editing': editing}"></li>
       <li>

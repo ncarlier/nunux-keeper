@@ -49,7 +49,7 @@ angular.module('DocumentService', ['angularFileUpload'])
         });
       } else {
         $http.post(url, doc.content, {
-          params: {title: doc.title, categories: doc.categories},
+          params: {title: doc.title, categories: doc.categories, link: doc.link},
           headers: {
             "Content-Type": doc.contentType
           }

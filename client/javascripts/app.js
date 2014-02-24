@@ -49,7 +49,13 @@ angular.module('KeeperApp', [
 })
 .filter('date', function() {
   return function(dateString) {
-    return moment(new Date(dateString)).format();
+    return moment(new Date(dateString)).format('MMMM Do YYYY, h:mm:ss a');
+  };
+})
+.filter('domain', function() {
+  return function(url) {
+    var m = url.match(/^(?:http[s]?:\/\/)?[\/]?([^\/]*)/i);
+    return m ? m[1] : url;
   };
 })
 .filter('escape', function() {
