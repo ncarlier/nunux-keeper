@@ -11,7 +11,7 @@
       <span class="glyphicon glyphicon-time"></span>
       <time>{{ doc.date | date }}</time>
       <span class="glyphicon glyphicon-globe" ng-if="doc.link"></span>
-      <a href="{{doc.link}}" title="View source" ng-if="doc.link">{{ doc.link | domain }}</a>
+      <a href="{{doc.link}}" title="View source" ng-if="doc.link" target="_blank">{{ doc.link | domain }}</a>
     </span>
     <ul class="categories" ng-show="editing || doc.categories.length">
       <li app-category-tag="cat" ng-repeat="cat in doc.categories" class="category" ng-class="{'editing': editing}"></li>

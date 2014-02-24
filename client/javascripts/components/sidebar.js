@@ -162,6 +162,15 @@ angular.module('SidebarModule', ['angular-md5'])
       $modalInstance.dismiss('Error: ' + err);
     };
 
+    $scope.colors = [
+      '#FE2E2E', '#FE9A2E', '#F7FE2E', '#9AFE2E','#2EFE2E', '#2EFE9A', '#2EFEF7',
+      '#2E9AFE', '#2E64FE', '#642EFE', '#CC2EFA', '#FE2EC8', '#A4A4A4'
+    ];
+
+    $scope.setColor = function(color) {
+      $scope.category.color = color;
+    };
+
     $scope.ok = function () {
       if ($scope.category.key) {
         $categoryService.update($scope.category)

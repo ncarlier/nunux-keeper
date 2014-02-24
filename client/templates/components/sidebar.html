@@ -58,6 +58,10 @@
       <label for="categoryColor">Color</label>
       <input type="color" id="categoryColor" value="#fad345" ng-model="category.color">
       <p class="help-block">Color in the sidebar.</p>
+      <ul class="color-preset">
+        <li ng-repeat="color in colors" ng-style="{'background-color': color}"
+         title="{{color}}" ng-click="setColor(color)"></li>
+      </ul>
     </div>
   </form>
 </div>
