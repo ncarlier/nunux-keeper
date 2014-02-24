@@ -1,6 +1,8 @@
 var when   = require('when'),
     logger = require('../helpers').logger;
 
+process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
+
 /**
  * Downloaders.
  * @module downloader

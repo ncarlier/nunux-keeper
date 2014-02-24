@@ -1,5 +1,8 @@
 var when       = require('when'),
     nodefn     = require('when/node/function'),
+    sequence   = require('when/sequence'),
+    dns        = require('dns'),
+    url        = require('url'),
     request    = require('request'),
     files      = require('../helpers').files,
     validators = require('../helpers').validators,
@@ -13,18 +16,34 @@ var when       = require('when'),
  * @returns {Promise} Promise of download
  */
 var download = function(urls, dest) {
-  var down = function(url) {
-    if (!validators.isUrl(url)) {
-      return when.resolve('Bad URL: ' + url);
+  var down = function(_url) {
+    if (!validators.isUrl(_url)) {
+      return when.reject('Bad URL: ' + _url);
     }
-    var to = files.chpath(dest, files.getHashName(url));
-    logger.debug('Downloading %s to %s...', url, to);
-    return files.chwrite(request(url), to);
+    var to = files.chpath(dest, files.getHashName(_url));
+
+    logger.debug('Downloading %s to %s...', _url, to);
+
+    var tryDownload = function() {
+      return files.chwrite(request(_url), to);
+    };
+
+    var hostname = url.parse(_url).hostname;
+    return nodefn.call(dns.resolve4, hostname)
+    .then(tryDownload, function(e) {
+      logger.error('Unable to download %s. Host cannot be resolved: %s', _url, hostname);
+      return when.reject('Host cannot be resolved: %s', hostname);
+    });
   };
 
   return files.chmkdir(dest)
   .then(function() {
-    return when.map(urls, down);
+    var tasks = [];
+    urls.forEach(function(url) {
+      tasks.push(function() { return down(url); });
+    });
+    return sequence(tasks);
+    // return when.map(urls, down);
   });
 };
 

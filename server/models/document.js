@@ -104,6 +104,8 @@ var downloadResources = function(doc) {
     return download(urls, files.chpath(doc.owner, 'documents', doc._id.toString()))
     .then(function() {
       return when.resolve(doc);
+    }, function() {
+      return when.resolve(doc);
     });
   } else {
     return when.resolve(doc);

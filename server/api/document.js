@@ -42,9 +42,9 @@ module.exports = {
    */
   create: function(req, res, next) {
     // Sanitize and validate query params
-    var url = req.query.url;
-    if (url && !validators.isUrl(url)) {
-      return next(new errors.BadRequest('Url invalid.'));
+    var link = req.query.link;
+    if (link && !validators.isUrl(link)) {
+      return next(new errors.BadRequest('Url link invalid.'));
     }
     var categories = req.query.categories ? req.query.categories : [];
 
@@ -52,7 +52,7 @@ module.exports = {
       title:       req.query.title,
       content:     req.rawBody || JSON.stringify(req.body),
       contentType: req.header('Content-Type'),
-      link:        url,
+      link:        link,
       owner:       req.user.uid,
       categories:  categories,
       files:       req.files

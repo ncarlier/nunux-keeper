@@ -43,6 +43,7 @@ app.configure(function() {
   app.set('realm', process.env.APP_REALM || 'http://localhost:' + app.get('port'));
   app.set('views', __dirname + '/views');
   app.set('view engine', 'ejs');
+  app.set('uploadDir', path.join(process.env.APP_VAR_DIR, 'upload') || '/tmp');
   app.use(express.logger('dev'));
   app.use(express.compress());
   app.use(express.cookieParser());
