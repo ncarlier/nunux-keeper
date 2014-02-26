@@ -33,7 +33,8 @@
     "commander": "~2.1.0",
     "redis": "~0.10.0",
     "hiredis": "~0.1.16",
-    "JSONStream": "~0.7.1"
+    "JSONStream": "~0.7.1",
+    "imagemagick": "~0.1.3"
   },
   "devDependencies": {
     "mocha": "~1.12.0",

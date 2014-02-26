@@ -12,11 +12,11 @@ Nunux Keeper allow you to save articles or medias you found on internet in one p
 * Documents attached medias are also saved.
 * Search a document with powerfull full text queries.
 * Access from your mobile or your computer. It's full responsive.
+* Easyly save web content while surfing thanks to the awesome bookmarklet.
 * Build your own client application thaks to the RESTFul JSON API.
 
 ## Roadmap
 
-* Create an awsome bookmarklet to easyly save web content during surfing;
 * Share a document using plugins. Share by mail, QRcode, other web sites;
 * Add the ability to choose a different storage system (ftp, remoteStorage, dropbox, etc.);
 * Add a user quota for local storage;
@@ -39,10 +39,11 @@ This installation procedure is from skratch. You can find below an easiest insta
 * [MongoDB](http://www.mongodb.org/) ~v2.4
 * [Elasticsearch](http://nodejs.org/) v0.90.10
 * [Redis](http://redis.io/) ~v2.8.0 (optional)
+* [Imagemagick](http://www.imagemagick.org/)
 
 #### Install Git, Node.JS, MongoDB and Redis (on Debian)
 
-    sudo aptitude install git nodejs mongodb-server redis-server
+    sudo aptitude install git nodejs mongodb-server redis-server imagemagick
 
 #### Install Elasticsearch (and MongoDB river)
 

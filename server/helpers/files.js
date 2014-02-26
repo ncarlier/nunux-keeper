@@ -96,6 +96,19 @@ var moveInChroot = function(src, dest) {
 };
 
 /**
+ * Test if file exists.
+ * @param {String} path path to test
+ * @return {Promise} promise of the test
+ */
+var chexists = function(path) {
+  var found = when.defer();
+  fs.exists(path, function(exists) {
+    return found.resolve(exists);
+  });
+  return found.promise;
+};
+
+/**
  * Get a hashed name.
  * The name can be a file name or an url.
  * @param {String} name
@@ -129,5 +142,7 @@ module.exports = {
   /** @see moveInChroot() */
   chmv: moveInChroot,
   /** Remove file or directory in chrooted location. */
-  chrm: function() { return nodefn.call(fs.remove, getChrootPath.apply(null, arguments)); }
+  chrm: function() { return nodefn.call(fs.remove, getChrootPath.apply(null, arguments)); },
+  /** Test if path exists. */
+  chexists: chexists
 };

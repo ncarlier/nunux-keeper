@@ -11,6 +11,11 @@ FROM nunux/nodejs
 
 MAINTAINER Nicolas Carlier <https://github.com/ncarlier>
 
+RUN apt-get update
+
+# Install packages
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y imagemagick
+
 # Env
 ENV NODE_ENV development
 

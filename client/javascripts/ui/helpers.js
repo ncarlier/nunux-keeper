@@ -6,6 +6,7 @@ angular.module('ui.helpers', ['angular-md5'])
   var link = function($scope, $element, $attributes) {
     if (!$scope.doc || !$scope.doc._id) return;
     var resourcePath = '/api/document/' + $scope.doc._id + '/resource/';
+    var size = $attributes.size
     $attributes.$observe(
       'appSrc',
       function(newSource) {
@@ -14,7 +15,9 @@ angular.module('ui.helpers', ['angular-md5'])
         // Extract extension
         var ext = cleanName.split('.').pop();
         if (ext) ext = ext.match(/^[a-zA-Z0-9]+/)[0];
-        $element[0].src = resourcePath + md5.createHash(cleanName) + (ext ? '.' + ext : '');
+        $element[0].src = resourcePath +
+          md5.createHash(cleanName) + (ext ? '.' + ext : '') +
+          ($attributes.size ? '?size=' + $attributes.size : '');
       }
     );
   };

@@ -7,6 +7,9 @@
       <h1>{{ user.username || user.uid }}</h1>
       <p>Member since {{ user.date | fromNow }}</p>
     </span>
+    <a href="/logout" class="btn btn-danger logout" title="Logout">
+      <span class="glyphicon glyphicon-off"></span>
+    </a>
   </header>
   <hr/>
   <section>
