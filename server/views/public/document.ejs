@@ -1,0 +1,16 @@
+<article>
+  <header>
+    <h1><%= doc.title %></h1>
+    <span class="doc-meta">
+      <span class="glyphicon glyphicon-time"></span>
+      <time><%= doc.date %></time>
+      <% if (doc.link) { %>
+        <span class="glyphicon glyphicon-globe"></span>
+        <a href="<%= doc.link %>" title="View source" target="_blank">source</a>
+      <% } %>
+    </span>
+  </header>
+  <section class="content">
+    <%- doc.content %>
+  </section>
+</article>

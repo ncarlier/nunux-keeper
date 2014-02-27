@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('SidebarModule', ['angular-md5'])
+angular.module('SidebarModule', [])
 .directive('appSidebar', ['$location', function($location) {
   return {
     restrict: 'E',
@@ -34,11 +34,10 @@ angular.module('SidebarModule', ['angular-md5'])
 }])
 .controller('SidebarCtrl', [
   '$window', '$scope', '$categoryService', '$documentService',
-  '$modal', '$log', '$location', '$timeout', 'md5',
+  '$modal', '$log', '$location', '$timeout',
   function ($window, $scope, $categoryService, $documentService,
-            $modal, $log, $location, $timeout, md5) {
+            $modal, $log, $location, $timeout) {
     $scope.user = $window.user;
-    $scope.gravatarUrl = 'http://www.gravatar.com/avatar/' + md5.createHash($scope.user.uid.toLowerCase());
     var refresh = function() {
       $categoryService.getAll()
       .then(function(categories) {

@@ -1,5 +1,6 @@
 var logger = require('../helpers').logger,
-    when   = require('when');
+    when   = require('when'),
+    crypto = require('crypto');
 
 /**
  * Document object model.
@@ -7,9 +8,10 @@ var logger = require('../helpers').logger,
 module.exports = function(db) {
 
   var UserSchema = new db.Schema({
-    uid: { type: String, index: { unique : true } },
-    username: { type: String },
-    date: { type: Date, default: Date.now }
+    uid:         { type: String, index: { unique: true } },
+    username:    { type: String },
+    date:        { type: Date, default: Date.now },
+    publicAlias: { type: String, index: { unique: true } }
   });
 
   UserSchema.static('login', function(user) {
@@ -25,6 +27,7 @@ module.exports = function(db) {
       } else if (autoGrantAccess || user.uid === process.env.APP_ADMIN) {
         // Create the user.
         logger.info('User %s authorized. Will be created.', user.uid);
+        user.publicAlias = crypto.createHash('md5').update(user.uid).digest('hex');
         return self.create(user);
       } else {
         // User not found and auto grant access is disabled.

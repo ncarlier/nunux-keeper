@@ -23,13 +23,15 @@ angular.module('KeeperApp', [
   'ngRoute',
   'CategoryService',
   'DocumentService',
+  'UserService',
   'SidebarModule',
   'NavbarModule',
   'DocumentsModule',
   'DocumentModule',
   'ProfileModule',
   'ui.helpers',
-  'ui.bootstrap'])
+  'ui.bootstrap',
+  'angular-md5'])
 .config(['$routeProvider', function($routeProvider) {
   $routeProvider
   .when('/document', {
@@ -64,6 +66,11 @@ angular.module('KeeperApp', [
 .filter('unsafe', ['$sce', function($sce) {
   return function(val) {
     return $sce.trustAsHtml(val);
+  };
+}])
+.filter('gravatar', ['md5', function(md5) {
+  return function(val) {
+    return 'http://www.gravatar.com/avatar/' + md5.createHash(val.toLowerCase());
   };
 }])
 .filter('prefix', function() {

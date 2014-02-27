@@ -9,6 +9,14 @@ validators.isDocId = function(str) {
 };
 
 /**
+ * Test if string is a valid public alias.
+ * @param {String} str
+ */
+validators.isPublicAlias = function(str) {
+  return /^[0-9a-zA-Z_]{3,128}$/.test(str);
+};
+
+/**
  * Validators helper.
  * @extends validator.validators
  * @module validators

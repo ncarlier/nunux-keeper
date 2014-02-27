@@ -1,9 +1,11 @@
 var home        = require('./home'),
     welcome     = require('./welcome'),
-    bookmarklet = require('./bookmarklet');
+    bookmarklet = require('./bookmarklet'),
+    pub         = require('./public');
 
 module.exports = {
   homepage:    home,
   welcomepage: welcome,
-  bookmarklet: bookmarklet
+  bookmarklet: bookmarklet,
+  pub:         pub
 };

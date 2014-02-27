@@ -10,4 +10,5 @@ module.exports = function(app) {
   app.get('/', contextHandler, controller.homepage);
   app.get('/welcome', contextHandler, controller.welcomepage);
   app.get('/bookmarklet', contextHandler, controller.bookmarklet);
+  app.get('/public/:alias', contextHandler, controller.pub.get);
 };

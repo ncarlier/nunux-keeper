@@ -6,6 +6,8 @@ var api = require('../api');
 module.exports = function(app) {
   // API info:
   app.get('/api', app.ensureAuthenticated, api.info(app));
+  // User API:
+  app.put('/api/user/:id', app.ensureAuthenticated, api.user.update);
   // Documents API:
   app.get('/api/document', app.ensureAuthenticated, api.documents.search);
   app.get('/api/document/:id', app.ensureAuthenticated, api.documents.get);

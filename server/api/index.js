@@ -1,6 +1,7 @@
 var documents  = require('./document'),
     categories = require('./category'),
-    resources  = require('./resource');
+    resources  = require('./resource'),
+    user       = require('./user');
 
 module.exports = {
   info: function(app) {
@@ -10,5 +11,6 @@ module.exports = {
   },
   documents: documents,
   categories: categories,
-  resources: resources
+  resources: resources,
+  user: user
 };
