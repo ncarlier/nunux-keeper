@@ -1,6 +1,6 @@
 var when   = require('when'),
-    url    = require('url'),
     logger = require('../helpers').logger,
+    filter = require('../helpers').filter,
     validators  = require('../helpers').validators,
     readability = require('node-readability');
 
@@ -13,41 +13,7 @@ var extractHtml = function(doc) {
   var extracted = when.defer();
   readability(doc.content, function(err, article) {
     if (err) return extracted.reject(err);
-
-    // Filter blacklisted sites:
-    // - remove <a> or <img> targeting blacklisted sites
-    var filterBlacklistedSites = function(match, p1, offset, string) {
-      if (/^http[s]?:\/\/feeds.feedburner.com/i.test(p1)) {
-        return '';
-      }
-      return match;
-    };
-
-    // Filter images data-src attribute:
-    // - remove 'src' attribute of images with 'app-src'
-    var filterAppImgSrc = function(match, offset, string) {
-      return match.replace(/\s+src\s*=\s*['"][^'"]+['"]/, '');
-    };
-
-    // Filter images src attribute:
-    // - Create absolute URL
-    // - replace 'src' attribute by 'app-src'
-    var filterImgSrc = function(match, p1, p2, offset, string) {
-      // Ignore app-src directives
-      if (/app\-$/i.test(p1)) return match;
-      // Create absolute URL if not
-      if (!/^https?|file|ftps?/i.test(p2) && doc.link) {
-        p2 = url.resolve(doc.link, p2);
-      }
-      // Replace 'src' attribute by 'app-src'
-      return '<img' + p1 + 'app-src="' + p2 + '"';
-    };
-    doc.content = article.cache.body
-    .replace(/<a[^>]+href\s*=\s*['"]([^'"]+)['"]+[^>]*>(?:(?:[^<])|<(?!a))*<\/a>/gi, filterBlacklistedSites)
-    .replace(/<img[^>]+src\s*=\s*['"]([^'"]+)['"]+[^>]*>(?:(?:[^<])|<(?!img))*<\/img>/gi, filterBlacklistedSites)
-    .replace(/<img[^>]+app\-src[^>\/]+\/>/gi, filterAppImgSrc)
-    .replace(/<img([^>]+)src\s*=\s*['"]([^'"]+)['"]/gi, filterImgSrc)
-    .replace(/\s+class\s*=\s*['"][^'"]+['"]/gi, '');
+    doc.content = filter(article.cache.body, doc.link);
     if (doc.title === 'Undefined') doc.title = article.title;
     doc.illustration = extractIllustration(doc);
     extracted.resolve(doc);

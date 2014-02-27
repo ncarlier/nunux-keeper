@@ -7,5 +7,6 @@ module.exports = {
   errors: require('./errors'),
   files:  require('./files'),
   elasticsearch: require('./elasticsearch'),
-  validators: require('./validators')
+  validators: require('./validators'),
+  filter: require('./filter')
 };
