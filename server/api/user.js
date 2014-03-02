@@ -1,5 +1,6 @@
 var when       = require('when'),
     _          = require('underscore'),
+    hat        = require('hat'),
     logger     = require('../helpers').logger,
     errors     = require('../helpers').errors,
     validators = require('../helpers').validators,
@@ -30,6 +31,24 @@ module.exports = {
     .then(function(user) {
       logger.info('User updated: %j', user);
       res.status(200).json(user);
+    }, next);
+  },
+  /**
+   * Regenerate user token.
+   */
+  generateToken: function(req, res, next) {
+    var uid = req.params.id;
+    if (uid !== req.user.uid) {
+      return next(new errors.Forbidden());
+    }
+
+    var update = {
+      apiToken: hat()
+    };
+    User.findByIdAndUpdate(req.user._id, update).exec()
+    .then(function(user) {
+      logger.info('User token updated: %j', user);
+      res.status(200).json(user.apiToken);
     }, next);
   }
 };

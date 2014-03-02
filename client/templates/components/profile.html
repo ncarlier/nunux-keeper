@@ -22,12 +22,22 @@
   </section>
   <section>
     <h2>Public page</h2>
-    <p>Documents in public category are published on your public page.
+    <p>Documents in public category are published on your public page.</p>
+    <p>
     <a href="{{realm}}/public/{{user.publicAlias}}" target="_blank" title="Your public page">
       {{realm}}/public/{{user.publicAlias}}
     </a>
-    </p>
+    &nbsp;
     <a class="pointer" ng-click="editUserDialog(user)" title="Edit your public alias">[edit]</a>
+    </p>
+  </section>
+  <section>
+    <h2>API access token</h2>
+    <p>Use this token to access to the API.</p>
+    <p>
+    <b>{{ user.apiToken }}</b>&nbsp;
+    <a class="pointer" ng-click="generateToken(user)" title="Regenerate token">[regenerate]</a>
+    </p>
   </section>
 </div>
 

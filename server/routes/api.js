@@ -8,6 +8,7 @@ module.exports = function(app) {
   app.get('/api', app.ensureAuthenticated, api.info(app));
   // User API:
   app.put('/api/user/:id', app.ensureAuthenticated, api.user.update);
+  app.put('/api/user/:id/token', app.ensureAuthenticated, api.user.generateToken);
   // Documents API:
   app.get('/api/document', app.ensureAuthenticated, api.documents.search);
   app.get('/api/document/:id', app.ensureAuthenticated, api.documents.get);

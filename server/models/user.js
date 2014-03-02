@@ -1,5 +1,6 @@
 var logger = require('../helpers').logger,
     when   = require('when'),
+    hat    = require('hat'),
     crypto = require('crypto');
 
 /**
@@ -11,7 +12,8 @@ module.exports = function(db) {
     uid:         { type: String, index: { unique: true } },
     username:    { type: String },
     date:        { type: Date, default: Date.now },
-    publicAlias: { type: String, index: { unique: true } }
+    publicAlias: { type: String, index: { unique: true } },
+    apiToken:    { type: String, index: { unique: true } }
   });
 
   UserSchema.static('login', function(user) {
@@ -28,6 +30,7 @@ module.exports = function(db) {
         // Create the user.
         logger.info('User %s authorized. Will be created.', user.uid);
         user.publicAlias = crypto.createHash('md5').update(user.uid).digest('hex');
+        user.apiToken = hat();
         return self.create(user);
       } else {
         // User not found and auto grant access is disabled.

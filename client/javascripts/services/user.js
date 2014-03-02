@@ -19,8 +19,22 @@ angular.module('UserService', [])
       return deferred.promise;;
     };
 
+    var generateToken = function(user) {
+      var deferred = $q.defer();
+      $http.put(url + '/' + user.uid + '/token')
+      .success(function(data) {
+        deferred.resolve(data);
+      })
+      .error(function(err) {
+        alert('Unable to regenerate token!');
+        deferred.reject(err);
+      });
+      return deferred.promise;;
+    };
+
     return {
-      update: updateUser
+      update: updateUser,
+      generateToken: generateToken
     };
   }
 ]);

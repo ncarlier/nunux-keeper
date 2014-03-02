@@ -9,8 +9,8 @@ angular.module('ProfileModule', [])
   };
 }])
 .controller('ProfileCtrl', [
-  '$scope', '$window', '$location', '$modal', '$log',
-  function ($scope, $window, $location, $modal, $log) {
+  '$scope', '$window', '$location', '$modal', '$log', '$userService',
+  function ($scope, $window, $location, $modal, $log, $userService) {
     $scope.user = $window.user;
     $scope.realm = $location.protocol() + '://' + $location.host() + ($location.port() === 80 ? '' : ':' + $location.port());
 
@@ -24,6 +24,14 @@ angular.module('ProfileModule', [])
       modalInstance.result.then(null, function(reason) {
         $scope.user = backup;
         $log.info('User edition modal dismissed: ' + reason);
+      });
+    };
+
+    $scope.generateToken = function() {
+       $userService.generateToken($scope.user)
+      .then(function(token) {
+        $scope.user.apiToken = token;
+        $window.user.apiToken = token;
       });
     };
   }

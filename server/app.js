@@ -50,6 +50,8 @@ app.configure(function() {
   app.use(express.cookieSession({secret: process.env.APP_SESSION_SECRET || 'NuNUXKeEpR_'}));
   app.use(express.bodyParser());
   app.use(middleware.rawbodyHandler());
+  app.use('/api', middleware.cors());
+  app.use('/api', middleware.token());
   app.use(passport.initialize());
   app.use(passport.session());
   app.use(express.methodOverride());
