@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
   <meta name="description" content="<%= info.description %>" />
   <meta name="author" content="<%= info.author %>">
-  <link rel="stylesheet" href="stylesheets/public.css" />
+  <link rel="stylesheet" href="/stylesheets/public.css" />
   <!--[if lt IE 9]>
       <script src="lib/html5shiv/html5shiv.js"></script>
   <![endif]-->
@@ -20,7 +20,7 @@
   <header>
     <h1>Nunux Keeper public page</h1>
   </header>
-  <section id="content">
+  <section class="content">
     <% documents.forEach(function(doc){ %>
     <% include document %>
     <% }) %>
@@ -30,5 +30,15 @@
     <p>powered by Nunux <%= info.name %></p>
   </div>
   </footer>
+<script>
+var imgs = document.getElementsByTagName('img');
+for (var i = 0; i < imgs.length; i++) {
+  var img = imgs[i], src
+      data = img.dataset;
+  if (src = img.getAttribute('data-app-src')) {
+    img.src = src;
+  }
+}
+</script>
 </body>
 </html>
