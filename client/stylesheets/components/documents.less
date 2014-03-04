@@ -1,0 +1,100 @@
+/*********************************************************************************/
+/* Documents                                                                     */
+/*********************************************************************************/
+#documents {
+  position: relative;
+  height: 100%;
+  div.one-col {
+    width: @k-sidebar-width !important;
+  }
+  div.documents {
+    width: 100%;
+    background: @k-grid-bg-color;
+    box-shadow: inset 0px 0 10px #444;
+    overflow: auto;
+    position: absolute;
+    bottom: 0;
+    top: @k-topnav-height;
+    h1 {
+      text-align: center;
+      font-style: italic;
+      font-size: 20px;
+      margin: 0;
+      padding-top: 10px;
+      color: @k-grid-text-color;
+    }
+    .no-result {
+      font-size: 2em;
+      font-weight: bold;
+      text-align: center;
+      display: block;
+      margin-top: 10%;
+      color: @k-grid-text-color;
+    }
+    .next {
+      text-align: center;
+      a {
+        font-weight: bold;
+        cursor: pointer;
+        color: @k-grid-text-color;
+      }
+      a:hover {
+        text-decoration: none;
+      }
+    }
+    .active {
+      background: @k-panel-bg-color;
+    }
+    ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    li {
+      padding: 10px;
+      margin: 10px;
+      color: @k-grid-card-fg-color;
+      background-color: @k-grid-card-bg-color;
+      box-shadow: 2px 2px 5px @k-grid-card-fg-color;
+      width: @k-grid-card-width;
+      position: relative;
+      cursor: pointer;
+      display: inline-block;
+      .transition(all 0.2s ease);
+      .doc-title {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        left: 10px;
+        background: @k-grid-card-fg-color;
+        color: @k-panel-text-color;
+        h3 {
+          font-size: 16px;
+          margin: 0;
+          padding: 5px;
+          font-weight: bold;
+        }
+      }
+      .doc-illustration {
+        position: absolute;
+        top: 10px;
+        height: @k-grid-card-height - 20px;
+        width: @k-grid-card-width - 20px;
+        overflow: hidden;
+        text-align: center;
+        img {
+          height: inherit;
+        }
+      }
+      .glyphicon {
+        height: @k-grid-card-height - 20px;
+        width: @k-grid-card-width - 20px;
+        display: block;
+        font-size: 75px;
+        text-align: center;
+        padding-top: 15px;
+      }
+    }
+  }
+}
+

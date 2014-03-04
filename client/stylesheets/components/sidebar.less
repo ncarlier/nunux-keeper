@@ -1,0 +1,84 @@
+/*********************************************************************************/
+/* Sidebar                                                                       */
+/*********************************************************************************/
+#sidebar {
+  background: @k-panel-bg-color;
+  color: @k-panel-text-color;
+  box-shadow: inset -1px 0 0 0 rgba(255,255,255,0.15), inset -0.1em 0 0.5em 0 rgba(0,0,0,0.25);
+  height: 100%;
+  width: @k-sidebar-width;
+  overflow: auto;
+  .sidebar {
+    position: relative;
+    padding-bottom: 10px;
+  }
+  .list-group-item {
+    font-size: 1.2em;
+    border: none;
+    background: none;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    &:hover, &.active {
+      background: @k-panel-fg-color;
+      color: @k-panel-text-color;
+    }
+    transition: background-color .25s ease-in-out, background-color .25s ease-in-out;
+  }
+  a {
+    text-decoration: none;
+    color: darken(@k-panel-text-color, 10%);
+    white-space: nowrap;
+    img {
+      position: absolute;
+      right: 10px;
+      top: 5px;
+    }
+    .setup {
+      display: none;
+      float: right;
+      margin-right: 5px;
+    }
+    max-height: 0;
+    opacity: 0;
+    .scale(0);
+    .animation(growHeight 500ms ease forwards);
+    &:hover {
+      .setup {
+        display: block;
+      }
+    }
+  }
+  .msg-overlay {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    height: 100%;
+    width: 100%;
+    text-align: right;
+    .transition(500ms cubic-bezier(0.175, 0.885, 0.32, 1.275) all);
+    left: -100%;
+    color: @k-panel-text-color;
+    font-weight: bold;
+    font-size: 2em;
+    padding-right: 15px;
+    &.displayed {
+      left: 0%;
+    }
+  }
+}
+
+/*********************************************************************************/
+/* Copyright                                                                     */
+/*********************************************************************************/
+#copyright {
+  color: @k-panel-fg-color;
+  bottom: 0;
+  position: absolute;
+  width: 100%;
+  font-size: 0.8em;
+  p {
+    opacity: 0.75;
+    text-align: center;
+  }
+}
+

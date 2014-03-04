@@ -1,0 +1,54 @@
+// Components: common
+@import "../lib/bootstrap/variables.less";
+@import "../lib/bootstrap/mixins.less";
+@import "../lib/bootstrap/type.less";
+@import "../lib/bootstrap/glyphicons.less";
+
+@import "readable.less";
+
+
+body {
+  background: #191919;
+  font-family: sans-serif;
+  margin: 0;
+  > header {
+    width: 900px;
+    margin: auto;
+    text-align: center;
+    padding: 25px 0;
+    background: #F5F5F5;
+    h1 {
+      margin: 0;
+      padding: 20px;
+      font-variant: small-caps;
+      width: 250px;
+      display: inline-block;
+      text-shadow: 2px 2px 10px #333;
+    }
+  }
+
+  > section.content {
+    width: 900px;
+    margin: auto;
+    background: #F5F5F5;
+  }
+}
+
+article.document {
+  padding: 20px;
+  header {
+    margin-bottom: 15px;
+    h1 {
+      margin: 0;
+      font-size: 20px;
+      font-style: italic;
+      border-bottom: 1px solid;
+    }
+  }
+}
+
+#powered {
+  color: #A9A9A9;
+  text-align: center;
+  padding: 5px;
+}

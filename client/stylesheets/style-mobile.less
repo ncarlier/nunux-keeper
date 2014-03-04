@@ -1,7 +1,6 @@
 /*********************************************************************************/
 /* Basic                                                                         */
 /*********************************************************************************/
-
 body, input, textarea {
   font-size: 11pt;
   letter-spacing: 0;
@@ -11,8 +10,7 @@ h2, h3, h4, h5, h6 {
   font-size: 1.5em;
 }
 
-section,
-article {
+section, article {
   clear: both;
 }
 
@@ -24,49 +22,33 @@ article {
   margin: 0.5em 0 0.5em 0;
 }
 
-@openWidth: 250px;
 #wrapper.open {
   #content {
-    left: @openWidth;
+    left: @k-sidebar-width;
   }
   #sidebar {
     display: block;
     left: 0;
-    width: @openWidth;
+    width: @k-sidebar-width;
   }
 }
 
 /*********************************************************************************/
 /* Content                                                                       */
 /*********************************************************************************/
-
 #content {
-  transition: all 0.3s ease;
+  .transition(all 0.3s ease);
 }
 
 /*********************************************************************************/
 /* Sidebar                                                                       */
 /*********************************************************************************/
-
 #sidebar {
   position: fixed;
-  left: -@openWidth;
-  transition: all 0.3s ease;
+  left: -@k-sidebar-width;
+  .transition(all 0.3s ease);
 }
 .navbar-form {
   margin-left: 10px;
-}
-
-/*********************************************************************************/
-/* Timeline                                                                      */
-/*********************************************************************************/
-.timeline, .manage {
-  > header {
-    h1 {
-      div {
-        display: inline-block;
-      }
-    }
-  }
 }
 
