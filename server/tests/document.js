@@ -89,8 +89,12 @@ describe('Check document API', function() {
 
   it('should create new document (HTML body)', function(done) {
     var title   = 'Sample simple HTML document',
-        content = '<p>sample</P><img src="' + imageUrl + '"/><img class="test" app-src="test" src = "test" alt="test" />',
-        expectedContent = '<p>sample</p><img app-src="' + imageUrl + '" /><img app-src="test" alt="test" />',
+        content = '<p>sample</P><img src="' + imageUrl + '"/>' +
+          '<img class="bad" src = "http://feeds.feedburner.com/~r/azerty" />' +
+          '<img class="bad" src = "http://doubleclick.net/azerty" />' +
+          '<img class="test" app-src="test" src = "test" alt="test" />',
+        expectedContent = '<p>sample</p><img app-src="' + imageUrl + '" />' +
+          '<img app-src="test" alt="test" />',
         categories = ['system-public', 'user-test', 'bad'];
 
     request.post({

@@ -1,12 +1,14 @@
-var url = require('url');
+var url     = require('url'),
+    logger  = require('./logger');
 
 var regExp = {
-  a:      /<a[^>]+href\s*=\s*['"]([^'"]+)['"]+[^>]*>(?:(?:[^<])|<(?!a))*<\/a>/gi,
-  img:    /<img[^>]+src\s*=\s*['"]([^'"]+)['"]+[^>]*>(?:(?:[^<])|<(?!img))*<\/img>/gi,
-  iframe: /<iframe[^>]+src\s*=\s*['"]([^'"]+)['"]+[^>]*>(?:(?:[^<])|<(?!iframe))*<\/iframe>/gi,
-  appSrc: /<img[^>]+app\-src[^>\/]+\/>/gi,
-  imgSrc: /<img([^>]+)src\s*=\s*['"]([^'"]+)['"]/gi,
-  css:    /\s+class\s*=\s*['"][^'"]+['"]/gi
+  a:        /<a[^>]+(?:(?:[^<])|<(?!a))*<\/a>/gi,
+  img:      /<img(?:[^>]|(?!\/>))+\/>/gi,
+  iframe:   /<iframe[^>]+(?:(?:[^<])|<(?!iframe))*<\/iframe>/gi,
+  source:   /(?:src|href)\s*=\s*['"]([^'"]+)['"]+/i,
+  appSrc:   /<img[^>]+app\-src[^>\/]+\/>/gi,
+  imgSrc:   /<img([^>]+)src\s*=\s*['"]([^'"]+)['"]/gi,
+  css:      /\s+class\s*=\s*['"][^'"]+['"]/gi
 };
 
 var blacklist = [
@@ -16,16 +18,22 @@ var blacklist = [
 
 /**
  * Filter blacklisted sites:
- * - remove <a> or <img> targeting blacklisted sites
+ * - remove element with source attribute targeting blacklisted sites
  * @param {String} match
- * @param {String} p1
  * @param {String} offset
  * @param {String} string
  * @return {String} filtered string
  */
-var filterBlacklistedSites = function(match, p1, offset, string) {
-  for (var i = 0; i < blacklist.length; i++) {
-    if (blacklist[i].test(p1)) return '';
+var filterBlacklistedSites = function(match, offset, string) {
+  var m = match.match(regExp.source);
+  if (m) {
+    var source = m[1];
+    for (var i = 0; i < blacklist.length; i++) {
+      if (blacklist[i].test(source)) {
+        logger.debug('Filter source: %s', source);
+        return '';
+      }
+    }
   }
   return match;
 };
@@ -68,11 +76,11 @@ var filterImgSrc = function(baseUrl) {
  */
 module.exports = function(content, url) {
   return content
-  .replace(regExp.a, filterBlacklistedSites)
-  .replace(regExp.img, filterBlacklistedSites)
-  .replace(regExp.iframe, filterBlacklistedSites)
-  .replace(regExp.appSrc, filterAppImgSrc)
-  .replace(regExp.imgSrc, filterImgSrc(url))
-  .replace(regExp.css, '');
+  .replace(regExp.iframe,   filterBlacklistedSites)
+  .replace(regExp.a,        filterBlacklistedSites)
+  .replace(regExp.img,      filterBlacklistedSites)
+  .replace(regExp.appSrc,   filterAppImgSrc)
+  .replace(regExp.imgSrc,   filterImgSrc(url))
+  .replace(regExp.css,      '');
 };
 
