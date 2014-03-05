@@ -27,6 +27,7 @@ module.exports = {
       'client/lib/jquery/jquery.min.js',
       'client/lib/lodash/lodash.min.js',
       'client/lib/angular/angular.min.js',
+      'client/lib/ng-file-upload/angular-file-upload.min.js',
       'build/javascripts/app-bm.js',
       'build/javascripts/services/*.js'
     ],
