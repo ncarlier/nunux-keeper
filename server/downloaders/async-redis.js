@@ -1,6 +1,5 @@
 var _      = require('underscore'),
     when   = require('when'),
-    files  = require('../helpers').files,
     redis  = require('../helpers/redis'),
     logger = require('../helpers').logger;
 
@@ -16,7 +15,7 @@ var download = function(urls, dest) {
   var data = _.map(urls, function(url) {
     return JSON.stringify({
       src: url,
-      dest: files.chpath(dest, files.getHashName(url))
+      dest: dest
     });
   });
   logger.debug('Delegating downloading with redis: %j ...', data);

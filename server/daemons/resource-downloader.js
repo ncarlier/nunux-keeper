@@ -1,14 +1,11 @@
 #!/usr/bin/env node
 
-var _       = require('underscore'),
-    when    = require('when'),
-    nodefn  = require('when/node/function'),
-    program = require('commander'),
-    request = require('request'),
-    path    = require('path'),
-    files   = require('../helpers').files,
-    logger  = require('../helpers').logger,
-    redis   = require('../helpers').redis,
+var _        = require('underscore'),
+    when     = require('when'),
+    program  = require('commander'),
+    download = require('../downloaders/default'),
+    logger   = require('../helpers').logger,
+    redis    = require('../helpers/redis'),
     EventEmitter = require('events').EventEmitter;
 
 var app = new EventEmitter();
@@ -68,16 +65,12 @@ app.on('nextresource', function() {
       return app.emit('nextresource');
     }
     var resource = JSON.parse(bulk[1]);
-    files.chmkdir(path.dirname(resource.dest))
-    .then(function() {
-      logger.debug('Downloading resource %j...', resource);
-      return files.chwrite(request(resource.src), resource.dest);
-    })
+    download([resource.src], resource.dest)
     .then(function() {
       logger.info('Resource %j downloaded.', resource);
       app.emit('nextresource');
     }, function(err) {
-      logger.error('Unable to download resource: %s', err);
+      logger.error('Unable to download resource: %j', resource, err);
       app.emit('nextresource');
     });
   });

@@ -88,7 +88,10 @@ module.exports = {
       file = files.chpath(req.user.uid, 'documents', doc._id.toString(), req.params.key);
       return files.chexists(file)
       .then(function(exists) {
-        if (!exists) return when.reject(new errors.NotFound('Resource not found.'));
+        if (!exists) {
+          // TODO return 404 image instead
+          return when.reject(new errors.NotFound('Resource not found.'));
+        }
         if (req.query.size) {
           return getThumbnail(file, req.query.size);
         }
