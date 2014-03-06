@@ -8,6 +8,7 @@ var when       = require('when'),
     validators = require('../helpers').validators,
     logger     = require('../helpers').logger;
 
+process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 
 /**
  * Download resources.

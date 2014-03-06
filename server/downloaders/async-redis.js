@@ -12,15 +12,14 @@ var _      = require('underscore'),
  * @returns {Promise} Promise of download
  */
 var download = function(urls, dest) {
-  var data = _.map(urls, function(url) {
-    return JSON.stringify({
-      src: url,
-      dest: dest
-    });
-  });
+  var data = {
+    dest: dest,
+    urls: urls
+  };
+
   logger.debug('Delegating downloading with redis: %j ...', data);
   var sended = when.defer();
-  redis.rpush('resources:download', data, function(err) {
+  redis.rpush('resources:download', JSON.stringify(data), function(err) {
     if (err) return sended.reject(err);
     return sended.resolve();
   });

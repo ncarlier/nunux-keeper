@@ -65,12 +65,11 @@ app.on('nextresource', function() {
       return app.emit('nextresource');
     }
     var resource = JSON.parse(bulk[1]);
-    download([resource.src], resource.dest)
+    download(resource.urls, resource.dest)
     .then(function() {
-      logger.info('Resource %j downloaded.', resource);
       app.emit('nextresource');
     }, function(err) {
-      logger.error('Unable to download resource: %j', resource, err);
+      logger.error('Unable to download resources: %j', resource, err);
       app.emit('nextresource');
     });
   });
