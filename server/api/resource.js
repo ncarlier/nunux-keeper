@@ -20,6 +20,9 @@ var oneDay = 86400000,
  */
 var getThumbnail = function(file, size) {
   var ext = file.split('.').pop();
+  if (ext) {
+    ext = ext.toLowerCase();
+  }
   if (!_.contains(imageExtensions, ext)) {
     return when.reject(new errors.BadRequest('Requested resource is not an image.'));
   }
