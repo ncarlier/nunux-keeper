@@ -19,7 +19,8 @@ process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 var download = function(urls, dest) {
   var down = function(_url) {
     if (!validators.isUrl(_url)) {
-      return when.reject('Bad URL: ' + _url);
+      logger.error('Unable to download %s. Bad URL.', _url);
+      return when.resolve('Bad URL: ' + _url);
     }
     var to = files.chpath(dest, files.getHashName(_url));
 
