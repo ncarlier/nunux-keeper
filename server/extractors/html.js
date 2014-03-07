@@ -27,7 +27,7 @@ var extractHtml = function(doc) {
  * @returns {String} doc illustration.
  */
 var extractIllustration = function(doc) {
-  var rex = /<img[^>]+src="?([^"\s]+)"?/g,
+  var rex = /<img[^>]+app\-src="?([^"\s]+)"?/g,
       m = rex.exec(doc.content);
 
   return m ? m[1] : null;
