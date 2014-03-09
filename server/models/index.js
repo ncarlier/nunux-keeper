@@ -18,11 +18,11 @@ var getMongoDBUri = function() {
   return uri;
 };
 
-mongoose.connect(getMongoDBUri());
+var conn = mongoose.createConnection(getMongoDBUri());
 
 module.exports = {
-  User: user(mongoose),
-  Document: document(mongoose),
-  Category: category(mongoose)
+  User: user(mongoose, conn),
+  Document: document(mongoose, conn),
+  Category: category(mongoose, conn)
 };
 

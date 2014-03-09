@@ -6,7 +6,11 @@ var documents  = require('./document'),
 module.exports = {
   info: function(app) {
     return function(req, res) {
-      res.json(app.get('info'));
+      var info = app.get('info');
+      if (req.authInfo) {
+        info.scope = req.authInfo.scope;
+      }
+      res.json(info);
     };
   },
   documents: documents,

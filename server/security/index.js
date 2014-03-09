@@ -34,21 +34,6 @@ module.exports = function(app, passport) {
   });
 
   /**
-   * Middleware to check that the user is logged.
-   */
-  app.ensureAuthenticated = function(req, res, next) {
-    if (req.isAuthenticated()) {return next(); }
-    next(new errors.Forbidden());
-  };
-
-  /**
-   * Middleware to check that the user is an admin.
-   */
-  app.ensureIsAdmin = function(req, res, next) {
-    next(req.isAdmin() ? null : new errors.Unauthorized());
-  };
-
-  /**
    * Logout route.
    */
   app.get('/logout', function(req, res, next) {

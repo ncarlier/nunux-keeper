@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title><%= info.title %> - Access Request</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
+  <meta name="description" content="<%= info.description %>" />
+  <meta name="author" content="<%= info.author %>">
+  <link rel="stylesheet" href="stylesheets/style.css" />
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="icons/apple-touch-icon-144-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" sizes="114x114" href="icons/apple-touch-icon-114-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" sizes="72x72" href="icons/apple-touch-icon-72-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" href="icons/apple-touch-icon-57-precomposed.png">
+  <link rel="shortcut icon" href="icons/favicon.png">
+</head>
+<body>
+<section>
+  <p>Hi <%= user.username %>!</p>
+  <p><b><%= client.name %></b> is requesting access to your account.</p>
+  <p>Do you approve?</p>
+
+  <form action="/oauth/authorize/decision" method="post">
+    <input name="transaction_id" type="hidden" value="<%= transactionID %>">
+    <div>
+      <input type="submit" value="Allow" id="allow">
+      <input type="submit" value="Deny" name="cancel" id="deny">
+    </div>
+  </form>
+</section>
+</body>
+</html>

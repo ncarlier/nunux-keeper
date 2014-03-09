@@ -9,14 +9,18 @@ var _        = require('underscore'),
 
 /**
  * Get documents river configuration.
- * @param {Object} db Mongoose instance
+ * @param {Object} conn Mongoose connection
  * @returns {Object} river configuration
  */
-var getRiverConf = function(db) {
+var getRiverConf = function(conn) {
   var conf = {
     type: 'mongodb',
     mongodb: {
-      servers: [],
+      dn: conn.name,
+      servers: [{
+        host: conn.host,
+        port: conn.port
+      }],
       options: { secondary_read_preference: true },
       collection: 'documents'
     },
@@ -25,13 +29,6 @@ var getRiverConf = function(db) {
       type: 'document'
     }
   };
-  _.each(db.connections, function(conn) {
-    conf.mongodb.db = conn.name;
-    conf.mongodb.servers.push({
-      host: conn.host,
-      port: conn.port
-    });
-  });
   return conf;
 };
 
@@ -139,7 +136,7 @@ var saveAttachment = function(doc) {
  * Document object model.
  * @module document
  */
-module.exports = function(db) {
+module.exports = function(db, conn) {
   var type = 'documents';
 
   var DocumentSchema = new db.Schema({
@@ -155,7 +152,7 @@ module.exports = function(db) {
   });
 
   DocumentSchema.static('configure', function() {
-    return elasticsearch.configureRiver(getRiverConf(db)).then(function() {
+    return elasticsearch.configureRiver(getRiverConf(conn)).then(function() {
       return elasticsearch.configureMapping(type, 'document', mapping);
     });
   });
@@ -245,6 +242,6 @@ module.exports = function(db) {
     return elasticsearch.search(type, buildQuery(uid, params));
   });
 
-  return db.model('Document', DocumentSchema);
+  return conn.model('Document', DocumentSchema);
 };
 

@@ -25,6 +25,7 @@ var express    = require('express'),
     logger     = require('./helpers').logger,
     files      = require('./helpers').files,
     middleware = require('./middlewares'),
+    secMiddleware = require('./security/middlewares'),
     appInfo    = require('../package.json'),
     routes     = require('./routes'),
     Document   = require('./models').Document;
@@ -50,10 +51,11 @@ app.configure(function() {
   app.use(express.cookieSession({secret: process.env.APP_SESSION_SECRET || 'NuNUXKeEpR_'}));
   app.use(express.bodyParser({ uploadDir: path.join(process.env.APP_VAR_DIR, 'upload') || '/tmp' }));
   app.use(middleware.rawbodyHandler());
-  app.use('/api', middleware.cors());
-  app.use('/api', middleware.token());
   app.use(passport.initialize());
   app.use(passport.session());
+  app.use('/api', secMiddleware.token(passport));
+  app.use('/api', middleware.cors());
+  //app.use('/api/admin', secMiddleware.ensureIsAdmin);
   app.use(express.methodOverride());
   app.use(app.router);
 });
@@ -72,6 +74,9 @@ app.configure('production', function() {
 
 // Set up security
 require('./security')(app, passport);
+
+// Set up OAuth2
+require('./security/oauth2')(app, passport);
 
 // Register routes...
 // Set up API routes
@@ -92,6 +97,8 @@ Document.configure().then(function() {
 }, function(err) {
   logger.error('Arghhh! Elasticsearch seem to be misconfigured. Application will not work properly.');
   logger.error(err);
-  throw err;
+  if (!module.parent) {
+    process.exit(1);
+  }
 });
 

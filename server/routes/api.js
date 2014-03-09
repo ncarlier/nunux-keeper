@@ -5,25 +5,25 @@ var api = require('../api');
  */
 module.exports = function(app) {
   // API info:
-  app.get('/api', app.ensureAuthenticated, api.info(app));
+  app.get('/api', api.info(app));
   // User API:
-  app.put('/api/user/:id', app.ensureAuthenticated, api.user.update);
-  app.put('/api/user/:id/token', app.ensureAuthenticated, api.user.generateToken);
+  app.put('/api/user/:id', api.user.update);
+  app.put('/api/user/:id/token', api.user.generateToken);
   // Documents API:
-  app.get('/api/document', app.ensureAuthenticated, api.documents.search);
-  app.get('/api/document/:id', app.ensureAuthenticated, api.documents.get);
-  app.put('/api/document/:id', app.ensureAuthenticated, api.documents.update);
-  app.post('/api/document', app.ensureAuthenticated, api.documents.create);
-  app.delete('/api/document', app.ensureAuthenticated, api.documents.del);
-  app.delete('/api/document/:id', app.ensureAuthenticated, api.documents.del);
+  app.get('/api/document', api.documents.search);
+  app.get('/api/document/:id', api.documents.get);
+  app.put('/api/document/:id', api.documents.update);
+  app.post('/api/document', api.documents.create);
+  app.delete('/api/document', api.documents.del);
+  app.delete('/api/document/:id', api.documents.del);
   // Document resources API:
-  app.get('/api/document/:id/resource/:key', app.ensureAuthenticated, api.resources.get);
+  app.get('/api/document/:id/resource/:key', api.resources.get);
   // Categories API:
-  app.get('/api/category', app.ensureAuthenticated, api.categories.all);
-  app.get('/api/category/:key', app.ensureAuthenticated, api.categories.get);
-  app.put('/api/category/:key', app.ensureAuthenticated, api.categories.update);
-  app.post('/api/category', app.ensureAuthenticated, api.categories.create);
-  app.delete('/api/category/:key', app.ensureAuthenticated, api.categories.del);
+  app.get('/api/category', api.categories.all);
+  app.get('/api/category/:key', api.categories.get);
+  app.put('/api/category/:key', api.categories.update);
+  app.post('/api/category', api.categories.create);
+  app.delete('/api/category/:key', api.categories.del);
   // Admin API:
-  //app.get('/api/admin/user/:id', app.ensureAuthenticated, app.ensureIsAdmin, api.admin.users.get);
+  //app.get('/api/admin/user/:id', api.admin.users.get);
 };

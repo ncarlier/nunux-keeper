@@ -6,7 +6,7 @@ var logger = require('../helpers').logger,
 /**
  * Document object model.
  */
-module.exports = function(db) {
+module.exports = function(db, conn) {
 
   var UserSchema = new db.Schema({
     uid:         { type: String, index: { unique: true } },
@@ -42,6 +42,6 @@ module.exports = function(db) {
     return logged;
   });
 
-  return db.model('User', UserSchema);
+  return conn.model('User', UserSchema);
 };
 
