@@ -1,4 +1,4 @@
 #!/bin/bash
 
-docker run -rm -link mongo-elastic:db -volumes-from KEEPER_VOLUMES -i -t -p 3000:3000 -p 3009:3009 nunux/keeper bash
+docker run -rm -link mongo-elastic:db -link redis:redis -volumes-from KEEPER_VOLUMES -i -t -p 3000:3000 -p 3009:3009 nunux/keeper bash
 
