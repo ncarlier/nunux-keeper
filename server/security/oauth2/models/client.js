@@ -5,7 +5,6 @@
 module.exports = function(db, conn) {
 
   var ClientSchema = new db.Schema({
-    id:          { type: String, required: true, unique: true },
     name:        { type: String, required: true, unique: true },
     homepage:    { type: String, required: true },
     redirectURI: { type: String, required: true },

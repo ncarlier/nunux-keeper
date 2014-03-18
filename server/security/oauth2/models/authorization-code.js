@@ -9,7 +9,7 @@ module.exports = function(db, conn) {
     clientId:    { type: String, required: true },
     userId:      { type: String, required: true },
     redirectURI: { type: String, required: true },
-    created:     { type: Date, default: Date.now, expires: 60 }
+    created:     { type: Date, default: Date.now, expires: '10m' }
   });
 
   return conn.model('AuthorizationCode', AuthzCodeSchema);

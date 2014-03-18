@@ -8,7 +8,7 @@
  * @return {String}
  * @api private
  */
-exports.uid = function(len) {
+module.exports = function(len) {
   var buf = []
     , chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
     , charlen = chars.length;

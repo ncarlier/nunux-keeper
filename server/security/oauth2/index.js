@@ -1,6 +1,6 @@
 var oauth2orize    = require('oauth2orize'),
-    middleware     = require('../middlewares'),
     uid            = require('../helpers').uid,
+    logger         = require('../../helpers').logger,
     User           = require('./models').User,
     Client         = require('./models').Client,
     AccessToken    = require('./models').AccessToken,
@@ -26,11 +26,11 @@ var server = oauth2orize.createServer();
 // simple matter of serializing the client's ID, and deserializing by finding
 // the client by ID from the database.
 server.serializeClient(function(client, done) {
-  return done(null, client.id);
+  return done(null, client._id);
 });
 
 server.deserializeClient(function(id, done) {
-  Client.findOne({id: id}, function(err, client) {
+  Client.findById(id, function(err, client) {
     if (err) { return done(err); }
     return done(null, client);
   });
@@ -54,7 +54,7 @@ server.grant(oauth2orize.grant.code(function(client, redirectURI, user, ares, do
   var code = uid(16);
   AuthorizationCode.create({
     code: code,
-    clientId: client.id,
+    clientId: client._id,
     redirectURI: redirectURI,
     userId: user.uid
   }, function(err) {
@@ -72,9 +72,9 @@ server.grant(oauth2orize.grant.code(function(client, redirectURI, user, ares, do
 server.exchange(oauth2orize.exchange.code(function(client, code, redirectURI, done) {
   AuthorizationCode.findOne({code: code}, function(err, authzCode) {
     if (err) { return done(err); }
-    if (authzCode === undefined ||
-        client.id !== authzCode.clientID ||
-        redirectURI !== authzCode.redirectURI) {
+    if (!authzCode ||
+        client._id != authzCode.clientId ||
+        redirectURI != authzCode.redirectURI) {
       return done(null, false);
     }
     AuthorizationCode.remove(authzCode, function(err) {
@@ -110,7 +110,8 @@ module.exports = function(app, passport) {
    * the specification, in practice it is quite common.
    */
   passport.use(new BasicStrategy(function(username, password, done) {
-    Client.findOne({id: username}, function(err, client) {
+    Client.findById(username, function(err, client) {
+      //logger.debug('BASIC:\n %j \n %j', err, client);
       if (err) { return done(err); }
       if (!client) { return done(null, false); }
       if (client.secret != password) { return done(null, false); }
@@ -119,7 +120,7 @@ module.exports = function(app, passport) {
   }));
 
   passport.use(new ClientPasswordStrategy(function(clientId, clientSecret, done) {
-    Client.findOne({id: clientId}, function(err, client) {
+    Client.findById(clientId, function(err, client) {
       if (err) { return done(err); }
       if (!client) { return done(null, false); }
       if (client.secret != clientSecret) { return done(null, false); }
@@ -151,64 +152,7 @@ module.exports = function(app, passport) {
     });
   }));
 
-  // user authorization endpoint
-  //
-  // `authorization` middleware accepts a `validate` callback which is
-  // responsible for validating the client making the authorization request.  In
-  // doing so, is recommended that the `redirectURI` be checked against a
-  // registered value, although security requirements may vary accross
-  // implementations.  Once validated, the `done` callback must be invoked with
-  // a `client` instance, as well as the `redirectURI` to which the user will be
-  // redirected after an authorization decision is obtained.
-  //
-  // This middleware simply initializes a new authorization transaction.  It is
-  // the application's responsibility to authenticate the user and render a dialog
-  // to obtain their approval (displaying details about the client requesting
-  // authorization).  We accomplish that here by routing through `ensureLoggedIn()`
-  // first, and rendering the `dialog` view. 
-  app.get('/oauth/authorize',
-          middleware.ensureAuthenticated,
-          server.authorization(function(clientId, redirectURI, done) {
-            Client.findOne({clientId: clientId}, function(err, client) {
-              if (err) { return done(err); }
-              // WARNING: For security purposes, it is highly advisable to check that
-              //          redirectURI provided by the client matches one registered with
-              //          the server.  For simplicity, this example does not.  You have
-              //          been warned.
-              return done(null, client, redirectURI);
-            });
-          }),
-          function(req, res) {
-            var context = {
-              info: app.get('info'),
-              realm: app.get('realm'),
-              env: app.get('env'),
-              user: req.user,
-              transactionID: req.oauth2.transactionID,
-              client: req.oauth2.client
-            };
-            res.render('oauth', context);
-          }
-  );
-
-  // user decision endpoint
-  //
-  // `decision` middleware processes a user's decision to allow or deny access
-  // requested by a client application.  Based on the grant type requested by the
-  // client, the above grant middleware configured above will be invoked to send
-  // a response.
-  app.post('/oauth/authorize/decision', middleware.ensureAuthenticated, server.decision());
-
-  // token endpoint
-  //
-  // `token` middleware handles client requests to exchange authorization grants
-  // for access tokens.  Based on the grant type being exchanged, the above
-  // exchange middleware will be invoked to handle the request.  Clients must
-  // authenticate when making requests to this endpoint.
-  app.post('/oauth/token',
-           passport.authenticate(['basic', 'oauth2-client-password'], { session: false }),
-           server.token(),
-           server.errorHandler()
-          );
+  // Register routes..
+  require('./routes')(app, server, passport);
 };
 

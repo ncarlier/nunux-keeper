@@ -23,7 +23,7 @@ ENV NODE_ENV development
 ENV APP_PORT 3000
 
 # Server base URL (Realm)
-ENV APP_REALM http://localhost:3000
+ENV APP_REALM http://keeper.lan
 
 # Application logger level
 ENV APP_LOG debug

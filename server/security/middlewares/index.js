@@ -1,3 +1,5 @@
+var errors = require('../../helpers').errors;
+
 /**
  * Security Middlewares.
  * @module middlewares
