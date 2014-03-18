@@ -15,7 +15,6 @@
 
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  odule dependencies.
 */
 
 var express    = require('express'),
@@ -44,7 +43,6 @@ app.configure(function() {
   app.set('realm', process.env.APP_REALM || 'http://localhost:' + app.get('port'));
   app.set('views', __dirname + '/views');
   app.set('view engine', 'ejs');
-  app.set('uploadDir', path.join(process.env.APP_VAR_DIR, 'upload') || '/tmp');
   app.use(express.logger('dev'));
   app.use(express.compress());
   app.use(express.cookieParser());
@@ -53,9 +51,8 @@ app.configure(function() {
   app.use(middleware.rawbodyHandler());
   app.use(passport.initialize());
   app.use(passport.session());
-  app.use('/api', secMiddleware.token(passport));
-  app.use('/api', middleware.cors());
-  //app.use('/api/admin', secMiddleware.ensureIsAdmin);
+  app.use('/api', secMiddleware.token(passport), middleware.cors());
+  app.use('/api/admin', secMiddleware.ensureIsAdmin);
   app.use(express.methodOverride());
   app.use(app.router);
 });
@@ -68,7 +65,7 @@ app.configure('development', function() {
 
 app.configure('production', function() {
   var oneDay = 86400000;
-  app.use(express.static(path.join(__dirname, '../build'), {maxAge: oneDay}));
+  app.use(express.static(path.join(__dirname, '../dist'), {maxAge: oneDay}));
   app.use(middleware.errorHandler(app));
 });
 

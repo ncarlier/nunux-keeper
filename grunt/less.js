@@ -5,9 +5,9 @@ module.exports = {
       cleancss: true
     },
     files: {
-      'build/stylesheets/style.css': 'client/stylesheets/style.less',
-      'build/stylesheets/welcome.css': 'client/stylesheets/welcome.less',
-      'build/stylesheets/bookmarklet.css': 'client/stylesheets/bookmarklet.less'
+      'dist/stylesheets/style.css': 'client/stylesheets/style.less',
+      'dist/stylesheets/welcome.css': 'client/stylesheets/welcome.less',
+      'dist/stylesheets/bookmarklet.css': 'client/stylesheets/bookmarklet.less'
     }
   }
 };

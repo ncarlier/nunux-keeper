@@ -15,7 +15,7 @@ module.exports = {
       expand: true,
       cwd: 'client/javascripts',
       src: ['**/*.js'],
-      dest: 'build/javascripts'
+      dest: 'dist/javascripts'
     }]
   }
 };

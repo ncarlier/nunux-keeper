@@ -17,10 +17,10 @@ module.exports = {
       'client/lib/angular-md5/angular-md5.min.js',
       'client/lib/ng-file-upload/angular-file-upload.min.js',
 
-      'build/javascripts/app.js',
-      'build/javascripts/**/*.js'
+      'dist/javascripts/app.js',
+      'dist/javascripts/**/*.js'
     ],
-    dest: 'build/javascripts/keeper.min.js'
+    dest: 'dist/javascripts/keeper.min.js'
   },
   bookmarklet: {
     src: [
@@ -28,10 +28,10 @@ module.exports = {
       'client/lib/lodash/lodash.min.js',
       'client/lib/angular/angular.min.js',
       'client/lib/ng-file-upload/angular-file-upload.min.js',
-      'build/javascripts/app-bm.js',
-      'build/javascripts/services/*.js'
+      'dist/javascripts/app-bm.js',
+      'dist/javascripts/services/*.js'
     ],
-    dest: 'build/javascripts/keeper-bm.min.js'
+    dest: 'dist/javascripts/keeper-bm.min.js'
   }
 
 };
