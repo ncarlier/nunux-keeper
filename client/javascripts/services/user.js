@@ -19,14 +19,14 @@ angular.module('UserService', [])
       return deferred.promise;;
     };
 
-    var generateToken = function(user) {
+    var getLinkedApp = function(user) {
       var deferred = $q.defer();
-      $http.put(url + '/' + user.uid + '/token')
+      $http.get(url + '/' + user.uid + '/client')
       .success(function(data) {
         deferred.resolve(data);
       })
       .error(function(err) {
-        alert('Unable to regenerate token!');
+        alert('Unable to get linked apps!');
         deferred.reject(err);
       });
       return deferred.promise;;
@@ -34,7 +34,7 @@ angular.module('UserService', [])
 
     return {
       update: updateUser,
-      generateToken: generateToken
+      getLinkedApp: getLinkedApp
     };
   }
 ]);

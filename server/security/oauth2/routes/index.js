@@ -64,4 +64,6 @@ module.exports = function(app, server, passport) {
   app.post('/api/admin/oauth/client', api.client.create);
   app.put('/api/admin/oauth/client/:id', api.client.update);
   app.delete('/api/admin/oauth/client/:id', api.client.del);
+  // User API:
+  app.get('/api/user/:id/client', api.user.getClients);
 };

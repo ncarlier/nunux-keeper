@@ -14,6 +14,10 @@ angular.module('ProfileModule', [])
     $scope.user = $window.user;
     $scope.realm = $location.protocol() + '://' + $location.host() + ($location.port() === 80 ? '' : ':' + $location.port());
 
+    $userService.getLinkedApp($scope.user).then(function(apps) {
+      $scope.apps = apps;
+    });
+
     $scope.editUserDialog = function() {
       var backup = angular.copy($scope.user);
       var modalInstance = $modal.open({
@@ -24,14 +28,6 @@ angular.module('ProfileModule', [])
       modalInstance.result.then(null, function(reason) {
         $scope.user = backup;
         $log.info('User edition modal dismissed: ' + reason);
-      });
-    };
-
-    $scope.generateToken = function() {
-       $userService.generateToken($scope.user)
-      .then(function(token) {
-        $scope.user.apiToken = token;
-        $window.user.apiToken = token;
       });
     };
   }

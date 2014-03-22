@@ -8,7 +8,6 @@ module.exports = function(app) {
   app.get('/api', api.info(app));
   // User API:
   app.put('/api/user/:id', api.user.update);
-  app.put('/api/user/:id/token', api.user.generateToken);
   // Documents API:
   app.get('/api/document', api.documents.search);
   app.get('/api/document/:id', api.documents.get);

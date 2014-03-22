@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
   <meta name="description" content="<%= info.description %>" />
   <meta name="author" content="<%= info.author %>">
-  <link rel="stylesheet" href="stylesheets/style.css" />
+  <link rel="stylesheet" href="/stylesheets/oauth.css" />
   <link rel="apple-touch-icon-precomposed" sizes="152x152" href="icons/icon_152.png">
   <link rel="apple-touch-icon-precomposed" sizes="120x120" href="icons/icon_120.png">
   <link rel="apple-touch-icon-precomposed" href="icons/icon_57.png">
@@ -14,15 +14,16 @@
 </head>
 <body>
 <section>
+  <img src="/icons/icon_120.png" alt="<%= info.title %>" class="logo"/>
   <p>Hi <%= user.username %>!</p>
-  <p><b><%= client.name %></b> is requesting access to your account.</p>
+  <p><a href="<%= client.homepage %>" target="_blank" title="<%= client.homepage %>" class="client"><%= client.name %></a> is requesting access to your account.</p>
   <p>Do you approve?</p>
 
   <form action="/oauth/authorize/decision" method="post">
     <input name="transaction_id" type="hidden" value="<%= transactionID %>">
     <div>
-      <input type="submit" value="Allow" id="allow">
-      <input type="submit" value="Deny" name="cancel" id="deny">
+      <input type="submit" value="Allow" id="allow" class="btn btn-success">
+      <input type="submit" value="Deny" name="cancel" id="deny" class="btn btn-danger">
     </div>
   </form>
 </section>

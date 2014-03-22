@@ -10,6 +10,7 @@ module.exports = function(db, conn) {
     token:    { type: String, unique: true, required: true },
     created:  { type: Date, default: Date.now, expires: '7d' }
   });
+  AccessTokenSchema.index({userId: 1, clientId: 1}, {unique: true});
 
   return conn.model('AccessToken', AccessTokenSchema);
 };

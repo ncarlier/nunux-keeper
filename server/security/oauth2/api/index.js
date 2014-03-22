@@ -1,4 +1,5 @@
-var client = require('./client');
+var client = require('./client'),
+    user   = require('./user');
 
 module.exports = {
   authorize: function(app) {
@@ -14,5 +15,6 @@ module.exports = {
       res.render('oauth', context);
     };
   },
-  client: client
+  client: client,
+  user: user
 };

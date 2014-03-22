@@ -32,13 +32,14 @@
     </p>
   </section>
   <section>
-    <h2>API access token</h2>
-    <p>Use this token to access to the API.</p>
-    <p>
-    <b>{{ user.apiToken }}</b>&nbsp;
-    <a class="pointer" ng-click="generateToken(user)" title="Regenerate token">[regenerate]</a>
-    </p>
+    <h2>Linked Applications</h2>
+    <p ng-if="!apps.length">No application linked.</p>
+    <p ng-if="apps.length">You have {{ apps.length }} application(s) linked with your account:</p>
+    <ul>
+      <li ng-repeat="app in apps"><a href="{{ app.homepage }}" target="_blank">{{ app.name }}</a></li>
+    </ul>
   </section>
+
 </div>
 
 <script type="text/ng-template" id="templates/dialog/user/edit.html">

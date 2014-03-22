@@ -1,4 +1,5 @@
 var oauth2orize    = require('oauth2orize'),
+    when           = require('when'),
     uid            = require('../helpers').uid,
     logger         = require('../../helpers').logger,
     User           = require('./models').User,
@@ -70,25 +71,39 @@ server.grant(oauth2orize.grant.code(function(client, redirectURI, user, ares, do
 // application issues an access token on behalf of the user who authorized the
 // code.
 server.exchange(oauth2orize.exchange.code(function(client, code, redirectURI, done) {
-  AuthorizationCode.findOne({code: code}, function(err, authzCode) {
-    if (err) { return done(err); }
+  var authzCode = null;
+  // Find authorization code...
+  AuthorizationCode.findOne({code: code}).exec()
+  .then(function(_authzCode) {
+    authzCode = _authzCode;
     if (!authzCode ||
         client._id != authzCode.clientId ||
         redirectURI != authzCode.redirectURI) {
-      return done(null, false);
+      return when.reject('EBADCODE');
     }
-    AuthorizationCode.remove(authzCode, function(err) {
-      if (err) { return done(err); }
-      var token = uid(256);
-      AccessToken.create({
-        userId: authzCode.userId,
-        clientId: authzCode.clientId,
-        token: token
-      }, function(err) {
-        if (err) { return done(err); }
-        done(null, token);
-      });
+    // Remove authorization code...
+    return AuthorizationCode.remove(authzCode).exec();
+  })
+  .then(function() {
+    // Remove existing access token for this client and this user...
+    return AccessToken.remove({
+      userId: authzCode.userId,
+      clientId: authzCode.clientId
+    }).exec();
+  })
+  .then(function() {
+    var token = uid(64);
+    // Create new access token...
+    return AccessToken.create({
+      userId: authzCode.userId,
+      clientId: authzCode.clientId,
+      token: token
     });
+  })
+  .then(function(accessToken) {
+    done(null, accessToken.token);
+  }, function(err) {
+    return (err === 'EBADCODE') ? done(null, false) : done(err);
   });
 }));
 
