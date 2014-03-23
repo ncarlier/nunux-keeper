@@ -66,6 +66,10 @@ var buildQuery = function(owner, params) {
         fields: ['title', 'contentType', 'category', 'illustration', 'attachment'],
         from: from,
         size: size,
+        sort: [
+          "_score",
+          { date: {order: "desc"}}
+        ],
         query: {
           filtered: {
             query: { match_all: {} },
