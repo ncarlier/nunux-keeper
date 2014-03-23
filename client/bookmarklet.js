@@ -57,7 +57,9 @@ var kBookmarklet = function() {
 
   $c.appendChild($ifrm);
 
-  var url = window.K_REALM+'/bookmarklet?url=' + encodeURIComponent(window.location.href);
+  var url = window.K_REALM+'/bookmarklet?url=' +
+    encodeURIComponent(window.location.href) +
+    '&title=' + encodeURIComponent(window.document.title);
 
   popup = window.open(url, frameId);
   if (!popup) alert('Unable to load bookmarklet.');

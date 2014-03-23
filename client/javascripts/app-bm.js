@@ -52,8 +52,15 @@ angular.module('KeeperBookmarklet', ['DocumentService'])
 .controller('BookmarkletCtrl', [
   '$scope', '$messenger', '$window', '$documentService',
   function ($scope, $messenger, $window, $documentService) {
-    var data = null,
-        url = decodeURIComponent($window.location.search.replace('?url=',''));
+    var data = null, match,
+        pl     = /\+/g,  // Regex for replacing addition symbol with a space
+        search = /([^&=]+)=?([^&]*)/g,
+        decode = function (s) { return decodeURIComponent(s.replace(pl, " ")); },
+        query  = $window.location.search.substring(1),
+        params = {};
+
+    while (match = search.exec(query))
+          params[decode(match[1])] = decode(match[2]);
 
     $scope.btnLabel = 'Keep this page';
     $scope.icon = 'glyphicon-cloud-upload';
@@ -78,10 +85,10 @@ angular.module('KeeperBookmarklet', ['DocumentService'])
       $scope.disabled = true;
       if (data) {
         var newDoc = {
-          title: 'From Bookmarklet',
+          title: params.title,
           content: data,
           contentType: 'text/html',
-          link: url
+          link: params.url
         };
         $documentService.create(newDoc)
         .then(function(doc) {
@@ -89,7 +96,8 @@ angular.module('KeeperBookmarklet', ['DocumentService'])
         });
       } else {
         var newDoc = {
-          content: url,
+          title: params.title,
+          content: params.url,
           contentType: 'text/vnd.curl'
         };
         $documentService.create(newDoc)
