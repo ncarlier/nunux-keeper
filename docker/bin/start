@@ -1,5 +1,4 @@
 #!/bin/bash
 
-#docker run -rm -link mongo-elastic:db -volumes-from KEEPER_VOLUMES -p 3000:3000 nunux/keeper /usr/bin/supervisord
-docker run -rm -link mongo-elastic:db -link redis:redis -volumes-from KEEPER_VOLUMES -i -t -p 3000:3000 nunux/keeper npm start /opt/keeper
+docker run -rm -link mongo-elastic:db -link redis:redis -volumes-from KEEPER_VOLUMES -i -t -p 3000:3000 nunux/keeper
 
