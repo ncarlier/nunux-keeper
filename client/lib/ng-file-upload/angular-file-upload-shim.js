@@ -1,10 +1,20 @@
 /**!
  * AngularJS file upload shim for HTML5 FormData
  * @author  Danial  <danial.farid@gmail.com>
- * @version 1.2.7
+ * @version 1.2.11
  */
 (function() {
 
+var hasFlash = function() {
+	try {
+	  var fo = new ActiveXObject('ShockwaveFlash.ShockwaveFlash');
+	  if (fo) return true;
+	} catch(e) {
+	  if (navigator.mimeTypes["application/x-shockwave-flash"] != undefined) return true;
+	}
+	return false;
+}
+	
 if (window.XMLHttpRequest) {
 	if (window.FormData) {
 		// allow access to Angular XHR private field: https://github.com/angular/angular.js/issues/1934
@@ -34,15 +44,10 @@ if (window.XMLHttpRequest) {
 				var origSend = xhr.send;
 				xhr.__requestHeaders = [];
 				xhr.open = (function(orig) {
-					xhr.upload = {
-						addEventListener: function(t, fn, b) {
-							if (t === 'progress') {
-								xhr.__progress = fn;
-							}
-							if (t === 'load') {
-								xhr.__load = fn;
-							}
-						}
+					if (!xhr.upload) xhr.upload = {};
+					xhr.__listeners = [];
+					xhr.upload.addEventListener = function(t, fn, b) {
+						xhr.__listeners[t] = fn;
 					};
 					return function(m, url, b) {
 						orig.apply(xhr, [m, url, b]);
@@ -51,17 +56,17 @@ if (window.XMLHttpRequest) {
 				})(xhr.open);
 				xhr.getResponseHeader = (function(orig) {
 					return function(h) {
-						return xhr.__fileApiXHR ? xhr.__fileApiXHR.getResponseHeader(h) : orig.apply(xhr, [h]); 
+						return xhr.__fileApiXHR ? xhr.__fileApiXHR.getResponseHeader(h) : orig.apply(xhr, [h]);
 					}
 				})(xhr.getResponseHeader);
 				xhr.getAllResponseHeaders = (function(orig) {
 					return function() {
-						return xhr.__fileApiXHR ? xhr.__fileApiXHR.getAllResponseHeaders() : orig.apply(xhr); 
+						return xhr.__fileApiXHR ? xhr.__fileApiXHR.getAllResponseHeaders() : orig.apply(xhr);
 					}
 				})(xhr.getAllResponseHeaders);
 				xhr.abort = (function(orig) {
 					return function() {
-						return xhr.__fileApiXHR ? xhr.__fileApiXHR.abort() : (orig == null ? null : orig.apply(xhr)); 
+						return xhr.__fileApiXHR ? xhr.__fileApiXHR.abort() : (orig == null ? null : orig.apply(xhr));
 					}
 				})(xhr.abort);
 				xhr.setRequestHeader = (function(orig) {
@@ -77,14 +82,19 @@ if (window.XMLHttpRequest) {
 						}
 					}
 				})(xhr.setRequestHeader);
-			
+
 				xhr.send = function() {
 					if (arguments[0] && arguments[0].__isShim) {
 						var formData = arguments[0];
 						var config = {
 							url: xhr.__url,
 							complete: function(err, fileApiXHR) {
-								xhr.__load({type: 'load', loaded: xhr.__total, total: xhr.__total, target: xhr, lengthComputable: true});
+								if (!err && xhr.__listeners['load']) 
+									xhr.__listeners['load']({type: 'load', loaded: xhr.__loaded, total: xhr.__total, target: xhr, lengthComputable: true});
+								if (!err && xhr.__listeners['loadend']) 
+									xhr.__listeners['loadend']({type: 'loadend', loaded: xhr.__loaded, total: xhr.__total, target: xhr, lengthComputable: true});
+								if (err === 'abort' && xhr.__listeners['abort']) 
+									xhr.__listeners['abort']({type: 'abort', loaded: xhr.__loaded, total: xhr.__total, target: xhr, lengthComputable: true});
 								if (fileApiXHR.status !== undefined) Object.defineProperty(xhr, 'status', {get: function() {return fileApiXHR.status}});
 								if (fileApiXHR.statusText !== undefined) Object.defineProperty(xhr, 'statusText', {get: function() {return fileApiXHR.statusText}});
 								Object.defineProperty(xhr, 'readyState', {get: function() {return 4}});
@@ -95,8 +105,9 @@ if (window.XMLHttpRequest) {
 							},
 							progress: function(e) {
 								e.target = xhr;
-								xhr.__progress(e);
+								xhr.__listeners['progress'] && xhr.__listeners['progress'](e);
 								xhr.__total = e.total;
+								xhr.__loaded = e.loaded;
 							},
 							headers: xhr.__requestHeaders
 						}
@@ -110,8 +121,11 @@ if (window.XMLHttpRequest) {
 								config.data[item.key] = item.val;
 							}
 						}
-						
+
 						setTimeout(function() {
+							if (!hasFlash()) {
+								throw 'Adode Flash Player need to be installed. To check ahead use "FileAPI.hasFlash"';
+							}
 							xhr.__fileApiXHR = FileAPI.upload(config);
 						}, 1);
 					} else {
@@ -121,19 +135,16 @@ if (window.XMLHttpRequest) {
 				return xhr;
 			}
 		})(window.XMLHttpRequest);
+		window.XMLHttpRequest.__hasFlash = hasFlash();
 	}
 	window.XMLHttpRequest.__isShim = true;
 }
 
 if (!window.FormData) {
-	var hasFlash = false;
-	try {
-	  var fo = new ActiveXObject('ShockwaveFlash.ShockwaveFlash');
-	  if (fo) hasFlash = true;
-	} catch(e) {
-	  if (navigator.mimeTypes["application/x-shockwave-flash"] != undefined) hasFlash = true;
-	}
 	var wrapFileApi = function(elem) {
+		if (!hasFlash()) {
+			throw 'Adode Flash Player need to be installed. To check ahead use "FileAPI.hasFlash"';
+		}
 		if (!elem.__isWrapped && (elem.getAttribute('ng-file-select') != null || elem.getAttribute('data-ng-file-select') != null)) {
 			var wrap = document.createElement('div');
 			wrap.innerHTML = '<div class="js-fileapi-wrapper" style="position:relative; overflow:hidden"></div>';
@@ -142,9 +153,6 @@ if (!window.FormData) {
 			parent.insertBefore(wrap, elem);
 			parent.removeChild(elem);
 			wrap.appendChild(elem);
-			if (!hasFlash) {
-				wrap.appendChild(document.createTextNode('Flash is required'));
-			}
 			elem.__isWrapped = true;
 		}
 	};
@@ -169,19 +177,19 @@ if (!window.FormData) {
 			return function(e, fn, b, d) {
 				if (isFileChange(this, e)) {
 					wrapFileApi(this);
-					origAddEventListener.apply(this, [e, changeFnWrapper(fn), b, d]); 
+					origAddEventListener.apply(this, [e, changeFnWrapper(fn), b, d]);
 				} else {
 					origAddEventListener.apply(this, [e, fn, b, d]);
 				}
 			}
-		})(HTMLInputElement.prototype.addEventListener);		
+		})(HTMLInputElement.prototype.addEventListener);
 	}
 	if (HTMLInputElement.prototype.attachEvent) {
 		HTMLInputElement.prototype.attachEvent = (function(origAttachEvent) {
 			return function(e, fn) {
 				if (isFileChange(this, e)) {
 					wrapFileApi(this);
-					origAttachEvent.apply(this, [e, changeFnWrapper(fn)]); 
+					origAttachEvent.apply(this, [e, changeFnWrapper(fn)]);
 				} else {
 					origAttachEvent.apply(this, [e, fn]);
 				}
@@ -202,13 +210,18 @@ if (!window.FormData) {
 			__isShim: true
 		};
 	};
-	
+
 	(function () {
 		//load FileAPI
-		if (!window.FileAPI || !FileAPI.upload) {
-			var base = '', script = document.createElement('script'), allScripts = document.getElementsByTagName('script'), i, index, src;
-			if (window.FileAPI && window.FileAPI.jsPath) {
-				base = window.FileAPI.jsPath;
+		if (!window.FileAPI) {
+			window.FileAPI = {};
+		}
+		if (!FileAPI.upload) {
+			var jsUrl, basePath, script = document.createElement('script'), allScripts = document.getElementsByTagName('script'), i, index, src;
+			if (window.FileAPI.jsUrl) {
+				jsUrl = window.FileAPI.jsUrl;
+			} else if (window.FileAPI.jsPath) {
+				basePath = window.FileAPI.jsPath;
 			} else {
 				for (i = 0; i < allScripts.length; i++) {
 					src = allScripts[i].src;
@@ -217,31 +230,27 @@ if (!window.FormData) {
 						index = src.indexOf('angular-file-upload-shim.min.js');
 					}
 					if (index > -1) {
-						base = src.substring(0, index);
+						basePath = src.substring(0, index);
 						break;
 					}
 				}
 			}
 
-			if (!window.FileAPI || FileAPI.staticPath == null) {
-				FileAPI = {
-					staticPath: base
-				}
-			}
-	
-			script.setAttribute('src', base + "FileAPI.min.js");
+			if (FileAPI.staticPath == null) FileAPI.staticPath = basePath;
+			script.setAttribute('src', jsUrl || basePath + "FileAPI.min.js");
 			document.getElementsByTagName('head')[0].appendChild(script);
+			FileAPI.hasFlash = hasFlash();
 		}
 	})();
 }
 
-/*
+
 if (!window.FileReader) {
 	window.FileReader = function() {
 		var _this = this, loadStarted = false;
 		this.listeners = {};
 		this.addEventListener = function(type, fn) {
-			_this.listeners[type] = _this.listeners[type] || []; 
+			_this.listeners[type] = _this.listeners[type] || [];
 			_this.listeners[type].push(fn);
 		};
 		this.removeEventListener = function(type, fn) {
@@ -256,7 +265,7 @@ if (!window.FileReader) {
 			}
 		};
 		this.onabort = this.onerror = this.onload = this.onloadstart = this.onloadend = this.onprogress = null;
-		
+
 		function constructEvent(type, evt) {
 			var e = {type: type, target: _this, loaded: evt.loaded, total: evt.total, error: evt.error};
 			if (evt.result != null) e.target.result = evt.result;
@@ -283,7 +292,7 @@ if (!window.FileReader) {
 			}
 		};
 		this.readAsArrayBuffer = function(file) {
-			FileAPI.readAsArrayBuffer(file, listener);
+			FileAPI.readAsBinaryString(file, listener);
 		}
 		this.readAsBinaryString = function(file) {
 			FileAPI.readAsBinaryString(file, listener);
@@ -296,5 +305,5 @@ if (!window.FileReader) {
 		}
 	}
 }
-*/
+
 })();

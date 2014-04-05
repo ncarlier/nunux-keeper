@@ -1,5 +1,5 @@
 /**
- * @license AngularJS v1.2.14-build.2277+sha.481508d
+ * @license AngularJS v1.2.17-build.94+sha.c3ec6ea
  * (c) 2010-2014 Google, Inc. http://angularjs.org
  * License: MIT
  */
@@ -16,7 +16,6 @@ var $sanitizeMinErr = angular.$$minErr('$sanitize');
  *
  * The `ngSanitize` module provides functionality to sanitize HTML.
  *
- * {@installModule sanitize}
  *
  * <div doc-module-components="ngSanitize"></div>
  *
@@ -260,7 +259,7 @@ function htmlParser( html, handler ) {
         match = html.match( DOCTYPE_REGEXP );
 
         if ( match ) {
-          html = html.replace( match[0] , '');
+          html = html.replace( match[0], '');
           chars = false;
         }
       // end tag
@@ -400,7 +399,7 @@ function decodeEntities(value) {
  * resulting string can be safely inserted into attribute or
  * element text.
  * @param value
- * @returns escaped text
+ * @returns {string} escaped text
  */
 function encodeEntities(value) {
   return value.

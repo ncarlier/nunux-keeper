@@ -1,27 +1,28 @@
 /**!
  * AngularJS file upload/drop directive with http post and progress
  * @author  Danial  <danial.farid@gmail.com>
- * @version 1.2.7
+ * @version 1.2.11
  */
 (function() {
 	
 var angularFileUpload = angular.module('angularFileUpload', []);
 
-angularFileUpload.service('$upload', ['$http', '$rootScope', '$timeout', function($http, $rootScope, $timeout) {
+angularFileUpload.service('$upload', ['$http', '$timeout', function($http, $timeout) {
 	function sendHttp(config) {
 		config.method = config.method || 'POST';
 		config.headers = config.headers || {};
-		config.transformRequest = config.transformRequest || function(data) {
-			if (window.ArrayBuffer && data instanceof ArrayBuffer) {
+		config.transformRequest = config.transformRequest || function(data, headersGetter) {
+			if (window.ArrayBuffer && data instanceof window.ArrayBuffer) {
 				return data;
 			}
-			return $http.defaults.transformRequest[0](data);
+			return $http.defaults.transformRequest[0](data, headersGetter);
 		};
-		
+
 		if (window.XMLHttpRequest.__isShim) {
 			config.headers['__setXHR_'] = function() {
 				return function(xhr) {
 					config.__XHR = xhr;
+					config.xhrFn && config.xhrFn(xhr);
 					xhr.upload.addEventListener('progress', function(e) {
 						if (config.progress) {
 							$timeout(function() {
@@ -40,13 +41,13 @@ angularFileUpload.service('$upload', ['$http', '$rootScope', '$timeout', functio
 				}	
 			};
 		}
-			
+
 		var promise = $http(config);
-		
+
 		promise.progress = function(fn) {
 			config.progress = fn;
 			return promise;
-		};		
+		};
 		promise.abort = function() {
 			if (config.__XHR) {
 				$timeout(function() {
@@ -54,65 +55,83 @@ angularFileUpload.service('$upload', ['$http', '$rootScope', '$timeout', functio
 				});
 			}
 			return promise;
-		};		
+		};
+		promise.xhr = function(fn) {
+			config.xhrFn = fn;
+			return promise;
+		};
 		promise.then = (function(promise, origThen) {
 			return function(s, e, p) {
 				config.progress = p || config.progress;
-				origThen.apply(promise, [s, e, p]);
-				return promise;
+				var result = origThen.apply(promise, [s, e, p]);
+				result.abort = promise.abort;
+				result.progress = promise.progress;
+				result.xhr = promise.xhr;
+				return result;
 			};
 		})(promise, promise.then);
 		
 		return promise;
-	};
+	}
+
 	this.upload = function(config) {
 		config.headers = config.headers || {};
 		config.headers['Content-Type'] = undefined;
 		config.transformRequest = config.transformRequest || $http.defaults.transformRequest;
 		var formData = new FormData();
-		if (config.data) {
-			for (var key in config.data) {
-				var val = config.data[key];
-				if (!config.formDataAppender) {
-					if (typeof config.transformRequest == 'function') {
-						val = config.transformRequest(val);
-					} else {
-						for (var i = 0; i < config.transformRequest.length; i++) {
-							var fn = config.transformRequest[i];
-							if (typeof fn == 'function') {
-								val = fn(val);
+		var origTransformRequest = config.transformRequest;
+		var origData = config.data;
+		config.transformRequest = function(formData, headerGetter) {
+			if (origData) {
+				if (config.formDataAppender) {
+					for (var key in origData) {
+						var val = origData[key];
+						config.formDataAppender(formData, key, val);
+					}
+				} else {
+					for (var key in origData) {
+						var val = origData[key];
+						if (typeof origTransformRequest == 'function') {
+							val = origTransformRequest(val, headerGetter);
+						} else {
+							for (var i = 0; i < origTransformRequest.length; i++) {
+								var transformFn = origTransformRequest[i];
+								if (typeof transformFn == 'function') {
+									val = transformFn(val, headerGetter);
+								}
 							}
 						}
+						formData.append(key, val);
 					}
-					formData.append(key, val);
-				} else {
-					config.formDataAppender(formData, key, val);
 				}
 			}
-		}
-		config.transformRequest =  angular.identity;
-		
-		var fileFormName = config.fileFormDataName || 'file';
-		
-		if (Object.prototype.toString.call(config.file) === '[object Array]') {
-			var isFileFormNameString = Object.prototype.toString.call(fileFormName) === '[object String]'; 
-			for (var i = 0; i < config.file.length; i++) {						         
-				formData.append(isFileFormNameString ? fileFormName + i : fileFormName[i], config.file[i], config.file[i].name);
+
+			if (config.file != null) {
+				var fileFormName = config.fileFormDataName || 'file';
+
+				if (Object.prototype.toString.call(config.file) === '[object Array]') {
+					var isFileFormNameString = Object.prototype.toString.call(fileFormName) === '[object String]'; 
+					for (var i = 0; i < config.file.length; i++) {
+						formData.append(isFileFormNameString ? fileFormName + i : fileFormName[i], config.file[i], config.file[i].name);
+					}
+				} else {
+					formData.append(fileFormName, config.file, config.file.name);
+				}
 			}
-		} else {
-			formData.append(fileFormName, config.file, config.file.name);
-		}
-		
+			return formData;
+		};
+
 		config.data = formData;
-		
+
 		return sendHttp(config);
 	};
+
 	this.http = function(config) {
 		return sendHttp(config);
 	}
 }]);
 
-angularFileUpload.directive('ngFileSelect', [ '$parse', '$http', '$timeout', function($parse, $http, $timeout) {
+angularFileUpload.directive('ngFileSelect', [ '$parse', '$timeout', function($parse, $timeout) {
 	return function(scope, elem, attr) {
 		var fn = $parse(attr['ngFileSelect']);
 		elem.bind('change', function(evt) {
@@ -136,7 +155,7 @@ angularFileUpload.directive('ngFileSelect', [ '$parse', '$http', '$timeout', fun
 	};
 } ]);
 
-angularFileUpload.directive('ngFileDropAvailable', [ '$parse', '$http', '$timeout', function($parse, $http, $timeout) {
+angularFileUpload.directive('ngFileDropAvailable', [ '$parse', '$timeout', function($parse, $timeout) {
 	return function(scope, elem, attr) {
 		if ('draggable' in document.createElement('span')) {
 			var fn = $parse(attr['ngFileDropAvailable']);
@@ -147,17 +166,21 @@ angularFileUpload.directive('ngFileDropAvailable', [ '$parse', '$http', '$timeou
 	};
 } ]);
 
-angularFileUpload.directive('ngFileDrop', [ '$parse', '$http', '$timeout', function($parse, $http, $timeout) {
+angularFileUpload.directive('ngFileDrop', [ '$parse', '$timeout', function($parse, $timeout) {
 	return function(scope, elem, attr) {
 		if ('draggable' in document.createElement('span')) {
+			var cancel = null;
 			var fn = $parse(attr['ngFileDrop']);
 			elem[0].addEventListener("dragover", function(evt) {
+				$timeout.cancel(cancel);
 				evt.stopPropagation();
 				evt.preventDefault();
 				elem.addClass(attr['ngFileDragOverClass'] || "dragover");
 			}, false);
 			elem[0].addEventListener("dragleave", function(evt) {
-				elem.removeClass(attr['ngFileDragOverClass'] || "dragover");
+				cancel = $timeout(function() {
+					elem.removeClass(attr['ngFileDragOverClass'] || "dragover");
+				});
 			}, false);
 			elem[0].addEventListener("drop", function(evt) {
 				evt.stopPropagation();
