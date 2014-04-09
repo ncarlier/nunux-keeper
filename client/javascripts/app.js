@@ -63,6 +63,11 @@ angular.module('KeeperApp', [
 .filter('escape', function() {
   return window.encodeURIComponent;
 })
+.filter('toArray', function() {
+  return function(val) {
+    return Object.prototype.toString.call(val) === '[object Array]' ? val : [val];
+  };
+})
 .filter('unsafe', ['$sce', function($sce) {
   return function(val) {
     return $sce.trustAsHtml(val);

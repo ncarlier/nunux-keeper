@@ -23,7 +23,7 @@ angular.module('DocumentsModule', ['ngRoute', 'angularFileUpload'])
       case '_missing_:category' === $routeParams.q:
         $scope.title = 'Uncategorized';
       break;
-      case (m = $routeParams.q.match(/^category:([a-z\-]+)$/)) != null:
+      case (m = $routeParams.q.match(/^category:([a-z\-]+)$/)) !== null:
         $scope.category = $categoryService.get(m[1]);
       if ($scope.category) {
         $scope.trash = $scope.category.key === 'system-trash';
@@ -35,7 +35,7 @@ angular.module('DocumentsModule', ['ngRoute', 'angularFileUpload'])
       default:
         $scope.title = 'Search';
       $scope.isSearch = true;
-    };
+    }
 
     $scope.documents = [];
     $scope.from = 0;
@@ -109,7 +109,7 @@ angular.module('DocumentsModule', ['ngRoute', 'angularFileUpload'])
       });
 
       modalInstance.result.then(function(doc) {
-        if (doc._id == null) {
+        if (!doc._id) {
           $scope.editing = true;
           $scope.doc = doc;
         } else {
@@ -193,4 +193,10 @@ angular.module('DocumentsModule', ['ngRoute', 'angularFileUpload'])
       $modalInstance.dismiss('cancel');
     };
   }
-]);
+])
+.filter('categoryColor', ['$categoryService', function($categoryService) {
+  return function(val) {
+    var cat = $categoryService.get(val);
+    return cat ? cat.color : '#fff';
+  };
+}]);

@@ -13,4 +13,4 @@ module.exports = function(grunt) {
   grunt.registerTask('dep', ['bower', 'uglify:dep']);
   grunt.registerTask('test', 'mochaTest');
   grunt.registerTask('default', 'test');
-}
+};

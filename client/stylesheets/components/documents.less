@@ -33,14 +33,9 @@
     }
     .next {
       text-align: center;
-      a {
-        font-weight: bold;
-        cursor: pointer;
-        color: @k-grid-text-color;
-      }
-      a:hover {
-        text-decoration: none;
-      }
+      height: initial;
+      font-weight: bold;
+      color: @k-grid-text-color;
     }
     .active {
       background: @k-panel-bg-color;
@@ -49,17 +44,20 @@
       margin: 0;
       padding: 0;
       list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
     }
-    li {
+    ul.cards > li {
+      flex: @k-grid-card-width;
+      height: @k-grid-card-height;
       padding: 10px;
       margin: 10px;
       color: @k-grid-card-fg-color;
       background-color: @k-grid-card-bg-color;
       box-shadow: 2px 2px 5px @k-grid-card-fg-color;
-      width: @k-grid-card-width;
       position: relative;
       cursor: pointer;
-      display: inline-block;
       .transition(all 0.2s ease);
       .doc-title {
         position: absolute;
@@ -78,22 +76,30 @@
       }
       .doc-illustration {
         position: absolute;
-        top: 10px;
-        height: @k-grid-card-height - 20px;
-        width: @k-grid-card-width - 20px;
+        top: 0;
+        left: 0;
+        padding: 10px;
         overflow: hidden;
+        width: 100%;
+        height: 100%;
         text-align: center;
-        img {
-          height: inherit;
-        }
       }
       .glyphicon {
-        height: @k-grid-card-height - 20px;
-        width: @k-grid-card-width - 20px;
+        width: 100%;
         display: block;
         font-size: 75px;
         text-align: center;
         padding-top: 15px;
+      }
+    }
+    ul.categories {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      left: 10px;
+      li {
+        height: 5px;
+        flex: 1;
       }
     }
   }
