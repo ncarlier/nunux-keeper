@@ -81,6 +81,9 @@ routes.api(app);
 // Set up Frontend routes
 routes.frontend(app);
 
+// Set up connectors
+require('./connectors');
+
 Document.configure().then(function() {
   logger.debug('Great! Elasticsearch seem to be well configured.');
   if (!module.parent) {

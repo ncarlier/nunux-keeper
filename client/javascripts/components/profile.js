@@ -1,3 +1,5 @@
+/* global angular, alert */
+
 'use strict';
 
 angular.module('ProfileModule', [])

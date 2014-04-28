@@ -1,7 +1,8 @@
 var documents  = require('./document'),
     categories = require('./category'),
     resources  = require('./resource'),
-    user       = require('./user');
+    user       = require('./user'),
+    connector  = require('./connector');
 
 module.exports = {
   info: function(app) {
@@ -16,5 +17,6 @@ module.exports = {
   documents: documents,
   categories: categories,
   resources: resources,
-  user: user
+  user: user,
+  connector: connector
 };

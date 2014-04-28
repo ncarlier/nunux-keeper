@@ -32,14 +32,27 @@
     </p>
   </section>
   <section>
-    <h2>Linked Applications</h2>
-    <p ng-if="!apps.length">No application linked.</p>
-    <p ng-if="apps.length">You have {{ apps.length }} application(s) linked with your account:</p>
+    <h2>Granted Applications</h2>
+    <p ng-if="!apps.length">No application granted to access your account.</p>
+    <p ng-if="apps.length">You have {{ apps.length }} application(s) granted to access your account:</p>
     <ul>
       <li ng-repeat="app in apps"><a href="{{ app.homepage }}" target="_blank">{{ app.name }}</a></li>
     </ul>
   </section>
-
+  <section>
+    <h2>Twitter</h2>
+    <p ng-if="!user.twitter">
+    Connect Twitter with your account.
+    Once activated, you will be able to keep a tweet thanks to the hash tag #keep.
+    <a href="/api/user/{{user.uid}}/connect/twitter" title="Connect with Twitter">[connect]</a>
+    </p>
+    <p ng-if="user.twitter">
+    Your are linked with <strong>@{{user.twitter.screen_name}}</strong> Twitter account.<br>
+    You can keep a tweet by adding the hash tag #keep.
+    If the tweet contain an url, the targeted resource will be saved.
+    <a href="/api/user/{{user.uid}}/disconnect/twitter" title="Disconnect from Twitter">[disconnect]</a>
+    </p>
+  </section>
 </div>
 
 <script type="text/ng-template" id="templates/dialog/user/edit.html">

@@ -11,7 +11,11 @@ module.exports = function(db, conn) {
     uid:         { type: String, index: { unique: true } },
     username:    { type: String },
     date:        { type: Date, default: Date.now },
-    publicAlias: { type: String, index: { unique: true } }
+    publicAlias: { type: String, index: { unique: true } },
+    twitter:     {
+      user_id:     { type: String },
+      screen_name: { type: String }
+    }
   });
 
   UserSchema.static('login', function(user) {

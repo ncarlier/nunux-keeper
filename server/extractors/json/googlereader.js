@@ -1,4 +1,4 @@
-var logger     = require('../helpers').logger,
+var logger     = require('../../helpers').logger,
     when       = require('when'),
     fs         = require('fs'),
     JSONStream = require('JSONStream');
@@ -61,24 +61,18 @@ var importAttachedJSON = function(doc) {
 };
 
 /**
- * JSON content extractor.
- * This extractor ican create multi documents.
- * @module json
+ * Google Reader JSON content extractor.
+ * This extractor create multi documents.
+ * @module googlereader
  */
 module.exports = {
   /**
-   * Extract content of a document.
+   * Extract content of a GoogleReader export.
    * @param {Document} doc
-   * @return {Promise} Promise of the document with extracted content.
+   * @return {Promise} Promise of extracted documents.
    */
   extract: function(doc) {
-    logger.debug('Using JSON extractor.');
-
-    if (doc.attachment) {
-      return importAttachedJSON(doc);
-    } else {
-      // Nothing else to do... forward the doc.
-      return when.resolve(doc);
-    }
+    logger.debug('Using GoogleReader exports extractor.');
+    return importAttachedJSON(doc);
   }
 };

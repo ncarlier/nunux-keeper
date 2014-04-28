@@ -2,7 +2,15 @@
 /* Profile                                                                       */
 /*********************************************************************************/
 #profile {
-  > section {
+  position: relative;
+  height: 100%;
+  div.profile {
+    width: 100%;
+    box-shadow: inset 0px 0 10px #444;
+    overflow: auto;
+    position: absolute;
+    bottom: 0;
+    top: @k-topnav-height;
     padding: 10px;
     header {
       height: 80px;
