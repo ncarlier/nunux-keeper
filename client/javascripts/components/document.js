@@ -64,6 +64,10 @@ angular.module('DocumentModule', ['ngRoute', 'ngSanitize'])
       return /^image\//.test(doc.contentType);
     };
 
+    $scope.isPublic = function(doc) {
+      return _.contains(doc.categories, 'system-public');
+    };
+
     $scope.addCategory = function(key) {
       if (!_.contains($scope.doc.categories, key)) {
         $scope.doc.categories.push(key);

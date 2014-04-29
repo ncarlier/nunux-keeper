@@ -12,6 +12,8 @@
       <time>{{ doc.date | date }}</time>
       <span class="glyphicon glyphicon-globe" ng-if="doc.link"></span>
       <a href="{{doc.link}}" title="View source" ng-if="doc.link" target="_blank">{{ doc.link | domain }}</a>
+      <span class="glyphicon glyphicon-link" ng-if="isPublic(doc)"></span>
+      <a href="/doc/{{doc._id}}" title="View public document" target="_blank" ng-if="isPublic(doc)">share</a>
     </span>
     <ul class="categories" ng-show="editing || doc.categories.length">
       <li app-category-tag="cat" ng-repeat="cat in doc.categories" class="category" ng-class="{'editing': editing}"></li>

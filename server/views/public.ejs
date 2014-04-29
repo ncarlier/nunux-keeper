@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title><%= info.title %></title>
+  <title><%= info.title %> | <%= doc.title %></title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
   <meta name="description" content="<%= info.description %>" />
   <meta name="author" content="<%= info.author %>">
@@ -17,18 +17,28 @@
 </head>
 <body>
   <header>
-    <h1>Nunux Keeper public page</h1>
+    <img src="/icons/icon_57.png"
+    alt="Powered by Nunux <%= info.name %>"
+    title="Powered by Nunux <%= info.name %>">
   </header>
   <section class="content">
-    <% documents.forEach(function(doc){ %>
-    <% include document %>
-    <% }) %>
+    <article class="document">
+      <header>
+        <h1><%= doc.title %></h1>
+        <span class="doc-meta">
+          <span class="glyphicon glyphicon-time"></span>
+          <time><%= doc.date %></time>
+          <% if (doc.link) { %>
+          <span class="glyphicon glyphicon-globe"></span>
+          <a href="<%= doc.link %>" title="View source" target="_blank">source</a>
+          <% } %>
+        </span>
+      </header>
+      <section class="content" class="readable">
+        <%- doc.content %>
+      </section>
+    </article>
   </section>
-  <footer>
-  <div id="powered">
-    <p>powered by Nunux <%= info.name %></p>
-  </div>
-  </footer>
 <script>
 var imgs = document.getElementsByTagName('img');
 for (var i = 0; i < imgs.length; i++) {

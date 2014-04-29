@@ -21,17 +21,6 @@
       onclick="alert('Don\'t click on me, but drag me.');return false;" title="Drag me in your toolbar!" class="bookmarklet">Keep This!</a>
   </section>
   <section>
-    <h2>Public page</h2>
-    <p>Documents in public category are published on your public page.</p>
-    <p>
-    <a href="{{realm}}/public/{{user.publicAlias}}" target="_blank" title="Your public page">
-      {{realm}}/public/{{user.publicAlias}}
-    </a>
-    &nbsp;
-    <a class="pointer" ng-click="editUserDialog(user)" title="Edit your public alias">[edit]</a>
-    </p>
-  </section>
-  <section>
     <h2>Granted Applications</h2>
     <p ng-if="!apps.length">No application granted to access your account.</p>
     <p ng-if="apps.length">You have {{ apps.length }} application(s) granted to access your account:</p>
@@ -54,22 +43,4 @@
     </p>
   </section>
 </div>
-
-<script type="text/ng-template" id="templates/dialog/user/edit.html">
-<div class="modal-header">
-  <h3>Edit user: {{ user.username }}</h3>
-</div>
-<div class="modal-body">
-  <form role="form" ng-submit="ok()">
-    <div class="form-group">
-      <label for="publicAlias">Public page alias</label>
-      <input type="text" class="form-control" id="publicAlias" placeholder="Enter your public alias" ng-model="user.publicAlias">
-    </div>
-  </form>
-</div>
-<div class="modal-footer">
-  <button class="btn btn-primary" ng-click="ok()">OK</button>
-  <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
-</div>
-</script>
 

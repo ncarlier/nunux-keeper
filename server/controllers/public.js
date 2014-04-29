@@ -1,31 +1,26 @@
-var when     = require('when'),
-    errors   = require('../helpers').errors,
-    logger   = require('../helpers').logger,
-    User     = require('../models').User,
-    Document = require('../models').Document;
+var _          = require('underscore'),
+    errors     = require('../helpers').errors,
+    validators = require('../helpers').validators,
+    Document   = require('../models').Document;
 
 /**
  * Public page controller.
  */
 module.exports = {
   /**
-   * Get public page.
+   * Get public document.
    */
   get: function(req, res, next) {
-    var alias = req.params.alias;
-    User.findOne({publicAlias: alias}).exec()
-    .then(function(user) {
-      if (!user) return when.reject(new errors.NotFound('Page not found.'));
-      logger.debug('Show public page %s of user %s', alias, user.uid);
-      var query = {
-        owner: user.uid,
-        categories: 'system-public'
-      };
-      return Document.find(query).exec();
-    })
-    .then(function(documents) {
-      logger.debug('Show public page %s (#%d documents)', alias, documents.length);
-      req.context.documents = documents;
+    if (!validators.isDocId(req.params.id)) {
+      return next(new errors.NotFound('Document not found.'));
+    }
+
+    Document.findById(req.params.id).exec()
+    .then(function(doc) {
+      if (!doc || !_.contains(doc.categories, 'system-public')) {
+        return next(new errors.NotFound('Document not found.'));
+      }
+      req.context.doc = doc;
       res.render('public', req.context);
     }, next);
   }
