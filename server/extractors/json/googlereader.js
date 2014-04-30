@@ -1,4 +1,5 @@
 var logger     = require('../../helpers').logger,
+    extractors = require('../../extractors'),
     when       = require('when'),
     fs         = require('fs'),
     JSONStream = require('JSONStream');
@@ -25,7 +26,7 @@ var importDocument = function(data, parent) {
   logger.debug('Importing document "%s" ...', doc.title);
 
   var extracted = when.defer();
-  module.parent.exports.get(doc.contentType).extract(doc)
+  module.parent.parent.exports.get(doc.contentType).extract(doc)
   .then(extracted.resolve, extracted.reject);
   return extracted.promise;
 };

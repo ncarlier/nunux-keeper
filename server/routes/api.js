@@ -1,4 +1,4 @@
-var api = require('../api');
+var api       = require('../api');
 
 /**
  * API Routes.
@@ -7,7 +7,6 @@ module.exports = function(app) {
   // API info:
   app.get('/api', api.info(app));
   // User API:
-  app.put('/api/user/:id', api.user.update);
   app.get('/api/user/:id/connect/twitter', api.connector.twitter.connect);
   app.get('/api/user/:id/connect/twitter/callback', api.connector.twitter.callback);
   app.get('/api/user/:id/disconnect/twitter', api.connector.twitter.disconnect);

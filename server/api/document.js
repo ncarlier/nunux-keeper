@@ -50,13 +50,14 @@ module.exports = {
 
     var doc = {
       title:       req.query.title,
-      content:     req.rawBody || JSON.stringify(req.body),
+      content:     req.text || JSON.stringify(req.body),
       contentType: req.header('Content-Type'),
       link:        link,
       owner:       req.user.uid,
       categories:  categories,
       files:       req.files
     };
+
     // Extract content
     Document.extract(doc)
     .then(function(_doc) {
@@ -109,7 +110,7 @@ module.exports = {
       }
 
       // Check that content can be modified
-      if (req.rawBody) {
+      if (req.text) {
         var contentType = req.header('Content-Type');
         if (doc.contentType.toLowerCase() !== contentType.toLowerCase()) {
           return when.reject(new errors.BadRequest('Change document content type is not supported ('+ doc.contentType  +' -> '+ contentType +').'));
@@ -118,7 +119,7 @@ module.exports = {
           return when.reject(new errors.BadRequest('Only text content type modification is supported: ' + contentType));
         }
         // Extract content
-        doc.content = req.rawBody;
+        doc.content = req.text;
         return Document.extract(doc).then(function(_doc) {
           // Udpate content
           update.content = _doc.content;

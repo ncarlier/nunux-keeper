@@ -10,7 +10,7 @@ var _          = require('underscore'),
 
 describe('Check document API', function() {
   var url = mockServer.getRealm() + '/api/document',
-      imageUrl = 'http://reader.nunux.org/images/screenshots.png?foo=bar',
+      imageUrl = 'http://reader.nunux.org/icons/favicon.png?foo=bar',
       uid = 'foo@bar.com';
   var docId, hits;
 

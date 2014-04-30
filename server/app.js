@@ -17,57 +17,62 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-var express    = require('express'),
-    http       = require('http'),
-    path       = require('path'),
-    passport   = require('passport'),
-    logger     = require('./helpers').logger,
-    files      = require('./helpers').files,
-    middleware = require('./middlewares'),
-    secMiddleware = require('./security/middlewares'),
-    appInfo    = require('../package.json'),
-    routes     = require('./routes'),
-    Document   = require('./models').Document;
+var express        = require('express'),
+    morgan         = require('morgan'),
+    bodyParser     = require('body-parser'),
+    compress       = require('compression'),
+    methodOverride = require('method-override'),
+    cookieParser   = require('cookie-parser'),
+    session        = require('express-session'),
+    path           = require('path'),
+    os             = require('os'),
+    passport       = require('passport'),
+    logger         = require('./helpers').logger,
+    files          = require('./helpers').files,
+    middleware     = require('./middlewares'),
+    secMiddleware  = require('./security/middlewares'),
+    appInfo        = require('../package.json'),
+    Document       = require('./models').Document;
 
 var app = module.exports = express();
 
-app.configure(function() {
-  app.set('info', {
-    name: appInfo.name,
-    title: appInfo.name,
-    description: appInfo.description,
-    version: appInfo.version,
-    author: appInfo.author
-  });
-  app.set('port', process.env.APP_PORT || 3000);
-  app.set('realm', process.env.APP_REALM || 'http://localhost:' + app.get('port'));
-  app.set('views', __dirname + '/views');
-  app.set('view engine', 'ejs');
-  app.use(express.logger('dev'));
-  app.use(express.compress());
-  app.use(express.cookieParser());
-  app.use(express.cookieSession({secret: process.env.APP_SESSION_SECRET || 'NuNUXKeEpR_'}));
-  app.use(express.bodyParser({ uploadDir: process.env.APP_VAR_DIR ? path.join(process.env.APP_VAR_DIR, 'upload') : '/tmp' }));
-  app.use(middleware.rawbodyHandler());
-  app.use(passport.initialize());
-  app.use(passport.session());
-  app.use('/api', secMiddleware.token(passport), middleware.cors());
-  app.use('/api/admin', secMiddleware.ensureIsAdmin);
-  app.use(express.methodOverride());
-  app.use(app.router);
-});
+var env = process.env.NODE_ENV || 'development',
+    uploadDir = process.env.APP_VAR_DIR ? path.join(process.env.APP_VAR_DIR, 'upload') : os.tmpdir();
 
-app.configure('development', function() {
-  app.use(require('less-middleware')({ src: path.join(__dirname, '../client') }));
+app.set('info', {
+  name: appInfo.name,
+  title: appInfo.name,
+  description: appInfo.description,
+  version: appInfo.version,
+  author: appInfo.author
+});
+app.set('port', process.env.APP_PORT || 3000);
+app.set('realm', process.env.APP_REALM || 'http://localhost:' + app.get('port'));
+app.set('views', __dirname + '/views');
+app.set('view engine', 'ejs');
+// Logger
+app.use(morgan('dev'));
+app.use(compress());
+app.use(cookieParser(process.env.APP_SESSION_SECRET || 'NuNUXKeEpR_'));
+app.use(bodyParser());
+//app.use(multer({ dest: uploadDir}));
+app.use(middleware.rawbodyParser());
+app.use(middleware.multipart());
+app.use(session());
+app.use(passport.initialize());
+app.use(passport.session());
+app.use('/api', secMiddleware.token(passport), middleware.cors());
+app.use('/api/admin', secMiddleware.ensureIsAdmin);
+app.use(methodOverride());
+
+if ('development' == env) {
+  app.use(require('less-middleware')(path.join(__dirname, '../client')));
   app.use(express.static(path.join(__dirname, '../client')));
-  app.use(middleware.errorHandler(app));
-});
-
-app.configure('production', function() {
+}
+if ('production' == env) {
   var oneDay = 86400000;
   app.use(express.static(path.join(__dirname, '../dist'), {maxAge: oneDay}));
-  app.use(middleware.errorHandler(app));
-});
+}
 
 // Set up security
 require('./security')(app, passport);
@@ -76,18 +81,17 @@ require('./security')(app, passport);
 require('./security/oauth2')(app, passport);
 
 // Register routes...
-// Set up API routes
-routes.api(app);
-// Set up Frontend routes
-routes.frontend(app);
+require('./routes')(app);
 
 // Set up connectors
 require('./connectors');
 
+app.use(middleware.errorHandler(app));
+
 Document.configure().then(function() {
   logger.debug('Great! Elasticsearch seem to be well configured.');
   if (!module.parent) {
-    http.createServer(app).listen(app.get('port'), function() {
+    app.listen(app.get('port'), function() {
       logger.info('%s web server listening on port %s (%s mode)',
                   app.get('info').name,
                   app.get('port'),

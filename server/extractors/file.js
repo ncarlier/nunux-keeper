@@ -9,14 +9,14 @@ var when     = require('when'),
  * @return {Promise} Promise of the importation.
  */
 var importFile = function(file, doc) {
-  logger.debug('Saving file %s for user %s ...', file.name, doc.owner);
-  doc.contentType = file.type;
-  var ext = file.name.split('.').pop();
+  logger.debug('Saving file %s for user %s ...', file.originalFilename, doc.owner);
+  doc.contentType = file.headers['content-type'];
+  var ext = file.originalFilename.split('.').pop();
   if (doc.contentType === 'application/octet-stream' && ext === 'json') {
     doc.contentType = 'application/json';
   }
   doc.attachment = {
-    name: file.name,
+    name: file.originalFilename,
     stream: fs.createReadStream(file.path)
   };
   // Get content...

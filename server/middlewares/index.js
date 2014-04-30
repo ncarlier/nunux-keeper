@@ -3,7 +3,8 @@
  */
 module.exports = {
   errorHandler: require('./error'),
-  rawbodyHandler: require('./rawbody'),
+  rawbodyParser: require('./rawbody'),
   contextHandler: require('./context'),
-  cors: require('./cors')
+  cors: require('./cors'),
+  multipart: require('./multipart')
 };

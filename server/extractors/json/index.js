@@ -1,7 +1,7 @@
-var logger     = require('../../helpers').logger,
-    when       = require('when'),
-    greader    = require('./googlereader'),
-    twitter    = require('./twitter');
+var logger  = require('../../helpers').logger,
+    when    = require('when'),
+    greader = require('./googlereader'),
+    twitter = require('./twitter');
 
 /**
  * JSON content extractor.

@@ -20,7 +20,7 @@ module.exports = {
     logger.debug('Using URL extractor.');
     var extracted = when.defer();
     if (!validators.isUrl(doc.content)) {
-      return when.reject(new errors.BadRequest(e.message));
+      return when.reject(new errors.BadRequest('URL not valid: ' + doc.content));
     }
     doc.link = doc.content;
 
