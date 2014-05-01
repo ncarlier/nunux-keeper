@@ -42,7 +42,7 @@ module.exports = {
   create: function(req, res, next) {
     // Sanitize and validate query params
     var link = req.query.link;
-    if (link && !validators.isUrl(link)) {
+    if (link && !validators.isURL(link)) {
       return next(new errors.BadRequest('Url link invalid.'));
     }
     var categories = req.query.categories ? req.query.categories : [];
