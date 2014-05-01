@@ -14,6 +14,7 @@ Nunux Keeper allow you to save articles or medias you found on internet in one p
 * Access from your mobile or your computer. It's full responsive.
 * Easyly save web content while surfing thanks to the awesome bookmarklet.
 * Build your own client application thaks to the RESTFul JSON API.
+* Link your account with Twitter and keep your tweets.
 
 ## Roadmap
 
