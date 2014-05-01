@@ -2,7 +2,6 @@ var when       = require('when'),
     logger     = require('../helpers').logger,
     errors     = require('../helpers').errors,
     validators = require('../helpers').validators,
-    sanitize   = require('validator').sanitize,
     Category   = require('../models').Category;
 
 /**
@@ -66,8 +65,8 @@ module.exports = {
     if (!req.body.label) {
       return next(new errors.BadRequest('Category label is undefined.'));
     }
-    var label = sanitize(req.body.label).trim();
-    label = sanitize(label).entityEncode();
+    var label = validators.trim(req.body.label);
+    label = validators.escape(label);
     // Sanitize and validate query params
     var color = req.body.color || '#fff';
     if (!validators.isHexColor(color)) {
@@ -102,8 +101,8 @@ module.exports = {
     // Sanitize and validate query params
     var label = req.body.label;
     if (label) {
-      label = sanitize(label).trim();
-      update.label = sanitize(label).entityEncode();
+      label = validators.trim(label);
+      update.label = validators.escape(label);
     }
     var color = req.body.color;
     if (color && !validators.isHexColor(color)) {

@@ -3,7 +3,6 @@ var when       = require('when'),
     logger     = require('../helpers').logger,
     errors     = require('../helpers').errors,
     validators = require('../helpers').validators,
-    sanitize   = require('validator').sanitize,
     Document   = require('../models').Document;
 
 module.exports = {

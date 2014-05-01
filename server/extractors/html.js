@@ -62,7 +62,7 @@ module.exports = {
       return extracted.promise;
     } else if (doc.content && doc.content !== '') {
       // extract content
-      if (validators.isUrl(doc.content)) {
+      if (validators.isURL(doc.content)) {
         doc.link = doc.content;
       }
       return extractHtml(doc);

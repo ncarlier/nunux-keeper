@@ -19,7 +19,7 @@ module.exports = {
   extract: function(doc) {
     logger.debug('Using URL extractor.');
     var extracted = when.defer();
-    if (!validators.isUrl(doc.content)) {
+    if (!validators.isURL(doc.content)) {
       return when.reject(new errors.BadRequest('URL not valid: ' + doc.content));
     }
     doc.link = doc.content;

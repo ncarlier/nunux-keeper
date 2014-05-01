@@ -1,10 +1,10 @@
-var validators = require('validator').validators;
+var validator = require('validator');
 
 /**
  * Test if string is a valid Document ID.
  * @param {String} str
  */
-validators.isDocId = function(str) {
+validator.isDocId = function(str) {
   return /^[0-9a-fA-F]{24}$/.test(str);
 };
 
@@ -12,14 +12,14 @@ validators.isDocId = function(str) {
  * Test if string is a valid public alias.
  * @param {String} str
  */
-validators.isPublicAlias = function(str) {
+validator.isPublicAlias = function(str) {
   return /^[0-9a-zA-Z_]{3,128}$/.test(str);
 };
 
 /**
  * Validators helper.
- * @extends validator.validators
+ * @extends validator
  * @module validators
  */
-module.exports = validators;
+module.exports = validator;
 
