@@ -91,6 +91,16 @@
   > article {
     padding: 10px;
     position: relative;
+    position: absolute;
+    top: 70px;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    overflow: auto;
+    &.editing {
+      top: 100px;
+      bottom: 50px;
+    }
   }
   .doc-image img {
     max-width: 100%;

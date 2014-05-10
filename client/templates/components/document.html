@@ -54,7 +54,7 @@
       </li>
     </ul>
   </header>
-  <article contenteditable="{{ editing }}" ng-model="doc.content" class="readable">
+  <article contenteditable="{{ editing }}" ng-model="doc.content" class="readable" ng-class="{editing: editing}">
   </article>
   <div class="doc-image" ng-if="isImage(doc)">
     <img src="" data-ng-src="/api/document/{{doc._id}}/resource/{{doc.attachment}}">
