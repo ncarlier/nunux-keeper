@@ -7,9 +7,14 @@ module.exports = function(app) {
   // API info:
   app.get('/api', api.info(app));
   // User API:
+  app.get('/api/user/current', api.user.get);
   app.get('/api/user/:id/connect/twitter', api.connector.twitter.connect);
   app.get('/api/user/:id/connect/twitter/callback', api.connector.twitter.callback);
   app.get('/api/user/:id/disconnect/twitter', api.connector.twitter.disconnect);
+  app.get('/api/user/:id/connect/pocket', api.connector.pocket.connect);
+  app.get('/api/user/:id/connect/pocket/callback', api.connector.pocket.callback);
+  app.get('/api/user/:id/disconnect/pocket', api.connector.pocket.disconnect);
+  app.get('/api/user/:id/pocket/import', api.connector.pocket.importAll);
   // Documents API:
   app.get('/api/document', api.documents.search);
   app.get('/api/document/:id', api.documents.get);

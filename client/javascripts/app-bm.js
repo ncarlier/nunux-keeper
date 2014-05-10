@@ -50,8 +50,8 @@ angular.module('KeeperBookmarklet', ['DocumentService'])
   };
 }])
 .controller('BookmarkletCtrl', [
-  '$scope', '$messenger', '$window', '$documentService',
-  function ($scope, $messenger, $window, $documentService) {
+  '$scope', '$messenger', '$window', 'documentService',
+  function ($scope, $messenger, $window, documentService) {
     var data = null, match,
         pl     = /\+/g,  // Regex for replacing addition symbol with a space
         search = /([^&=]+)=?([^&]*)/g,
@@ -83,28 +83,25 @@ angular.module('KeeperBookmarklet', ['DocumentService'])
 
     $scope.saveDocument = function() {
       $scope.disabled = true;
+      var newDoc = null;
       if (data) {
-        var newDoc = {
+        newDoc = {
           title: params.title,
           content: data,
           contentType: 'text/html',
           link: params.url
         };
-        $documentService.create(newDoc)
-        .then(function(doc) {
-          $scope.icon = 'glyphicon-ok';
-        });
       } else {
-        var newDoc = {
+        newDoc = {
           title: params.title,
           content: params.url,
           contentType: 'text/vnd.curl'
         };
-        $documentService.create(newDoc)
-        .then(function(doc) {
-          $scope.icon = 'glyphicon-ok';
-        });
       }
+      documentService.create(newDoc)
+      .then(function(doc) {
+        $scope.icon = 'glyphicon-ok';
+      });
     };
   }
 ]);

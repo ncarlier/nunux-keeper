@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('CategoryService', [])
-.factory('$categoryService', ['$q', '$http', function ($q, $http) {
+.factory('categoryService', ['$q', '$http', function ($q, $http) {
   var url = '/api/category',
     categories = [];
 

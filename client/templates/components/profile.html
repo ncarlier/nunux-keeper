@@ -1,4 +1,5 @@
 <div class="profile">
+  <div class="alert" ng-if="message" ng-class="message.clazz">{{message.text}}</div>
   <header>
     <span class="avatar">
       <img ng-src="{{user.uid | gravatar}}" alt="{{user.uid}}" title="{{user.uid}} on Gravatar" />
@@ -36,10 +37,26 @@
     <a href="/api/user/{{user.uid}}/connect/twitter" title="Connect with Twitter">[connect]</a>
     </p>
     <p ng-if="user.twitter">
-    Your are linked with <strong>@{{user.twitter.screen_name}}</strong> Twitter account.<br>
+    Your are linked with <strong>@{{user.twitter.screen_name}}</strong> Twitter account.
+    <a href="/api/user/{{user.uid}}/disconnect/twitter" title="Disconnect from Twitter">[disconnect]</a>
+    <br>
     You can keep a tweet by adding the hash tag #keep.
     If the tweet contain an url, the targeted resource will be saved.
-    <a href="/api/user/{{user.uid}}/disconnect/twitter" title="Disconnect from Twitter">[disconnect]</a>
+    </p>
+  </section>
+  <section>
+    <h2>Pocket</h2>
+    <p ng-if="!user.pocket">
+    Connect Pocket with your account.
+    Once activated, you will be able to import Pocket documents.
+    <a href="/api/user/{{user.uid}}/connect/pocket" title="Connect with Pocket">[connect]</a>
+    </p>
+    <p ng-if="user.pocket">
+    Your are linked with <strong>{{user.pocket.username}}</strong> Pocket account.
+    <a href="/api/user/{{user.uid}}/disconnect/pocket" title="Disconnect from Twitter">[disconnect]</a>
+    <br>
+    You can import Pocket documents.
+    <a href="/api/user/{{user.uid}}/pocket/import" title="Import all documents from Pocket">[import]</a>
     </p>
   </section>
 </div>

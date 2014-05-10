@@ -15,6 +15,10 @@ module.exports = function(db, conn) {
     twitter:     {
       user_id:     { type: String },
       screen_name: { type: String }
+    },
+    pocket: {
+      username:     { type: String },
+      access_token: { type: String }
     }
   });
 

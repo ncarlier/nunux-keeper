@@ -1,3 +1,5 @@
+/* global angular */
+
 'use strict';
 
 angular.module('ui.helpers', ['angular-md5'])
@@ -6,7 +8,7 @@ angular.module('ui.helpers', ['angular-md5'])
   var link = function($scope, $element, $attributes) {
     if (!$scope.doc || !$scope.doc._id) return;
     var resourcePath = '/api/document/' + $scope.doc._id + '/resource/';
-    var size = $attributes.size
+    var size = $attributes.size;
     $attributes.$observe(
       'appSrc',
       function(newSource) {
@@ -55,7 +57,7 @@ angular.module('ui.helpers', ['angular-md5'])
         return false;
       }, false);
     }
-  }
+  };
 })
 .directive('droppable', function() {
   return {
@@ -116,6 +118,6 @@ angular.module('ui.helpers', ['angular-md5'])
         false
       );
     }
-  }
+  };
 });
 

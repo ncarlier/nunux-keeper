@@ -1,3 +1,5 @@
+/* global angular, $ ,_, confirm, alert */
+
 'use strict';
 
 angular.module('DocumentModule', ['ngRoute', 'ngSanitize'])
@@ -9,14 +11,14 @@ angular.module('DocumentModule', ['ngRoute', 'ngSanitize'])
   };
 }])
 .directive('appCategoryTag', [
-  '$categoryService', '$filter',
-  function($categoryService, $filter) {
+  'categoryService', '$filter',
+  function(categoryService, $filter) {
     function link(scope, element, attrs) {
       var category;
 
       scope.$watch(attrs.appCategoryTag, function(value) {
         scope.key = value;
-        category = $categoryService.get(scope.key);
+        category = categoryService.get(scope.key);
         if (category) {
           scope.label = category.label;
           element.css('background-color', category.color);
@@ -54,11 +56,13 @@ angular.module('DocumentModule', ['ngRoute', 'ngSanitize'])
   };
 }])
 .controller('DocumentCtrl', [
-  '$scope', '$categoryService', '$documentService', '$timeout',
-  function ($scope, $categoryService, $documentService, $timeout) {
-    $categoryService.getAll().then(function(categories) {
+  '$rootScope', '$scope', 'categoryService', 'documentService', '$timeout',
+  function ($rootScope, $scope, categoryService, documentService, $timeout) {
+    categoryService.getAll().then(function(categories) {
       $scope.categories = categories;
     });
+
+    $scope.loading = false;
 
     $scope.isImage = function(doc) {
       return /^image\//.test(doc.contentType);
@@ -80,6 +84,10 @@ angular.module('DocumentModule', ['ngRoute', 'ngSanitize'])
       }
     };
 
+    $scope.startEditing = function() {
+      $scope.editing = true;
+    };
+
     $scope.cancelDocument = function() {
       $scope.editing = false;
       if (!$scope.doc._id) {
@@ -89,7 +97,7 @@ angular.module('DocumentModule', ['ngRoute', 'ngSanitize'])
 
     $scope.saveDocument = function() {
       if ($scope.doc._id) {
-        $documentService.update($scope.doc)
+        documentService.update($scope.doc)
         .then(function(doc) {
           $scope.doc = doc;
           $scope.editing = false;
@@ -98,7 +106,7 @@ angular.module('DocumentModule', ['ngRoute', 'ngSanitize'])
           }, 300);
         });
       } else {
-        $documentService.create($scope.doc)
+        documentService.create($scope.doc)
         .then(function(doc) {
           $scope.doc = doc;
           $scope.addDocument(doc);
@@ -106,6 +114,30 @@ angular.module('DocumentModule', ['ngRoute', 'ngSanitize'])
           $timeout(function() {
             $scope.doc.opened = true;
           }, 300);
+        });
+      }
+    };
+
+    $scope.reFetchFromSource = function() {
+      if (confirm('Are you sure to create a new document from the source of this one ?')) {
+        var doc = {
+          title: $scope.doc.title,
+          content: $scope.doc.link,
+          contentType: 'text/vnd.curl'
+        };
+        $scope.loading = true;
+        documentService.create(doc)
+        .then(function(_doc) {
+          $scope.doc = _doc;
+          $scope.addDocument(_doc);
+          $scope.editing = false;
+          $scope.loading = false;
+          $timeout(function() {
+            $scope.doc.opened = true;
+          }, 300);
+        }, function(err) {
+          $scope.loading = false;
+          alert('Error: '+ err);
         });
       }
     };

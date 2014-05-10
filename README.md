@@ -15,6 +15,7 @@ Nunux Keeper allow you to save articles or medias you found on internet in one p
 * Easyly save web content while surfing thanks to the awesome bookmarklet.
 * Build your own client application thaks to the RESTFul JSON API.
 * Link your account with Twitter and keep your tweets.
+* Import your bookmarks from Pocket.
 
 ## Roadmap
 
@@ -66,7 +67,7 @@ Connect to mongodb and enabled replicaset:
 
 ### Install the Keeper
 
-    mkdir -p /opt/node/keeper &&keeper cd $_
+    mkdir -p /opt/node/keeper && cd $_
     git clone git@github.com:ncarlier/nunux-keeper.git
     cd keeper
     npm install

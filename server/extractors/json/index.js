@@ -1,7 +1,8 @@
 var logger  = require('../../helpers').logger,
     when    = require('when'),
     greader = require('./googlereader'),
-    twitter = require('./twitter');
+    twitter = require('./twitter'),
+    pocket  = require('./pocket');
 
 /**
  * JSON content extractor.
@@ -26,6 +27,9 @@ module.exports = {
       if (twitter.detect(doc.content)) {
         // Detect a Tweet JSON.
         return twitter.extract(doc);
+      } else if (pocket.detect(doc.content)) {
+        // Detect a Pocket JSON.
+        return pocket.extract(doc);
       } else {
         // Nothing else to do... forward the doc.
         return when.resolve(doc);

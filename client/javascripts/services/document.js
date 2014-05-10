@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('DocumentService', ['angularFileUpload'])
-.factory('$documentService', [
+.factory('documentService', [
   '$q', '$http', '$upload', '$log',
   function ($q, $http, $upload, $log) {
     var url = '/api/document';

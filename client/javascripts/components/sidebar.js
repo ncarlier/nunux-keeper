@@ -1,3 +1,5 @@
+/* global $, angular, alert, Mousetrap ,_ */
+
 'use strict';
 
 angular.module('SidebarModule', [])
@@ -33,13 +35,16 @@ angular.module('SidebarModule', [])
   };
 }])
 .controller('SidebarCtrl', [
-  '$window', '$scope', '$categoryService', '$documentService',
+  '$scope', 'userService', 'categoryService', 'documentService',
   '$modal', '$log', '$location', '$timeout',
-  function ($window, $scope, $categoryService, $documentService,
+  function ($scope, userService, categoryService, documentService,
             $modal, $log, $location, $timeout) {
-    $scope.user = $window.user;
+    userService.get().then(function(user) {
+      $scope.user = user;
+    });
+
     var refresh = function() {
-      $categoryService.getAll()
+      categoryService.getAll()
       .then(function(categories) {
         $scope.categories = categories;
       });
@@ -53,7 +58,7 @@ angular.module('SidebarModule', [])
       } else {
         var m = data.query.match(/category:([a-z0-9_-]+)/);
         if (m) {
-          var cat = $categoryService.get(m[1]);
+          var cat = categoryService.get(m[1]);
           if (cat) {
             cat.total = data.total;
           }
@@ -132,7 +137,7 @@ angular.module('SidebarModule', [])
       }
       if (!_.contains(doc.categories, key)) {
         doc.categories.push(key);
-        $documentService.update(doc)
+        documentService.update(doc)
         .then(function(doc) {
           var cat = _.findWhere($scope.categories, {key: key});
           cat.eventMsg = '+1';
@@ -154,8 +159,8 @@ angular.module('SidebarModule', [])
   }
 ])
 .controller('CategoryEditionModalCtrl', [
-  '$scope', '$modalInstance', '$categoryService',
-  function ($scope, $modalInstance, $categoryService) {
+  '$scope', '$modalInstance', 'categoryService',
+  function ($scope, $modalInstance, categoryService) {
     var errHandler = function(err) {
       alert('Error: ' + err);
       $modalInstance.dismiss('Error: ' + err);
@@ -172,16 +177,16 @@ angular.module('SidebarModule', [])
 
     $scope.ok = function () {
       if ($scope.category.key) {
-        $categoryService.update($scope.category)
+        categoryService.update($scope.category)
         .then($modalInstance.close, errHandler);
       } else {
-        $categoryService.create($scope.category)
+        categoryService.create($scope.category)
         .then($modalInstance.close, errHandler);
       }
     };
 
     $scope.delete = function () {
-      $categoryService.delete($scope.category)
+      categoryService.delete($scope.category)
       .then($modalInstance.close, errHandler);
     };
 

@@ -1,11 +1,37 @@
 <div id="document" ng-class="{open: doc.opened}">
+  <div class="loading" ng-if="loading">
+    Processing...
+    <span class="glyphicon glyphicon-refresh"></span>
+  </div>
   <header>
     <a class="close" ng-click="closeDocument()">
       <span class="glyphicon glyphicon-remove-circle"></span>
     </a>
-    <button type="button" class="btn btn-default btn-xs pull-left" ng-show="editing" ng-click="cancelDocument()">cancel</button>
-    <button type="button" class="btn btn-success btn-xs pull-left" ng-show="editing" ng-click="saveDocument(doc)">save</button>
-    <button type="button" class="btn btn-primary btn-xs pull-left" ng-show="!editing" ng-click="editing = true">edit</button>
+
+    <div class="btn-group">
+      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+        <span class="glyphicon glyphicon-plus"></span>
+        <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu pull-right" role="menu">
+        <li ng-if="!editing">
+        <a class="pointer" ng-click="startEditing()">
+          <span class="glyphicon glyphicon-pencil"></span>
+          Edit the document
+        </a>
+        </li>
+
+        <li ng-if="!editing" class="divider"></li>
+
+        <li>
+        <a ng-if="doc.link" ng-click="reFetchFromSource()" class="pointer" title="Create a new document from the source">
+          <span class="glyphicon glyphicon-cloud-download"></span>
+          Refetch from source
+        </a>
+        </li>
+      </ul>
+    </div>
+
     <h1 contenteditable="{{ editing }}" ng-model="doc.title"></h1>
     <span class="doc-meta">
       <span class="glyphicon glyphicon-time"></span>
@@ -13,7 +39,7 @@
       <span class="glyphicon glyphicon-globe" ng-if="doc.link"></span>
       <a href="{{doc.link}}" title="View source" ng-if="doc.link" target="_blank">{{ doc.link | domain }}</a>
       <span class="glyphicon glyphicon-link" ng-if="isPublic(doc)"></span>
-      <a href="/doc/{{doc._id}}" title="View public document" target="_blank" ng-if="isPublic(doc)">share</a>
+      <a href="/doc/{{doc._id}}" title="View public document" target="_blank" ng-if="isPublic(doc)">public link</a>
     </span>
     <ul class="categories" ng-show="editing || doc.categories.length">
       <li app-category-tag="cat" ng-repeat="cat in doc.categories" class="category" ng-class="{'editing': editing}"></li>
@@ -32,5 +58,9 @@
   </article>
   <div class="doc-image" ng-if="isImage(doc)">
     <img src="" data-ng-src="/api/document/{{doc._id}}/resource/{{doc.attachment}}">
+  </div>
+  <div class="actions" ng-if="editing" >
+    <button type="button" class="btn btn-default" ng-click="cancelDocument()">cancel</button>
+    <button type="button" class="btn btn-success" ng-click="saveDocument(doc)">save</button>
   </div>
 </div>

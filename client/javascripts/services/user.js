@@ -1,22 +1,35 @@
+/* global alert, angular */
+
 'use strict';
 
 angular.module('UserService', [])
-.factory('$userService', [
+.factory('userService', [
   '$q', '$http', '$log',
   function ($q, $http, $log) {
-    var url = '/api/user';
+    var url = '/api/user',
+        user = null;
 
-    var updateUser = function(user) {
+    var fetchUser = function() {
       var deferred = $q.defer();
-      $http.put(url + '/' + user.uid, user)
-      .success(function(data) {
-        deferred.resolve(data);
-      })
-      .error(function(err) {
-        alert('Unable to update user!');
-        deferred.reject(err);
-      });
-      return deferred.promise;;
+      $http.get(url + '/current')
+      .success(deferred.resolve)
+      .error(deferred.reject);
+      return deferred.promise;
+    };
+
+    var getUser = function() {
+      var deferred = $q.defer();
+      if (user) deferred.resolve(user);
+      else {
+        fetchUser()
+        .then(function(_user) {
+          $log.debug('User fetched: ' + _user.uid);
+          user = _user;
+          user.registrationDate = new Date(parseInt(_user.registrationDate));
+          deferred.resolve(user);
+        }, deferred.reject);
+      }
+      return deferred.promise;
     };
 
     var getLinkedApp = function(user) {
@@ -29,11 +42,11 @@ angular.module('UserService', [])
         alert('Unable to get linked apps!');
         deferred.reject(err);
       });
-      return deferred.promise;;
+      return deferred.promise;
     };
 
     return {
-      update: updateUser,
+      get: getUser,
       getLinkedApp: getLinkedApp
     };
   }

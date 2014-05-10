@@ -9,10 +9,10 @@ angular.module('DocumentsModule', ['ngRoute', 'angularFileUpload'])
   };
 }])
 .controller('DocumentsCtrl', [
-  '$rootScope', '$scope', '$routeParams', '$categoryService',
-  '$documentService', '$modal', '$log', '$timeout',
-  function ($rootScope, $scope, $routeParams, $categoryService,
-            $documentService, $modal, $log, $timeout) {
+  '$rootScope', '$scope', '$routeParams', 'categoryService',
+  'documentService', '$modal', '$log', '$timeout',
+  function ($rootScope, $scope, $routeParams, categoryService,
+            documentService, $modal, $log, $timeout) {
     var m, size = 20;
     $scope.emptyMessage = 'No documents found.';
     $scope.isSearch = false;
@@ -24,7 +24,7 @@ angular.module('DocumentsModule', ['ngRoute', 'angularFileUpload'])
         $scope.title = 'Uncategorized';
       break;
       case (m = $routeParams.q.match(/^category:([a-z\-]+)$/)) !== null:
-        $scope.category = $categoryService.get(m[1]);
+        $scope.category = categoryService.get(m[1]);
       if ($scope.category) {
         $scope.trash = $scope.category.key === 'system-trash';
         if ($scope.trash) {
@@ -41,7 +41,7 @@ angular.module('DocumentsModule', ['ngRoute', 'angularFileUpload'])
     $scope.from = 0;
     $scope.isnext = false;
     $scope.fetch = function() {
-      $documentService.fetch($routeParams.q, $scope.from, size)
+      documentService.fetch($routeParams.q, $scope.from, size)
       .then(function(data) {
         if (data.hits.length == size && $scope.from + size < data.total) {
           $scope.from += size;
@@ -71,7 +71,7 @@ angular.module('DocumentsModule', ['ngRoute', 'angularFileUpload'])
 
     $scope.trashDocuments = function() {
       if (confirm('Are you sure you want to remove the items in the Trash permanently?')) {
-        $documentService.trash()
+        documentService.trash()
         .then(function() {
           $scope.doc = null;
           $scope.documents = [];
@@ -84,7 +84,7 @@ angular.module('DocumentsModule', ['ngRoute', 'angularFileUpload'])
         doc.clazz = doc._id == id ? 'active' : '';
       });
       $scope.editing = false;
-      $documentService.get(id)
+      documentService.get(id)
       .then(function(doc) {
         $scope.doc = doc;
         $timeout(function() {
@@ -150,8 +150,8 @@ angular.module('DocumentsModule', ['ngRoute', 'angularFileUpload'])
   }
 ])
 .controller('DocumentCreationModalCtrl', [
-  '$log', '$scope', '$modalInstance', '$upload', '$documentService', 'category',
-  function ($log, $scope, $modalInstance, $upload, $documentService, category) {
+  '$log', '$scope', '$modalInstance', '$upload', 'documentService', 'category',
+  function ($log, $scope, $modalInstance, $upload, documentService, category) {
     $scope.category = category;
     var doc = {
       categories: $scope.category ? [$scope.category.key] : []
@@ -177,7 +177,7 @@ angular.module('DocumentsModule', ['ngRoute', 'angularFileUpload'])
       if (!this.urlForm.$valid) return;
       doc.content = this.url;
       doc.contentType = 'text/vnd.curl';
-      $documentService.create(doc)
+      documentService.create(doc)
       .then($modalInstance.close, errHandler);
     };
 
@@ -185,7 +185,7 @@ angular.module('DocumentsModule', ['ngRoute', 'angularFileUpload'])
       if (!this.fileForm.$valid || !$scope.files) return;
       doc.file = $scope.files[0];
       doc.contentType = 'multipart/form-data';
-      $documentService.create(doc)
+      documentService.create(doc)
       .then($modalInstance.close, errHandler);
     };
 
@@ -194,9 +194,9 @@ angular.module('DocumentsModule', ['ngRoute', 'angularFileUpload'])
     };
   }
 ])
-.filter('categoryColor', ['$categoryService', function($categoryService) {
+.filter('categoryColor', ['categoryService', function(categoryService) {
   return function(val) {
-    var cat = $categoryService.get(val);
+    var cat = categoryService.get(val);
     return cat ? cat.color : '#fff';
   };
 }]);
