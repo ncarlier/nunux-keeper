@@ -1,4 +1,4 @@
-check process reader with pidfile /var/run/keeper-server.pid
+check process keeper with pidfile /var/run/keeper-server.pid
     start program = "/etc/init.d/keeper-server start" with timeout 60 seconds
     stop program  = "/etc/init.d/keeper-server stop"
     if cpu > 60% for 2 cycles then alert
@@ -8,3 +8,15 @@ check process reader with pidfile /var/run/keeper-server.pid
     if loadavg(5min) greater than 10 for 8 cycles then stop
     if 3 restarts within 5 cycles then timeout
     group server
+
+check process keeper-downloader with pidfile /var/run/keeper-downloader.pid
+    start program = "/etc/init.d/keeper-downloader start" with timeout 60 seconds
+    stop program  = "/etc/init.d/keeper-downloader stop"
+    if cpu > 60% for 2 cycles then alert
+    if cpu > 80% for 5 cycles then restart
+    if totalmem > 200.0 MB for 5 cycles then restart
+    if children > 25 then restart
+    if loadavg(5min) greater than 10 for 8 cycles then stop
+    if 3 restarts within 5 cycles then timeout
+    group server
+    depends on keeper
