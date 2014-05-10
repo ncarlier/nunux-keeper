@@ -55,10 +55,22 @@ app.use(morgan('dev'));
 app.use(compress());
 app.use(cookieParser(process.env.APP_SESSION_SECRET || 'NuNUXKeEpR_'));
 app.use(bodyParser());
-//app.use(multer({ dest: uploadDir}));
 app.use(middleware.rawbodyParser());
 app.use(middleware.multipart());
-app.use(session());
+
+// Session store
+if ('production' == env) {
+  var RedisStore = require('connect-redis')(session),
+      redis = require('./helpers/redis');
+  app.use(session({ store: new RedisStore({
+    host: redis.host,
+    port: redis.port,
+    db: 10
+  })}));
+} else {
+  app.use(session());
+}
+
 app.use(passport.initialize());
 app.use(passport.session());
 app.use('/api', secMiddleware.token(passport), middleware.cors());
