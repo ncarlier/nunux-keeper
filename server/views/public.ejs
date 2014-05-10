@@ -40,14 +40,17 @@
     </article>
   </section>
 <script>
-var imgs = document.getElementsByTagName('img');
-for (var i = 0; i < imgs.length; i++) {
-  var img = imgs[i], src
-      data = img.dataset;
-  if (src = img.getAttribute('data-app-src')) {
-    img.src = src;
+function processImages() {
+  var imgs = document.getElementsByTagName('img');
+  for (var i = 0; i < imgs.length; i++) {
+    var img = imgs[i],
+      data = img.dataset,
+      src = img.getAttribute('data-app-src') || img.getAttribute('app-src');
+    if (src) {
+      img.src = src;
+    }
   }
-}
+}();
 </script>
 </body>
 </html>
