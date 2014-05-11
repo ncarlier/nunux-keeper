@@ -59,8 +59,8 @@
   <div class="doc-image" ng-if="isImage(doc)">
     <img src="" data-ng-src="/api/document/{{doc._id}}/resource/{{doc.attachment}}">
   </div>
-  <div class="actions" ng-if="editing" >
+  <footer ng-if="editing" >
     <button type="button" class="btn btn-default" ng-click="cancelDocument()">cancel</button>
     <button type="button" class="btn btn-success" ng-click="saveDocument(doc)">save</button>
-  </div>
+  </footer>
 </div>
