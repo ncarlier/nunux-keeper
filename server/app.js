@@ -50,6 +50,17 @@ app.set('port', process.env.APP_PORT || 3000);
 app.set('realm', process.env.APP_REALM || 'http://localhost:' + app.get('port'));
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
+
+// Statics
+if ('development' == env) {
+  app.use(require('less-middleware')(path.join(__dirname, '../client')));
+  app.use(express.static(path.join(__dirname, '../client')));
+}
+if ('production' == env) {
+  var oneDay = 86400000;
+  app.use(express.static(path.join(__dirname, '../dist'), {maxAge: oneDay}));
+}
+
 // Logger
 app.use(morgan('dev'));
 app.use(compress());
@@ -76,15 +87,6 @@ app.use(passport.session());
 app.use('/api', secMiddleware.token(passport), middleware.cors());
 app.use('/api/admin', secMiddleware.ensureIsAdmin);
 app.use(methodOverride());
-
-if ('development' == env) {
-  app.use(require('less-middleware')(path.join(__dirname, '../client')));
-  app.use(express.static(path.join(__dirname, '../client')));
-}
-if ('production' == env) {
-  var oneDay = 86400000;
-  app.use(express.static(path.join(__dirname, '../dist'), {maxAge: oneDay}));
-}
 
 // Set up security
 require('./security')(app, passport);
