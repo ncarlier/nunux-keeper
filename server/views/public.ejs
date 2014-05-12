@@ -40,12 +40,12 @@
     </article>
   </section>
 <script>
-function processImages() {
+var _init = function () {
   var imgs = document.getElementsByTagName('img');
   for (var i = 0; i < imgs.length; i++) {
     var img = imgs[i],
-      data = img.dataset,
-      src = img.getAttribute('data-app-src') || img.getAttribute('app-src');
+        data = img.dataset,
+        src = img.getAttribute('data-app-src') || img.getAttribute('app-src');
     if (src) {
       img.src = src;
     }
