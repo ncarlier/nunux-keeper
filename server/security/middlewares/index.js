@@ -26,5 +26,14 @@ module.exports = {
    */
   ensureIsAdmin: function(req, res, next) {
     next(req.isAdmin() ? null : new errors.Unauthorized());
+  },
+  /**
+   * Middleware to handle redirect query param.
+   */
+  handleRedirectQueryParam: function(req, res, next) {
+    if (req.query.redirect) {
+      req.session.redirect = req.query.redirect;
+    }
+    next();
   }
 };

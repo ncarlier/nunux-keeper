@@ -1,4 +1,5 @@
 @import "../lib/bootstrap/bootstrap.less";
+@import "../lib/font-awesome/less/font-awesome.less";
 @import "variable.less";
 
 body {
@@ -21,4 +22,28 @@ body {
       color: @k-panel-text-color;
     }
   }
+}
+
+#login-providers {
+  list-style: none;
+  display: inline-block;
+  padding: 0;
+  margin: 0;
+  font-size: 20px;
+  li {
+    box-shadow: 2px 1px 5px rgba(0, 0, 0, 0.5);
+    border-radius: 3px;
+    margin: 10px 0;
+  }
+  a {
+    padding: 5px 10px;
+  }
+  a, a:hover, a:focus {color: white;}
+  .google {
+    background-color: #E72929;
+  }
+  .persona {
+    background-color: #575757;
+  }
+
 }

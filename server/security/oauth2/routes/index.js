@@ -33,7 +33,7 @@ module.exports = function(app, server, passport) {
    * authorization).
    */
   app.get('/oauth/authorize',
-          middleware.ensureAuthenticated,
+          api.ensureLoggedIn(app),
           server.authorization(authorization),
           api.authorize(app));
 

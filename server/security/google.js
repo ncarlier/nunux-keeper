@@ -1,6 +1,7 @@
 var GoogleStrategy = require('passport-google').Strategy,
-    nodefn = require('when/node/function'),
-    User = require('../models').User;
+    nodefn         = require('when/node/function'),
+    middlewares    = require('./middlewares'),
+    User           = require('../models').User;
 
 /**
  * Google auth provider configuration.
@@ -26,12 +27,18 @@ module.exports = function(app, passport) {
   /**
    * Google auth entry point.
    */
-  app.get('/auth/google', passport.authenticate('google'));
+  app.get('/auth/google',
+          middlewares.handleRedirectQueryParam,
+          passport.authenticate('google'));
 
   /**
    * Google auth return URL.
    */
   app.get('/auth/google/return', passport.authenticate('google', {
-    successRedirect: '/', failureRedirect: '/welcome?error=unauthorized'
-  }));
+    //successRedirect: redirect.get(req, '/'),
+    failureRedirect: '/welcome?error=unauthorized'
+  }), function (req, res) {
+    res.redirect(req.session.redirect || '/');
+    delete req.session.redirect;
+  });
 };

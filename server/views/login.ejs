@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title><%= info.title %> - Login Request</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
+  <meta name="description" content="<%= info.description %>" />
+  <meta name="author" content="<%= info.author %>">
+  <link rel="stylesheet" href="/stylesheets/oauth.css" />
+  <link rel="apple-touch-icon-precomposed" sizes="152x152" href="icons/icon_152.png">
+  <link rel="apple-touch-icon-precomposed" sizes="120x120" href="icons/icon_120.png">
+  <link rel="apple-touch-icon-precomposed" href="icons/icon_57.png">
+  <link rel="shortcut icon" href="icons/favicon.png">
+</head>
+<body>
+<section>
+  <img src="/icons/icon_120.png" alt="<%= info.title %>" class="logo"/>
+  <p>Choose your identity provider for log in:</p>
+  <ul id="login-providers">
+    <li class="google">
+    <a href="/auth/google?redirect=<%= redirect %>" title="Sign in with your Google account.">
+      <span class="fa fa-google-plus"></span> Login with Google
+    </a>
+    </li>
+    <li class="persona">
+    <a href="javascript:loginWithPersona();" title="Sign in with your email.">
+      <span class="fa fa-user"></span> Login with your email
+    </a>
+    </li>
+  </ul>
+</section>
+<form action="/auth/browserid?redirect=<%= redirect %>" method="post" style="display:none;" id="personaForm">
+  <input type="text" name="assertion"/>
+</form>
+
+<script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
+<script src="https://login.persona.org/include.js"></script>
+<script>
+function loginWithPersona(){
+  navigator.id.get(function(assertion) {
+    if (assertion) {
+      $("#personaForm > input").val(assertion);
+      $("#personaForm").submit();
+    } else {
+      location.reload();
+    }
+  });
+};
+</script>
+</body>
+</html>

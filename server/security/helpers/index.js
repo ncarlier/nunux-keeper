@@ -3,5 +3,5 @@
  * @module helpers
  */
 module.exports = {
-  uid: require('./uid')
+  uid:      require('./uid')
 };

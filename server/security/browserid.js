@@ -1,6 +1,8 @@
 var BrowserIDStrategy = require('passport-browserid').Strategy,
-    nodefn = require('when/node/function'),
-    User = require('../models').User;
+    nodefn      = require('when/node/function'),
+    middlewares = require('./middlewares'),
+    redirect    = require('./helpers').redirect,
+    User        = require('../models').User;
 
 /**
  * Browser ID configuration.
@@ -24,7 +26,16 @@ module.exports = function(app, passport) {
   /**
    * Borwser ID auth entry point.
    */
-  app.post('/auth/browserid', passport.authenticate('browserid', {
-    successRedirect: '/', failureRedirect: '/welcome?error=unauthorized'
-  }));
+  app.post(
+    '/auth/browserid',
+    middlewares.handleRedirectQueryParam,
+    passport.authenticate('browserid', {
+      //successRedirect: redirect.get(req, '/'),
+      failureRedirect: '/welcome?error=unauthorized'
+    }),
+    function (req, res) {
+      res.redirect(req.session.redirect || '/');
+      delete req.session.redirect;
+    }
+  );
 };
