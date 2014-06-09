@@ -11,10 +11,17 @@
       <h1><%= info.title %><span class="glyphicon glyphicon-remove-circle" ng-click="close()" title="Close"></span></h1>
     </header>
     <section id="content">
-      <div class="dropzone" title="Drop text or image here" ng-class="{over: over}">
+      <% if (!user) { %>
+      <div class="login">
+        <p>You are not logged in.</p>
+        <a class="btn btn-primary" href="/login?redirect={{url}}" target="_parent" >Please, login first.</a>
+      </div>
+      <% } else { %>
+      <div class="dropzone" title="Drop text or image here" ng-class="{over: over, ready: ready, error: error, busy: busy}">
         <span class="glyphicon" ng-class="icon"></span>
       </div>
-      <button type="button" class="btn btn-primary" title="Keep this!" ng-click="saveDocument()" ng-disabled="disabled">{{btnLabel}}</button>
+      <button type="button" class="btn btn-primary" title="Keep this!" ng-click="saveDocument()" ng-disabled="busy">{{btnLabel}}</button>
+      <% } %>
     </section>
   </div>
 <% if (env == 'production') {%>

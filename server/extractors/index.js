@@ -1,4 +1,5 @@
-var defaultExtractor = require('./default'),
+var logger = require('../helpers').logger,
+    defaultExtractor = require('./default'),
     htmlExtractor    = require('./html'),
     urlExtractor     = require('./url'),
     fileExtractor    = require('./file'),
@@ -31,12 +32,17 @@ var getExtractor = function(ct) {
 module.exports = {
   /** @see getExtractor */
   get: function(contentType) {
-    return getExtractor(contentType) || defaultExtractor;
+    var extractor = getExtractor(contentType);
+    if (extractor) return extractor;
+    else {
+      logger.debug('No extractor found for content-type: ' + contentType);
+      return defaultExtractor;
+    }
   },
   /**
    * Test if content type is supported.
    */
   support: function(contentType) {
-    return getExtractor(contentType) ? true : false;
+    return getExtractor(contentType) !== null;
   }
 };

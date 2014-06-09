@@ -19,6 +19,7 @@ var kBookmarklet = function() {
     $c.style['box-shadow'] = '#000 4px 4px 20px';
     $c.style['border-radius'] = '4px';
     var $o = document.createElement('div');
+    $o.title = "Drag content on me.";
     $o.style.height = '120px';
     $o.style.position = 'absolute';
     $o.style.top = '30px';

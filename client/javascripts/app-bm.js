@@ -62,6 +62,8 @@ angular.module('KeeperBookmarklet', ['DocumentService'])
     while (match = search.exec(query))
           params[decode(match[1])] = decode(match[2]);
 
+    $scope.busy = false;
+    $scope.url = params.url;
     $scope.btnLabel = 'Keep this page';
     $scope.icon = 'glyphicon-cloud-upload';
 
@@ -71,8 +73,11 @@ angular.module('KeeperBookmarklet', ['DocumentService'])
         else if ('onDragLeave' === message) $scope.over = false;
         else {
           data = message;
-          $scope.btnLabel = 'Keep this';
-          $scope.disabled = false;
+          $scope.ready = true;
+          $scope.error = false;
+          $scope.btnLabel = 'Keep this !';
+          $scope.busy = false;
+          $scope.icon = 'glyphicon-cloud-upload';
         }
       });
     });
@@ -82,7 +87,8 @@ angular.module('KeeperBookmarklet', ['DocumentService'])
     };
 
     $scope.saveDocument = function() {
-      $scope.disabled = true;
+      $scope.busy = true;
+      $scope.icon = 'glyphicon-repeat';
       var newDoc = null;
       if (data) {
         newDoc = {
@@ -100,7 +106,14 @@ angular.module('KeeperBookmarklet', ['DocumentService'])
       }
       documentService.create(newDoc)
       .then(function(doc) {
-        $scope.icon = 'glyphicon-ok';
+        $scope.icon = 'glyphicon-floppy-saved';
+        $scope.error = false;
+        $scope.busy = false;
+        $scope.ready = true;
+      }, function(err) {
+        $scope.icon = 'glyphicon-floppy-remove';
+        $scope.error = true;
+        $scope.busy = false;
       });
     };
   }
