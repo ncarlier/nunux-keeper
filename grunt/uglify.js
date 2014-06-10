@@ -7,7 +7,8 @@ module.exports = {
       'client/lib/angular-ui-bootstrap-bower/ui-bootstrap-tpls.min.js': ['client/lib/angular-ui-bootstrap-bower/ui-bootstrap-tpls.js'],
       'client/lib/angular/angular.min.js': ['client/lib/angular/angular.js'],
       'client/lib/lodash/lodash.min.js': ['client/lib/lodash/lodash.compat.js'],
-      'client/lib/ng-file-upload/angular-file-upload.min.js': ['client/lib/ng-file-upload/angular-file-upload.js']
+      'client/lib/ng-file-upload/angular-file-upload.min.js': ['client/lib/ng-file-upload/angular-file-upload.js'],
+      'client/lib/ngInfiniteScroll/ng-infinite-scroll.min.js': ['client/lib/ngInfiniteScroll/ng-infinite-scroll.js']
     }
   },
   dist: {

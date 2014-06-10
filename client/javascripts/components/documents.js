@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('DocumentsModule', ['ngRoute', 'angularFileUpload'])
+angular.module('DocumentsModule', ['ngRoute', 'angularFileUpload', 'infinite-scroll'])
 .directive('appDocuments', ['$location', function($location) {
   return {
     restrict: 'E',
@@ -39,8 +39,10 @@ angular.module('DocumentsModule', ['ngRoute', 'angularFileUpload'])
 
     $scope.documents = [];
     $scope.from = 0;
-    $scope.isnext = false;
-    $scope.fetch = function() {
+    $scope.isnext = true;
+    $scope.fetchDocuments = function() {
+      if (!$scope.isnext) return;
+      $log.debug('Fetching documents...');
       documentService.fetch($routeParams.q, $scope.from, size)
       .then(function(data) {
         if (data.hits.length == size && $scope.from + size < data.total) {
@@ -63,10 +65,6 @@ angular.module('DocumentsModule', ['ngRoute', 'angularFileUpload'])
           total: data.total
         });
       });
-    };
-
-    $scope.next = function() {
-      $scope.fetch();
     };
 
     $scope.trashDocuments = function() {
@@ -145,8 +143,6 @@ angular.module('DocumentsModule', ['ngRoute', 'angularFileUpload'])
       };
       return JSON.stringify(data);
     };
-
-    $scope.fetch();
   }
 ])
 .controller('DocumentCreationModalCtrl', [

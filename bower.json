@@ -16,7 +16,8 @@
     "angular-md5": "~0.1.7",
     "angular-ui-bootstrap-bower": "~0.10.0",
     "ng-file-upload": "~1.2.7",
-    "font-awesome": "~4.0.3"
+    "font-awesome": "~4.0.3",
+    "ngInfiniteScroll": "~1.1.2"
   },
   "exportsOverride": {
     "bootstrap": {

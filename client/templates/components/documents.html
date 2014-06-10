@@ -1,6 +1,6 @@
-<div class="documents" ng-class="{'one-col': doc}">
+<div class="documents" ng-class="{'one-col': doc}" >
   <h1>{{ title || category.label }}</h1>
-  <ul class="cards">
+  <ul class="cards" infinite-scroll="fetchDocuments()" infinite-scroll-parent>
     <li title="Create new document..." ng-click="showDocumentCreationDialog()" ng-if="!trash && !isSearch">
     <div class="glyphicon glyphicon-plus" ></div>
     <div class="doc-title"><h3>Create new document</h3></div>
@@ -23,10 +23,6 @@
     <ul ng-if="doc.fields.category" class="categories">
       <li ng-repeat="cat in doc.fields.category | toArray" style="background-color: {{cat | categoryColor}}" title="{{cat}}"></li>
     </ul>
-    </li>
-
-    <li ng-if="isnext" class="next" ng-click="next()">
-      <span>Fetch next documents</span>
     </li>
   </ul>
   <span ng-if="documents.length == 0" class="no-result">{{ emptyMessage }}</span>

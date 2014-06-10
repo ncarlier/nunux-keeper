@@ -16,6 +16,7 @@ module.exports = {
       'client/lib/angular-route/angular-route.min.js',
       'client/lib/angular-md5/angular-md5.min.js',
       'client/lib/ng-file-upload/angular-file-upload.min.js',
+      'client/lib/ngInfiniteScroll/ng-infinite-scroll.min.js',
 
       'dist/javascripts/app.js',
       'dist/javascripts/**/*.js'
