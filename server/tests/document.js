@@ -89,7 +89,7 @@ describe('Check document API', function() {
 
   it('should create new document (HTML body)', function(done) {
     var title   = 'Sample simple HTML document',
-        content = '<p>sample</P><img src="' + imageUrl + '"/>' +
+        content = '<p id="toclean">sample</P><img src="' + imageUrl + '"/>' +
           '<img class="bad" src = "http://feeds.feedburner.com/~r/azerty" />' +
           '<img class="bad" src = "http://doubleclick.net/azerty" />' +
           '<img class="test" app-src="test" src = "test" alt="test" />',

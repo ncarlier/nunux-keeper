@@ -1,7 +1,7 @@
-var when   = require('when'),
-    logger = require('../helpers').logger,
-    filter = require('../helpers').filter,
-    validators  = require('../helpers').validators,
+var when    = require('when'),
+    cleaner = require('./cleaner'),
+    logger  = require('../../helpers').logger,
+    validators  = require('../../helpers').validators,
     readability = require('node-readability');
 
 /**
@@ -11,26 +11,14 @@ var when   = require('when'),
  */
 var extractHtml = function(doc) {
   var extracted = when.defer();
-  readability(doc.content, function(err, article) {
+  readability(doc.content, function(err, read) {
     if (err) return extracted.reject(err);
-    doc.content = filter(article.cache.body, doc.link);
-    if (doc.title === 'Undefined') doc.title = article.title;
-    doc.illustration = extractIllustration(doc);
+    doc.content = cleaner.cleanup(read.document, {baseUrl: doc.link});
+    if (doc.title === 'Undefined') doc.title = read.title;
+    doc.illustration = cleaner.getIllustration(read.document);
     extracted.resolve(doc);
   });
   return extracted.promise;
-};
-
-/**
- * Extract illustration from document content.
- * @param {Document} document
- * @returns {String} doc illustration.
- */
-var extractIllustration = function(doc) {
-  var rex = /<img[^>]+app\-src="?([^"\s]+)"?/g,
-      m = rex.exec(doc.content);
-
-  return m ? m[1] : null;
 };
 
 /**

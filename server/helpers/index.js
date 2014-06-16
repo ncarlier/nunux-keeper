@@ -8,5 +8,5 @@ module.exports = {
   files:  require('./files'),
   elasticsearch: require('./elasticsearch'),
   validators: require('./validators'),
-  filter: require('./filter')
+  blacklist: require('./blacklist')()
 };
