@@ -1,2 +1,3 @@
 #!/bin/sh
-curl -XDELETE localhost:9200/_river/keeper
+HOST=$1
+curl -XDELETE $HOST:9200/_river/keeper

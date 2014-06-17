@@ -1,5 +1,6 @@
 #!/bin/sh
-curl -XPUT localhost:9200/_river/keeper/_meta -d '
+HOST=$1
+curl -XPUT $HOST:9200/_river/keeper/_meta -d '
 {
   "type": "mongodb",
   "mongodb": {

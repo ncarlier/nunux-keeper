@@ -1,2 +1,3 @@
 #!/bin/sh
-curl -XDELETE localhost:9200/documents/document/_mapping
+HOST=$1
+curl -XDELETE $HOST:9200/documents/document/_mapping
