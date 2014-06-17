@@ -144,5 +144,7 @@ module.exports = {
   /** Remove file or directory in chrooted location. */
   chrm: function() { return nodefn.call(fs.remove, getChrootPath.apply(null, arguments)); },
   /** Test if path exists. */
-  chexists: chexists
+  chexists: chexists,
+  /** List directory content. */
+  chls: function() { return nodefn.call(fs.readdir, getChrootPath.apply(null, arguments)); }
 };

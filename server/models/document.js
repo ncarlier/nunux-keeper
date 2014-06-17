@@ -16,7 +16,7 @@ var getRiverConf = function(conn) {
   var conf = {
     type: 'mongodb',
     mongodb: {
-      dn: conn.name,
+      db: conn.name,
       servers: [{
         host: conn.host,
         port: conn.port
@@ -123,7 +123,8 @@ var saveAttachment = function(doc) {
     return when.resolve(doc);
   }
 
-  var filename = files.getHashName(doc.attachment.name);
+  // Prefix filename by '_' to distinct attachment file and resource file.
+  var filename = '_' + files.getHashName(doc.attachment.name);
   return files.chmkdir(doc.owner, 'tmp')
   .then(function(dir) {
     var path = files.chpath(dir, filename);

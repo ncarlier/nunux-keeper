@@ -261,6 +261,7 @@ describe('Check document API', function() {
   });
 
   it('should create new document (Image URL)', function(done) {
+    this.timeout(5000);
     var title = 'Sample online image document';
 
     request.post({
@@ -279,9 +280,9 @@ describe('Check document API', function() {
       body.should.have.properties('_id', 'date', 'attachment');
       body.title.should.equal(title);
       body.owner.should.equal(uid);
-      var file = files.chpath(uid, 'documents', body._id, files.getHashName(imageUrl));
+      var file = files.chpath(uid, 'documents', body._id, '_' + files.getHashName(imageUrl));
       fs.existsSync(file).should.be.true;
-      body.attachment.should.equal(files.getHashName(imageUrl));
+      body.attachment.should.equal('_' + files.getHashName(imageUrl));
       body.contentType.should.equal('image/png');
       done();
     });
@@ -290,7 +291,7 @@ describe('Check document API', function() {
   it('should retrieve document resource (Image)', function(done) {
     var key = files.getHashName(imageUrl);
     request.head({
-      url: url + '/' + docId + '/resource/' + key,
+      url: url + '/' + docId + '/resource/_' + key,
       jar: true
     }, function(err, res, body) {
       if (err) return done(err);

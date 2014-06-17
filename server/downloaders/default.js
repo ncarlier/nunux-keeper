@@ -1,4 +1,5 @@
-var when       = require('when'),
+var _        = require('underscore'),
+    when       = require('when'),
     nodefn     = require('when/node/function'),
     sequence   = require('when/sequence'),
     dns        = require('dns'),
@@ -9,6 +10,31 @@ var when       = require('when'),
     logger     = require('../helpers').logger;
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
+
+/**
+ * Clean destination directory.
+ * Remove all hash files not in the URL list.
+ */
+var cleanDirectory = function(dir, urls) {
+  // Create hash list
+  var hashList = _.map(urls, function(_url) {
+    return files.getHashName(_url);
+  });
+
+  // List directory content...
+  return files.chls(dir)
+  .then(function(entries) {
+    // Get delta between directory content and hash list
+    var delta = _.difference(entries, hashList);
+    return when.map(delta, function(entry) {
+      // Ignore files prefixed by '_' (attachment file)
+      if (entry.indexOf('_') === 0) return null;
+      // Remove file not in hash list.
+      logger.debug('Removing unused resource: %s ...', entry);
+      return files.chrm(files.chpath(dir, entry));
+    });
+  });
+};
 
 /**
  * Download resources.
@@ -45,7 +71,10 @@ var download = function(urls, dest) {
       tasks.push(function() { return down(url); });
     });
     return sequence(tasks);
-    // return when.map(urls, down);
+  })
+  .then(function() {
+    logger.debug('Cleaning directory %s ...', dest);
+    return cleanDirectory(dest, urls);
   });
 };
 
