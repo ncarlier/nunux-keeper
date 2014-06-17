@@ -6,15 +6,16 @@ var when    = require('when'),
  * Get Elasticsearch docker URI.
  */
 var getElasticSearchUri = function() {
-  if (process.env.DB_PORT_9200_TCP_ADDR) {
-    return 'http://' + process.env.DB_PORT_9200_TCP_ADDR + ':9200';
+  var _uri = 'http://localhost:9200';
+  if (process.env.APP_ELASTICSEARCH_URI) {
+    _uri = process.env.APP_ELASTICSEARCH_URI;
+  } else if (process.env.ELASTICSEARCH_PORT) { // Docker
+    _uri = process.env.ELASTICSEARCH_PORT.replace(/^tcp/, 'http');
   }
-  return null;
+  return _uri;
 };
 
-var uri = process.env.APP_ELASTICSEARCH_URI ||
-          getElasticSearchUri() ||
-          'http://localhost:9200';
+var uri = getElasticSearchUri();
 
 /**
  * Get Elasticsearch river status.
@@ -56,8 +57,9 @@ var configureRiver = function(river) {
   };
 
   return getRiverStatus(riverName).then(function(status) {
+    logger.debug('Elasticsearch river "%s" status: ', riverName, status);
     if (status.exists) return when.resolve();
-    logger.debug('Configuring Elasticsearch river %s...', riverName);
+    logger.debug('Configuring Elasticsearch river "%s"...', riverName);
     return _configure();
   }, function(err) {
     if (err.status && err.status === 404) {
