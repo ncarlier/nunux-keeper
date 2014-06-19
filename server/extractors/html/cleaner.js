@@ -1,6 +1,7 @@
 var logger    = require('../../helpers').logger,
     blacklist = require('../../helpers').blacklist,
-    url       = require('url');
+    url       = require('url'),
+    _         = require('underscore');
 
 var blacklistedAttributes = [
   'class', 'id'
@@ -81,6 +82,21 @@ var filterImages = function(document, options) {
 };
 
 /**
+ * Filter links href.
+ * - Add target _blank.
+ * @param {Object} document DOM
+ */
+var filterLinks = function(document, options) {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; ++i) {
+    var link = links[i];
+    if (link.hasAttribute('href')) {
+      link.setAttribute('target', '_blank');
+    }
+  }
+};
+
+/**
  * HTML cleaner.
  * @module cleaner
  */
@@ -96,24 +112,17 @@ module.exports = {
     var nodes = document.getElementsByTagName('*');
     for (var i = 0; i < nodes.length; ++i) {
       var node = nodes[i];
-      if (filterBlacklistedSites(node)) {
-        filterAttributes(node);
-      }
+      var filterChain = _.compose(
+        filterBlacklistedSites,
+        filterAttributes
+      );
+      filterChain(node);
     }
     // Filter images...
     filterImages(document, options);
-    // Return content.
-    return document.body.innerHTML;
-  },
-
-  /**
-   * Retrieve main illustration.
-   * @param {Object} document DOM
-   * @return {String} illustration URL
-   */
-  getIllustration: function(document) {
-    var images = document.getElementsByTagName('img');
-    return (images && images.length > 0 && images[0].hasAttribute('app-src')) ?
-      images[0].getAttribute('app-src') : null;
+    // Filter links...
+    filterLinks(document, options);
+    // Return document.
+    return document;
   }
 };
