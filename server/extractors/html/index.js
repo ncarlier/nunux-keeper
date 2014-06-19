@@ -7,18 +7,41 @@ var when    = require('when'),
 /**
  * Extract and clean HTML content of a document using Readability.
  * @param {Document} doc
+ * @param {Document} extractArticle flag to tell if we have to
+ * try to extract the main content
  * @returns {Promise} Promise of the doc with clean HTML content.
  */
-var extractHtml = function(doc) {
+var extractHtml = function(doc, extractArticle) {
   var extracted = when.defer();
   readability(doc.content, function(err, read) {
     if (err) return extracted.reject(err);
-    doc.content = cleaner.cleanup(read.document, {baseUrl: doc.link});
+    cleaner.cleanup(read.document, {baseUrl: doc.link});
+    if (extractArticle) {
+      // Try to get page main content...
+      doc.content = read.document.body.innerHTML;
+      var articleContent = read.content;
+      if (articleContent) doc.content = articleContent;
+    } else {
+      // Get content such as
+      doc.content = read.document.body.innerHTML;
+    }
     if (doc.title === 'Undefined') doc.title = read.title;
-    doc.illustration = cleaner.getIllustration(read.document);
+    doc.illustration = getIllustration(doc.content);
     extracted.resolve(doc);
   });
   return extracted.promise;
+};
+
+/**
+ * Retrieve main illustration.
+ * @param {String} content HTML content
+ * @return {String} illustration URL
+ */
+var getIllustration = function(content) {
+  var rex = /<img[^>]+app\-src="?([^"\s]+)"?/g,
+  m = rex.exec(content);
+
+  return m ? m[1] : null;
 };
 
 /**
@@ -45,7 +68,7 @@ module.exports = {
       doc.attachment.stream.on('end', function() {
         doc.content = Buffer.concat(bufs).toString();
         doc.attachment = null;
-        extractHtml(doc).then(extracted.resolve, extracted.reject);
+        extractHtml(doc, true).then(extracted.resolve, extracted.reject);
       });
       return extracted.promise;
     } else if (doc.content && doc.content !== '') {
@@ -53,11 +76,11 @@ module.exports = {
       if (validators.isURL(doc.content)) {
         doc.link = doc.content;
       }
-      return extractHtml(doc);
+      return extractHtml(doc, validators.isURL(doc.content));
     } else if (doc.link) {
       // no content, check if it's a link...
       doc.content = doc.link;
-      return extractHtml(doc);
+      return extractHtml(doc, true);
     } else {
       return when.reject('Content not found.');
     }
