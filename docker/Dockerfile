@@ -2,9 +2,9 @@
 #
 # VERSION               0.0.1
 #
-# VOLUME: docker run -v ~/src/keeper:/opt/keeper -v ~/var/keeper:/var/opt/keeper -name KEEPER_VOLUMES busybox true
-# BUILD:  docker build -rm -t nunux/keeper .
-# RUN:    docker run -rm -link mongo-elastic:db -link redis:redis -volumes-from KEEPER_VOLUMES -i -t -p 3000:3000 nunux/keeper
+# VOLUME: docker run -v ~/src/keeper:/opt/keeper -v ~/var/keeper:/var/opt/keeper --name KEEPER_VOLUMES busybox true
+# BUILD:  docker build --rm -t nunux/keeper .
+# RUN:    docker run --rm --link mongo-elastic:db --link redis:redis --volumes-from KEEPER_VOLUMES -i -t -p 3000:3000 nunux/keeper
 
 FROM nunux/nodejs
 
@@ -14,6 +14,10 @@ RUN apt-get update
 
 # Install packages
 RUN apt-get install -y imagemagick
+
+# Virtual host (for reverse proxy container)
+ENV VIRTUAL_HOST keeper.lan
+ENV VIRTUAL_PORT 3001
 
 # Env
 ENV NODE_ENV development
