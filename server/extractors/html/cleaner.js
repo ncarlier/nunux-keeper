@@ -14,7 +14,9 @@ var blacklistedAttributes = [
  */
 var filterBlacklistedSites = function(node) {
   if (!node) return null;
-  var src = node.getAttribute('src') || node.getAttribute('href');
+  var src = node.getAttribute('src') ||
+    node.getAttribute('href') ||
+    node.getAttribute('data-src');
   if (src && blacklist.contains(src)) {
     logger.debug('Removing blacklisted source: %s', src);
     node.parentNode.removeChild(node);
@@ -67,7 +69,7 @@ var filterImages = function(document, options) {
           break;
         }
       }
-      var src = image.getAttribute('src');
+      var src = image.getAttribute('src') || image.getAttribute('data-src');
       if (src) {
         // Create absolute URL if possible
         if (options && options.baseUrl && !/^https?|file|ftps?/i.test(src)) {
@@ -75,6 +77,7 @@ var filterImages = function(document, options) {
         }
         // Swapping src and app-src attributes.
         image.removeAttribute('src');
+        image.removeAttribute('data-src');
         image.setAttribute('app-src', src);
       }
     }
