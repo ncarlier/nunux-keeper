@@ -25,6 +25,7 @@ var kBookmarklet = function() {
     $o.style.top = '30px';
     $o.style.right = '10px';
     $o.style.width = '180px';
+    $o.style.background = 'transparent';
     $o.addEventListener('dragenter', function(e) {
       popup.postMessage('onDragEnter', window.K_REALM);
     }, false);
