@@ -8,6 +8,6 @@ module.exports = function(req, res) {
     req.context.redirect = '/';
   }
   if (req.user) return res.redirect(req.context.redirect);
-  res.render('login', req.context);
+  res.render('login.html', req.context);
 };
 

@@ -55,7 +55,7 @@ angular.module('KeeperBookmarklet', ['DocumentService'])
     var data = null, match,
         pl     = /\+/g,  // Regex for replacing addition symbol with a space
         search = /([^&=]+)=?([^&]*)/g,
-        decode = function (s) { return decodeURIComponent(s.replace(pl, " ")); },
+        decode = function (s) { return decodeURIComponent(s.replace(pl, ' ')); },
         query  = $window.location.search.substring(1),
         params = {};
 
@@ -65,7 +65,7 @@ angular.module('KeeperBookmarklet', ['DocumentService'])
     $scope.busy = false;
     $scope.url = params.url;
     $scope.btnLabel = 'Keep this page';
-    $scope.icon = 'glyphicon-cloud-upload';
+    $scope.icon = 'fa-cloud-upload';
 
     $messenger.onMessage(function(message) {
       $scope.$apply(function() {
@@ -77,7 +77,7 @@ angular.module('KeeperBookmarklet', ['DocumentService'])
           $scope.error = false;
           $scope.btnLabel = 'Keep this !';
           $scope.busy = false;
-          $scope.icon = 'glyphicon-cloud-upload';
+          $scope.icon = 'fa-cloud-upload';
         }
       });
     });
@@ -88,7 +88,7 @@ angular.module('KeeperBookmarklet', ['DocumentService'])
 
     $scope.saveDocument = function() {
       $scope.busy = true;
-      $scope.icon = 'glyphicon-repeat';
+      $scope.icon = 'fa-repeat';
       var newDoc = null;
       if (data) {
         newDoc = {
@@ -106,12 +106,12 @@ angular.module('KeeperBookmarklet', ['DocumentService'])
       }
       documentService.create(newDoc)
       .then(function(doc) {
-        $scope.icon = 'glyphicon-floppy-saved';
+        $scope.icon = 'fa-save';
         $scope.error = false;
         $scope.busy = false;
         $scope.ready = true;
       }, function(err) {
-        $scope.icon = 'glyphicon-floppy-remove';
+        $scope.icon = 'fa-warning';
         $scope.error = true;
         $scope.busy = false;
       });

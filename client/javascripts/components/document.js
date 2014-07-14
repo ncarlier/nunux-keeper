@@ -2,7 +2,7 @@
 
 'use strict';
 
-angular.module('DocumentModule', ['ngRoute', 'ngSanitize'])
+angular.module('DocumentModule', ['ngRoute', 'ngSanitize', 'ngCkeditor'])
 .directive('appDocument', ['$location', function($location) {
   return {
     restrict: 'E',
@@ -28,59 +28,62 @@ angular.module('DocumentModule', ['ngRoute', 'ngSanitize'])
     }
     return {
       restrict: 'A',
-      template: '{{label}}<span class="glyphicon glyphicon-remove-sign" ng-click="removeCategory(key)">',
+      template: '{{label}}<span class="fa fa-times-circle" ng-click="removeCategory(key)" title="Remove category">',
       link: link
     };
   }
 ])
-.directive('contenteditable', ['$compile', function($compile) {
-  return {
-    require: 'ngModel',
-    link: function(scope, elm, attrs, ctrl) {
-      // view -> model
-      elm.bind('blur', function() {
-        scope.$apply(function() {
-          ctrl.$setViewValue($('> div', elm).html());
-        });
-      });
-
-      // model -> view
-      ctrl.$render = function() {
-        var $content = $('<div>').html(ctrl.$viewValue);
-        $content = $compile($content)(scope);
-        elm.html($content);
-      };
-
-      ctrl.$render();
-    }
-  };
-}])
 .controller('DocumentCtrl', [
-  '$rootScope', '$scope', 'categoryService', 'documentService', '$timeout',
-  function ($rootScope, $scope, categoryService, documentService, $timeout) {
+  '$rootScope', '$scope', '$sce', '$modal', '$log',
+  'categoryService', 'documentService', '$timeout',
+  function ($rootScope, $scope, $sce, $modal, $log,
+            categoryService, documentService, $timeout) {
     categoryService.getAll().then(function(categories) {
       $scope.categories = categories;
     });
 
     $scope.loading = false;
+    $scope.editorOptions = {
+      language: 'en'
+    };
 
-    $scope.isImage = function(doc) {
-      return /^image\//.test(doc.contentType);
+    $scope.getHtmlContent = function(doc) {
+      if (/^text\/html/.test(doc.contentType)) {
+        return $sce.trustAsHtml(doc.content);
+      } else if (/^image\//.test(doc.contentType)) {
+        var src = '/api/document/' + doc._id + '/resource/' + doc.attachment;
+        var $img = $('<img>');
+        $img.attr('src', src);
+        return $sce.trustAsHtml($('<div>').append($img).html());
+      } else {
+        return doc.content;
+      }
     };
 
     $scope.isPublic = function(doc) {
-      return _.contains(doc.categories, 'system-public');
+      return doc._id && _.contains(doc.categories, 'system-public');
     };
 
-    $scope.addCategory = function(key) {
-      if (!_.contains($scope.doc.categories, key)) {
-        $scope.doc.categories.push(key);
-      }
+    var refreshHandler = function(doc) {
+      $scope.doc = doc;
+      $scope.editing = false;
+      $scope.loading = false;
+      $timeout(function() {
+        $scope.doc.opened = true;
+      }, 300);
+    };
+    var errorHandler = function(err) {
+      $scope.loading = false;
+      alert('Error: '+ err);
     };
 
     $scope.removeCategory = function(key) {
       if (_.contains($scope.doc.categories, key)) {
-        _.remove($scope.doc.categories, function(k) { return k == key; });
+        var data = _.pick($scope.doc, '_id', 'categories');
+        _.remove(data.categories, function(k) { return k == key; });
+        if (!data.categories.length) data.categories = ['empty'];
+        documentService.update(data)
+        .then(refreshHandler, errorHandler);
       }
     };
 
@@ -98,24 +101,29 @@ angular.module('DocumentModule', ['ngRoute', 'ngSanitize'])
     $scope.saveDocument = function() {
       if ($scope.doc._id) {
         documentService.update($scope.doc)
-        .then(function(doc) {
-          $scope.doc = doc;
-          $scope.editing = false;
-          $timeout(function() {
-            $scope.doc.opened = true;
-          }, 300);
-        });
+        .then(refreshHandler, errorHandler);
       } else {
         documentService.create($scope.doc)
-        .then(function(doc) {
-          $scope.doc = doc;
-          $scope.addDocument(doc);
-          $scope.editing = false;
-          $timeout(function() {
-            $scope.doc.opened = true;
-          }, 300);
-        });
+        .then(refreshHandler, errorHandler);
       }
+    };
+
+    $scope.editTitleDialog = function() {
+      var backup = angular.copy($scope.doc);
+      var modalInstance = $modal.open({
+        templateUrl: 'templates/dialog/document/edit-title.html',
+        controller: 'DocumentTitleEditionModalCtrl',
+        resolve: {
+          doc: function () {
+            return $scope.doc;
+          }
+        }
+      });
+
+      modalInstance.result.then(null, function(reason) {
+        $scope.doc = backup;
+        $log.info('Document title edition modal dismissed: ' + reason);
+      });
     };
 
     $scope.reFetchFromSource = function() {
@@ -127,19 +135,28 @@ angular.module('DocumentModule', ['ngRoute', 'ngSanitize'])
         };
         $scope.loading = true;
         documentService.create(doc)
-        .then(function(_doc) {
-          $scope.doc = _doc;
-          $scope.addDocument(_doc);
-          $scope.editing = false;
-          $scope.loading = false;
-          $timeout(function() {
-            $scope.doc.opened = true;
-          }, 300);
-        }, function(err) {
-          $scope.loading = false;
-          alert('Error: '+ err);
-        });
+        .then(refreshHandler, errorHandler);
       }
+    };
+  }
+])
+.controller('DocumentTitleEditionModalCtrl', [
+  '$scope', '$modalInstance', 'documentService', 'doc',
+  function ($scope, $modalInstance, documentService, doc) {
+    $scope.doc = doc;
+    var errHandler = function(err) {
+      alert('Error: ' + err);
+      $modalInstance.dismiss('Error: ' + err);
+    };
+
+    $scope.ok = function () {
+      var data = _.pick($scope.doc, '_id', 'title');
+      documentService.update(data)
+      .then($modalInstance.close, errHandler);
+    };
+
+    $scope.cancel = function () {
+      $modalInstance.dismiss('cancel');
     };
   }
 ]);

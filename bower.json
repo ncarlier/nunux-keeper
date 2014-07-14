@@ -4,7 +4,6 @@
   "main": "app.js",
   "dependencies": {
     "bootstrap": "~3.0.0",
-    "html5shiv": "~3.6.2",
     "angular": "~1.2.0",
     "angular-route": "~1.2.7",
     "angular-sanitize": "~1.2.10",
@@ -17,32 +16,8 @@
     "angular-ui-bootstrap-bower": "~0.10.0",
     "ng-file-upload": "~1.2.7",
     "font-awesome": "~4.0.3",
-    "ngInfiniteScroll": "~1.1.2"
-  },
-  "exportsOverride": {
-    "bootstrap": {
-      "": [
-        "./less/*.less",
-        "./dist/js/bootstrap.min.js"
-      ]
-    },
-    "jquery": {
-      "": "jquery.*"
-    },
-    "html5shiv": {
-      "": "dist/html5shiv.js"
-    },
-    "moment": {
-      "": "min/moment.min.js"
-    },
-    "humane-js": {
-      "": "*.js"
-    },
-    "mousetrap": {
-      "": "*.js"
-    }
-  },
-  "ignore": [
-    "**/.*"
-  ]
+    "ngInfiniteScroll": "~1.1.2",
+    "ng-ckeditor": "~0.2.1",
+    "ckeditor": "~4.4.2"
+  }
 }

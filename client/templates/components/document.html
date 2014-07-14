@@ -1,66 +1,83 @@
 <div id="document" ng-class="{open: doc.opened}">
   <div class="loading" ng-if="loading">
     Processing...
-    <span class="glyphicon glyphicon-refresh"></span>
+    <span class="fa fa-spin fa-refresh"></span>
   </div>
   <header>
-    <a class="close" ng-click="closeDocument()">
-      <span class="glyphicon glyphicon-remove-circle"></span>
+    <a class="close" ng-click="closeDocument()" title="Close document">
+      <span class="fa fa-times-circle"></span>
     </a>
 
     <div class="btn-group">
       <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-        <span class="glyphicon glyphicon-plus"></span>
+        <span class="fa fa-pencil"></span>
         <span class="caret"></span>
       </button>
       <ul class="dropdown-menu pull-right" role="menu">
-        <li ng-if="!editing">
-        <a class="pointer" ng-click="startEditing()">
-          <span class="glyphicon glyphicon-pencil"></span>
-          Edit the document
+        <li>
+        <a class="pointer" ng-click="editTitleDialog()">
+          <span class="fa fa-fw fa-font"></span>
+          Edit title
         </a>
         </li>
 
-        <li ng-if="!editing" class="divider"></li>
+        <li ng-if="!editing">
+        <a class="pointer" ng-click="startEditing()">
+          <span class="fa fa-fw fa-file-text-o"></span>
+          Edit content
+        </a>
+        </li>
+
+        <li ng-if="doc.link" class="divider"></li>
 
         <li>
         <a ng-if="doc.link" ng-click="reFetchFromSource()" class="pointer" title="Create a new document from the source">
-          <span class="glyphicon glyphicon-cloud-download"></span>
+          <span class="fa fa-fw fa-cloud-download"></span>
           Refetch from source
         </a>
         </li>
       </ul>
     </div>
 
-    <h1 contenteditable="{{ editing }}" ng-model="doc.title"></h1>
+    <h1 ng-bind="doc.title"></h1>
     <span class="doc-meta">
-      <span class="glyphicon glyphicon-time"></span>
-      <time>{{ doc.date | date }}</time>
-      <span class="glyphicon glyphicon-globe" ng-if="doc.link"></span>
+      <span class="fa fa-clock-o" ng-if="doc.date"></span>
+      <time ng-if="doc.date">{{ doc.date | date }}</time>
+      <span class="fa fa-globe" ng-if="doc.link"></span>
       <a href="{{doc.link}}" title="View source" ng-if="doc.link" target="_blank">{{ doc.link | domain }}</a>
-      <span class="glyphicon glyphicon-link" ng-if="isPublic(doc)"></span>
+      <span class="fa fa-link" ng-if="isPublic(doc)"></span>
       <a href="/doc/{{doc._id}}" title="View public document" target="_blank" ng-if="isPublic(doc)">public link</a>
     </span>
     <ul class="categories" ng-show="editing || doc.categories.length">
-      <li app-category-tag="cat" ng-repeat="cat in doc.categories" class="category" ng-class="{'editing': editing}"></li>
-      <li>
-      <form class="add-category" ng-if="editing">
-        <select class="form-control input-sm"
-          ng-model="selected"
-          ng-change="addCategory(selected.key)"
-          ng-options="cat.label for cat in categories" >
-        </select>
-      </form>
-      </li>
+      <li app-category-tag="cat" ng-repeat="cat in doc.categories" class="category" ></li>
     </ul>
   </header>
-  <article contenteditable="{{ editing }}" ng-model="doc.content" class="readable" ng-class="{editing: editing}">
-  </article>
-  <div class="doc-image" ng-if="isImage(doc)">
-    <img src="" data-ng-src="/api/document/{{doc._id}}/resource/{{doc.attachment}}">
-  </div>
+
+  <article ng-bind-html="getHtmlContent(doc)" class="readable" ng-if="!editing"></article>
+  <textarea ckeditor="editorOptions" ng-model="doc.content" ng-if="editing && doc.contentType.indexOf('text/html') === 0"></textarea>
+  <textarea ng-model="doc.content" ng-if="editing && doc.contentType == 'text/plain'"></textarea>
+
   <footer ng-if="editing" >
     <button type="button" class="btn btn-default" ng-click="cancelDocument()">cancel</button>
     <button type="button" class="btn btn-success" ng-click="saveDocument(doc)">save</button>
   </footer>
 </div>
+
+<script type="text/ng-template" id="templates/dialog/document/edit-title.html">
+<div class="modal-header">
+  <h3>Edit title: {{ doc.title }}</h3>
+</div>
+<div class="modal-body">
+  <form role="form" ng-submit="ok()">
+    <div class="form-group">
+      <label for="documentTitle">Label</label>
+      <input type="text" class="form-control" id="documentTitle" placeholder="Enter document title" ng-model="doc.title">
+    </div>
+  </form>
+</div>
+<div class="modal-footer">
+  <button class="btn btn-primary" ng-click="ok()">OK</button>
+  <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+</div>
+</script>
+

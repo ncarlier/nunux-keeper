@@ -1,6 +1,5 @@
-'use strict';
-
 var kBookmarklet = function() {
+  'use strict';
   var cid = 'KPR_K__CONTAINER',
       frameId = 'KPR_K__FRAME',
       popup,
@@ -19,7 +18,7 @@ var kBookmarklet = function() {
     $c.style['box-shadow'] = '#000 4px 4px 20px';
     $c.style['border-radius'] = '4px';
     var $o = document.createElement('div');
-    $o.title = "Drag content on me.";
+    $o.title = 'Drag content on me.';
     $o.style.height = '120px';
     $o.style.position = 'absolute';
     $o.style.top = '30px';
@@ -42,7 +41,7 @@ var kBookmarklet = function() {
       if (e.preventDefault) {
         e.preventDefault();
       }
-      var data = e.dataTransfer.getData("text/html");
+      var data = e.dataTransfer.getData('text/html');
       popup.postMessage(data, window.K_REALM);
       return false;
     }, false);
@@ -70,7 +69,7 @@ var kBookmarklet = function() {
     if ('close' === e.data && window.K_REALM === e.origin) {
       $c.parentNode.removeChild($c);
     }
-  }
+  };
   window.addEventListener('message', receiveMessage, false);
   setInterval(function() {
     popup.postMessage('ping', window.K_REALM);

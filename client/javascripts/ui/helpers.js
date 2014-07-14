@@ -12,6 +12,11 @@ angular.module('ui.helpers', ['angular-md5'])
     $attributes.$observe(
       'appSrc',
       function(newSource) {
+        if (newSource.indexOf(resourcePath) === 0) {
+          $element[0].src = newSource +
+            ($attributes.size ? '?size=' + $attributes.size : '');
+          return;
+        }
         // Clean query
         var cleanName = newSource.replace(/\?.*$/, '');
         // Extract extension
@@ -31,20 +36,16 @@ angular.module('ui.helpers', ['angular-md5'])
 }])
 .directive('draggable', function() {
   return {
-    scope: {
-      dragdata: '&'
-    },
-    link: function(scope, element) {
+    link: function(scope, element, attrs) {
       // this gives us the native JS object
       var el = element[0];
 
       el.draggable = true;
 
+      var fn = attrs.dragdata;
+
       el.addEventListener('dragstart', function(e) {
-        var data = null;
-        scope.$apply(function(scope) {
-          data = scope.dragdata();
-        });
+        var data = scope.$apply(fn);
 
         e.dataTransfer.effectAllowed = 'move';
         e.dataTransfer.setData('Text', data);

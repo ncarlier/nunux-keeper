@@ -1,6 +1,8 @@
 @import "./variable.less";
 @import "../lib/font-awesome/less/font-awesome.less";
 
+@k-welcome-color: #404D64;
+
 body {
   font-family: sans-serif;
   margin: 0;
@@ -30,7 +32,7 @@ header, section, footer {
 
 header {
   color: @k-panel-text-color;
-  background: #6117BE;
+  background: @k-welcome-color;
   height: 480px;
   text-align: center;
   > div {
@@ -123,7 +125,7 @@ footer {
   h2 {color: #555;}
   p {color: #888;}
   .fa {
-    color: #6117BE;
+    color: @k-welcome-color;
     font-size: 60px;
     text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
   }

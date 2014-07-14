@@ -20,7 +20,7 @@ angular.module('SidebarModule', [])
             pattern, regexp;
 
           if (href) {
-            pattern = href.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&"),
+            pattern = href.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&');
             regexp = new RegExp('^' + pattern + '$', ['i']);
 
             if(regexp.test(target)) {
@@ -72,29 +72,31 @@ angular.module('SidebarModule', [])
         $location.url('/');
       });
     });
-    Mousetrap.bind(['g p'], function() {
+    Mousetrap.bind(['g u'], function() {
       $scope.$apply(function() {
         $location.url('/profile');
       });
     });
-    Mousetrap.bind(['g a'], function() {
+    Mousetrap.bind(['g p'], function() {
       $scope.$apply(function() {
-        $location.url('/documents');
+        $location.url('/document?q=category:system-public');
       });
     });
-    Mousetrap.bind(['g u'], function() {
+    Mousetrap.bind(['g t'], function() {
       $scope.$apply(function() {
-        $location.url('/documents?category=none');
+        $location.url('/document?q=category:system-trash');
+      });
+    });
+    Mousetrap.bind(['g n'], function() {
+      $scope.$apply(function() {
+        $location.url('/document?q=_missing_:category');
       });
     });
     Mousetrap.bind(['?'], function() {
       $scope.$apply(function() {
-        $dialog('templates/dialog/keybindings.html', {
-          id: 'keyBindingsDialog',
-          title: 'Keyboard shortcuts',
-          backdrop: true,
-          footerTemplate: '<button class="btn btn-primary" ng-click="$modalSuccess()">{{$modalSuccessLabel}}</button>',
-          success: {label: 'ok', fn: function() {}}
+        $modal.open({
+          templateUrl: 'templates/dialog/keybindings.html',
+          controller: 'KeybindingsHelpModalCtrl'
         });
       });
     });
@@ -127,8 +129,15 @@ angular.module('SidebarModule', [])
     };
 
     $scope.handleDropOnCategory = function(id, data) {
-      var doc = JSON.parse(data),
-      key = id.split('$').pop();
+      var key = id.split('$').pop();
+
+      data = JSON.parse(data);
+      if (!data.document) {
+        // Not a document. Exit.
+        return;
+      }
+      var doc = data.document;
+
       if (!doc.categories) {
         doc.categories = [];
       }
@@ -137,7 +146,8 @@ angular.module('SidebarModule', [])
       }
       if (!_.contains(doc.categories, key)) {
         doc.categories.push(key);
-        documentService.update(doc)
+        var _data = _.pick(doc, '_id', 'categories');
+        documentService.update(_data)
         .then(function(doc) {
           var cat = _.findWhere($scope.categories, {key: key});
           cat.eventMsg = '+1';
@@ -192,6 +202,14 @@ angular.module('SidebarModule', [])
 
     $scope.cancel = function () {
       $modalInstance.dismiss('cancel');
+    };
+  }
+])
+.controller('KeybindingsHelpModalCtrl', [
+  '$scope', '$modalInstance',
+  function($scope, $modalInstance) {
+    $scope.ok = function () {
+      $modalInstance.dismiss('ok');
     };
   }
 ]);

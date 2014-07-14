@@ -11,7 +11,7 @@ module.exports = function(app) {
     var error = _.isString(err) ? err : (_.isObject(err) ? err.message : 'Unknown Error');
     res.format({
       html: function() {
-        res.render('error', {error: error, info: app.get('info')});
+        res.render('error.html', {error: error, info: app.get('info')});
       },
       json: function(){
         res.json({error: error});

@@ -45,11 +45,11 @@
       padding: 0;
       list-style: none;
       display: flex;
-      flex-wrap: wrap;
-      align-items: center;
+      flex-flow: row wrap;
+      justify-content: space-around;
     }
     ul.cards > li {
-      flex: @k-grid-card-width;
+      width: @k-grid-card-width + 20px;
       height: @k-grid-card-height;
       padding: 10px;
       margin: 10px;
@@ -84,12 +84,12 @@
         height: 100%;
         text-align: center;
       }
-      .glyphicon {
+      .fa {
         width: 100%;
         display: block;
         font-size: 75px;
         text-align: center;
-        padding-top: 15px;
+        padding-top: 25px;
       }
     }
     ul.categories {

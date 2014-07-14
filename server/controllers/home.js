@@ -5,5 +5,5 @@ module.exports = function(req, res) {
   if (!req.user) {
     return res.redirect('/welcome');
   }
-  res.render('index', req.context);
+  res.render('index.html', req.context);
 };

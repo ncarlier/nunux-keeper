@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title><%= info.title %></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
+  <meta name="description" content="<%= info.description %>" />
+  <meta name="author" content="<%= info.author %>">
+  <!-- build:css stylesheets/vendors.css -->
+  <link rel="stylesheet" href="lib/humane-js/themes/original.css" />
+  <link rel="stylesheet" href="lib/ng-ckeditor/ng-ckeditor.css" />
+  <!-- endbuild -->
+  <link rel="stylesheet" href="stylesheets/style.css" />
+  <link rel="apple-touch-icon-precomposed" sizes="152x152" href="icons/icon_152.png">
+  <link rel="apple-touch-icon-precomposed" sizes="120x120" href="icons/icon_120.png">
+  <link rel="apple-touch-icon-precomposed" href="icons/icon_57.png">
+  <link rel="shortcut icon" href="icons/favicon.png">
+</head>
+<body ng-app="KeeperApp">
+  <div id="wrapper" ng-class="mainMenuStatus">
+    <ng-view id="content"></ng-view>
+    <app-sidebar id="sidebar"></app-sidebar>
+  </div><!-- end wrapper -->
+
+<script type="text/ng-template" id="templates/views/profile.html">
+<div id="profile">
+  <header>
+    <app-navbar></app-navbar>
+  </header>
+  <section>
+    <app-profile></app-profile>
+  </section>
+</div>
+</script>
+
+<script type="text/ng-template" id="templates/views/documents.html">
+<div id="documents">
+  <header>
+    <app-navbar></app-navbar>
+  </header>
+  <section>
+    <app-documents></app-documents>
+  </section>
+</div>
+</script>
+
+<!-- build:js javascripts/vendors.min.js -->
+<!-- include:js -->
+<script src="lib/jquery/jquery.js"></script>
+<script src="lib/angular/angular.js"></script>
+<script src="lib/angular-md5/angular-md5.js"></script>
+<script src="lib/angular-route/angular-route.js"></script>
+<script src="lib/angular-sanitize/angular-sanitize.js"></script>
+<script src="lib/angular-ui-bootstrap/ui-bootstrap-tpls.js"></script>
+<script src="lib/humane-js/humane.js"></script>
+<script src="lib/lodash/lodash.js"></script>
+<script src="lib/moment/moment.js"></script>
+<script src="lib/mousetrap/mousetrap.js"></script>
+<script src="lib/ng-ckeditor/ng-ckeditor.js"></script>
+<script src="lib/ng-file-upload/ng-file-upload.js"></script>
+<script src="lib/ng-infinite-scroll/ng-infinite-scroll.js"></script>
+<!-- endinclude:js -->
+<!-- endbuild -->
+<script src="lib/ckeditor/ckeditor.js"></script>
+
+<!-- build:js javascripts/keeper.min.js -->
+<script src="javascripts/app.js"></script>
+<script src="javascripts/ui/helpers.js"></script>
+<script src="javascripts/services/category.js"></script>
+<script src="javascripts/services/document.js"></script>
+<script src="javascripts/services/user.js"></script>
+<script src="javascripts/components/documents.js"></script>
+<script src="javascripts/components/document.js"></script>
+<script src="javascripts/components/profile.js"></script>
+<script src="javascripts/components/sidebar.js"></script>
+<script src="javascripts/components/navbar.js"></script>
+<!-- endbuild -->
+</body>
+</html>

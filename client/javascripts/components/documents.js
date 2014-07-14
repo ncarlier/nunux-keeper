@@ -138,11 +138,17 @@ angular.module('DocumentsModule', ['ngRoute', 'angularFileUpload', 'infinite-scr
 
     $scope.getDraggableData = function(doc) {
       var data = {
-        _id: doc._id,
-        categories: doc.fields.category
+        document: {
+          _id: doc._id,
+          categories: doc.fields.category
+        }
       };
       return JSON.stringify(data);
     };
+
+    $scope.$on('document-created', function(event, data) {
+      $scope.addDocument(data.doc);
+    });
   }
 ])
 .controller('DocumentCreationModalCtrl', [
@@ -162,10 +168,17 @@ angular.module('DocumentsModule', ['ngRoute', 'angularFileUpload', 'infinite-scr
       $modalInstance.dismiss('Error: ' + err);
     };
 
-    $scope.postSimple = function() {
+    $scope.postSimpleHtml = function() {
       doc.title = 'My new document';
       doc.content = '<p>what\'s up ?</p>';
       doc.contentType = 'text/html';
+      $modalInstance.close(doc);
+    };
+
+    $scope.postSimpleText = function() {
+      doc.title = 'My new document';
+      doc.content = 'what\'s up ?';
+      doc.contentType = 'text/plain';
       $modalInstance.close(doc);
     };
 

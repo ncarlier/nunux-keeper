@@ -1,0 +1,17 @@
+#!/bin/bash
+
+###
+# Simple script to get a shell into the container.
+###
+docker run \
+    --rm \
+    --name="keeper" \
+    --link mongodb:db \
+    --link elastic:elasticsearch \
+    --link redis:redis \
+    --env-file="./etc/keeper.conf" \
+    -i -t \
+    --entrypoint="/bin/bash" \
+    ncarlier/keeper \
+    -c /bin/bash
+

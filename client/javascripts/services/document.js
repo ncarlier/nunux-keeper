@@ -1,10 +1,30 @@
 'use strict';
 
-angular.module('DocumentService', ['angularFileUpload'])
+angular.module('DocumentService', ['angularFileUpload', 'angular-md5'])
 .factory('documentService', [
-  '$q', '$http', '$upload', '$log',
-  function ($q, $http, $upload, $log) {
+  '$rootScope', '$q', '$http', '$upload', '$log', 'md5',
+  function ($rootScope, $q, $http, $upload, $log, md5) {
     var url = '/api/document';
+
+    var _processContent = function(doc) {
+      if (/^text\/html/.test(doc.contentType)) {
+        var resourcePath = '/api/document/' + doc._id + '/resource/';
+        var $content = $('<div>').html(doc.content);
+        $('img', $content).each(function() {
+          var src = $(this).attr('app-src');
+          if (src) {
+            var cleanSrc = src.replace(/\?.*$/, '');
+            var ext = cleanSrc.split('.').pop();
+            if (ext) ext = ext.match(/^[a-zA-Z0-9]+/)[0];
+            $(this).attr(
+              'src',
+              resourcePath + md5.createHash(cleanSrc) + (ext ? '.' + ext : '')
+            );
+          }
+        });
+        doc.content = $content.html();
+      }
+    };
 
     var fetchDocuments = function(query, from, size) {
       var params = $.param({
@@ -19,18 +39,19 @@ angular.module('DocumentService', ['angularFileUpload'])
       })
       .error(deferred.reject);
 
-      return deferred.promise;;
+      return deferred.promise;
     };
 
     var getDocument = function(id) {
       var deferred = $q.defer();
       $http.get(url + '/' + id)
       .success(function (data) {
+        _processContent(data);
         deferred.resolve(data);
       })
       .error(deferred.reject);
-      return deferred.promise;;
-    }
+      return deferred.promise;
+    };
 
     var createDocument = function(doc) {
       var deferred = $q.defer();
@@ -42,23 +63,28 @@ angular.module('DocumentService', ['angularFileUpload'])
         }).progress(function(evt) {
           $log.info('percent: ' + parseInt(100.0 * evt.loaded / evt.total));
         }).success(function(data, status, headers, config) {
+          $log.info('Document created: ' + data);
           deferred.resolve(data);
+          $rootScope.$broadcast('document-created', { doc: data });
         }).error(function(err) {
-          alert('Unable to create document!');
+          $log.error('Unable to create document: ', err);
           deferred.reject(err);
         });
       } else {
         $http.post(url, doc.content, {
           params: {title: doc.title, categories: doc.categories, link: doc.link},
           headers: {
-            "Content-Type": doc.contentType
+            'Content-Type': doc.contentType
           }
         })
         .success(function(data) {
+          _processContent(data);
+          $log.info('Document created:', data);
           deferred.resolve(data);
+          $rootScope.$broadcast('document-created', { doc: data });
         })
         .error(function(err) {
-          alert('Unable to create document!');
+          $log.error('Unable to create document: ', err);
           deferred.reject(err);
         });
       }
@@ -70,30 +96,34 @@ angular.module('DocumentService', ['angularFileUpload'])
       $http.put(url + '/' + doc._id, doc.content, {
         params: {title: doc.title, categories: doc.categories},
         headers: {
-          "Content-Type": doc.contentType
+          'Content-Type': doc.contentType
         }
       })
       .success(function(data) {
+        _processContent(data);
+        $log.info('Document updated:', data);
         deferred.resolve(data);
+        $rootScope.$broadcast('document-updated', { doc: data });
       })
       .error(function(err) {
-        alert('Unable to update document!');
+        $log.error('Unable to update document:', err);
         deferred.reject(err);
       });
-      return deferred.promise;;
+      return deferred.promise;
     };
 
     var trashDocuments = function() {
       var deferred = $q.defer();
       $http.delete(url)
       .success(function() {
+        $log.info('Trash emptied.');
         deferred.resolve();
       })
       .error(function(err) {
-        alert('Unable to trash documents!');
+        $log.error('Unable to empty tashbin:', err);
         deferred.reject(err);
       });
-      return deferred.promise;;
+      return deferred.promise;
     };
 
     return {

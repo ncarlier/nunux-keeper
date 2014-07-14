@@ -46,12 +46,16 @@ angular.module('KeeperApp', [
 }])
 .filter('fromNow', function() {
   return function(dateString) {
-    return moment(new Date(dateString)).fromNow(true);
+    return dateString ?
+      moment(new Date(dateString)).fromNow(true) :
+      'n/a';
   };
 })
 .filter('date', function() {
   return function(dateString) {
-    return moment(new Date(dateString)).format('MMMM Do YYYY, h:mm:ss a');
+    return dateString ?
+      moment(new Date(dateString)).format('MMMM Do YYYY, h:mm:ss a') :
+      'n/a';
   };
 })
 .filter('domain', function() {
@@ -87,7 +91,7 @@ angular.module('KeeperApp', [
 .filter('lighten', function() {
   return function(col, amt) {
     var usePound = false;
-    if (col[0] == "#") {
+    if (col[0] == '#') {
       col = col.slice(1);
       usePound = true;
     }
@@ -101,7 +105,7 @@ angular.module('KeeperApp', [
     var g = (num & 0x0000FF) + amt;
     if (g > 255) g = 255;
     else if (g < 0) g = 0;
-    return (usePound?"#":"") + (g | (b << 8) | (r << 16)).toString(16);
+    return (usePound ? '#' : '') + (g | (b << 8) | (r << 16)).toString(16);
   };
 });
 

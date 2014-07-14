@@ -2,6 +2,6 @@
  * Bookmarklet.
  */
 module.exports = function(req, res) {
-  res.render('bookmarklet', req.context);
+  res.render('bookmarklet.html', req.context);
 };
 

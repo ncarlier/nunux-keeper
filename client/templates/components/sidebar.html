@@ -3,18 +3,18 @@
     <h1><img src="/icons/icon_57.png"/> keeper</h1>
   </div>
   <div class="list-group">
-    <a href="#profile" target="_self" class="list-group-item" title="View profile [g p]" >
-      <span class="glyphicon glyphicon-user"></span>
+    <a href="#profile" target="_self" class="list-group-item" title="View profile [g u]" >
+      <span class="fa fa-user"></span>
       Profile
       <img ng-src="{{user.uid | gravatar}}?s=35" alt="{{user.uid}}" title="{{user.uid}}" />
     </a>
-    <a href="#document" target="_self" class="list-group-item" title="View all documents [g a]" >
-      <span class="glyphicon glyphicon-th"></span>
+    <a href="#document" target="_self" class="list-group-item" title="View all documents [g h]" >
+      <span class="fa fa-asterisk"></span>
       All
       <span class="badge">{{ total }}</span>
     </a>
-    <a href="#document?q=_missing_:category" target="_self" class="list-group-item" title="View archived items [g u]" >
-      <span class="glyphicon glyphicon-inbox"></span>
+    <a href="#document?q=_missing_:category" target="_self" class="list-group-item" title="View uncategorized documents [g n]" >
+      <span class="fa fa-inbox"></span>
       Uncategorized
       <span class="badge">{{ uncatTotal }}</span>
     </a>
@@ -24,16 +24,17 @@
       title="{{ category.label }}"
       class="list-group-item"
       target="_self"
+      draggable dragdata="getDraggableData(category)"
       droppable drop="handleDropOnCategory"
       ng-repeat="category in categories">
-      <span class="glyphicon" ng-class="category.icon"></span>
+      <span class="fa" ng-class="category.icon"></span>
       {{ category.label }}
       <span class="badge">{{ category.total }}</span>
-      <span class="glyphicon glyphicon-cog setup" ng-click="editCategoryDialog(category); $event.stopPropagation()" ng-show="category.is_user" title="Setup category"></span>
+      <span class="fa fa-gears setup" ng-click="editCategoryDialog(category); $event.stopPropagation()" ng-show="category.isUser" title="Setup category"></span>
       <span class="msg-overlay" ng-class="{displayed: category.event}">{{ category.eventMsg }}</span>
     </a>
     <a class="list-group-item pointer" title="Add a new category" ng-click="createCategoryDialog(); $event.stopPropagation()">
-      <span class="glyphicon glyphicon-plus"></span>
+      <span class="fa fa-plus"></span>
       Add a category
     </a>
   </div>

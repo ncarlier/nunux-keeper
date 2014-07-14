@@ -2,18 +2,21 @@
   <h1>{{ title || category.label }}</h1>
   <ul class="cards" infinite-scroll="fetchDocuments()" infinite-scroll-parent>
     <li title="Create new document..." ng-click="showDocumentCreationDialog()" ng-if="!trash && !isSearch">
-    <div class="glyphicon glyphicon-plus" ></div>
+    <div class="fa fa-plus" ></div>
     <div class="doc-title"><h3>Create new document</h3></div>
     </li>
 
     <li title="Empty trash bin!" ng-click="trashDocuments()" ng-if="trash && documents.length">
-    <div class="glyphicon glyphicon-trash" ></div>
+    <div class="fa fa-trash-o" ></div>
     <div class="doc-title"><h3>Empty trash bin!</h3></div>
     </li>
 
-    <li ng-repeat="doc in documents" id="{{ doc._id }}" title="{{ doc.fields.title }}"
-        ng-click="openDocument(doc._id)" ng-class="doc.clazz" draggable dragdata="getDraggableData(doc)">
-    <div class="glyphicon glyphicon-file" ></div>
+    <li ng-repeat="doc in documents"
+        id="{{ doc._id }}" title="{{ doc.fields.title }}"
+        ng-click="openDocument(doc._id)"
+        ng-class="doc.clazz"
+        draggable dragdata="getDraggableData(doc)">
+    <div class="fa fa-file" ></div>
     <div class="doc-illustration" ng-if="doc.fields.illustration">
       <img src="" app-src="{{doc.fields.illustration}}" size="200x150" onerror="this.src='/icons/404.png'">
     </div>
@@ -41,7 +44,8 @@
 <tabset justified="true">
   <tab heading="Simple">
     <p>Open document creation form.</p>
-    <button class="btn btn-primary" ng-click="postSimple()" >Open</button>
+    <button class="btn btn-primary" ng-click="postSimpleHtml()" >Html</button>
+    <button class="btn btn-primary" ng-click="postSimpleText()" >Text</button>
   </tab>
   <tab heading="Online">
     <form name="urlForm" ng-submit="postUrl()" novalidate>

@@ -12,4 +12,5 @@ module.exports = function(app) {
   app.get('/welcome', contextHandler, controller.welcomepage);
   app.get('/bookmarklet', contextHandler, controller.bookmarklet);
   app.get('/doc/:id', contextHandler, controller.pub.get);
+  app.get('/doc/:id/raw', contextHandler, controller.pub.getRaw);
 };

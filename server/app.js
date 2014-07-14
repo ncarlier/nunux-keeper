@@ -37,7 +37,9 @@ var express        = require('express'),
 var app = module.exports = express();
 
 var env = process.env.NODE_ENV || 'development',
-    uploadDir = process.env.APP_VAR_DIR ? path.join(process.env.APP_VAR_DIR, 'upload') : os.tmpdir();
+    uploadDir = process.env.APP_VAR_DIR ? path.join(process.env.APP_VAR_DIR, 'upload') : os.tmpdir(),
+    production = 'production' == env,
+    assetsPath = production ? path.join(__dirname, '../dist') : path.join(__dirname, '../client');
 
 app.set('info', {
   name: appInfo.name,
@@ -48,17 +50,17 @@ app.set('info', {
 });
 app.set('port', process.env.APP_PORT || 3000);
 app.set('realm', process.env.APP_REALM || 'http://localhost:' + app.get('port'));
-app.set('views', __dirname + '/views');
+app.set('views', path.join(assetsPath, 'html'));
 app.set('view engine', 'ejs');
+app.engine('html', require('ejs').renderFile);
 
 // Statics
-if ('development' == env) {
-  app.use(require('less-middleware')(path.join(__dirname, '../client')));
-  app.use(express.static(path.join(__dirname, '../client')));
-}
-if ('production' == env) {
+if (production) {
   var oneDay = 86400000;
-  app.use(express.static(path.join(__dirname, '../dist'), {maxAge: oneDay}));
+  app.use(express.static(assetsPath, {maxAge: oneDay}));
+} else {
+  app.use(require('less-middleware')(assetsPath));
+  app.use(express.static(assetsPath));
 }
 
 // Logger
@@ -70,7 +72,7 @@ app.use(middleware.rawbodyParser());
 app.use(middleware.multipart());
 
 // Session store
-if ('production' == env) {
+if (production) {
   var RedisStore = require('connect-redis')(session),
       redis = require('./helpers/redis');
   app.use(session({ store: new RedisStore({

@@ -17,6 +17,8 @@ module.exports = {
       'client/lib/angular-md5/angular-md5.min.js',
       'client/lib/ng-file-upload/angular-file-upload.min.js',
       'client/lib/ngInfiniteScroll/ng-infinite-scroll.min.js',
+      'client/lib/ckeditor/ckeditor.js',
+      'client/lib/ng-ckeditor/ng-ckeditor.min.js',
 
       'dist/javascripts/app.js',
       'dist/javascripts/**/*.js'

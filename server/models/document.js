@@ -213,11 +213,10 @@ module.exports = function(db, conn) {
     if (update.title) update.title = update.title.trim();
     // TODO filter categories
     if (update.categories) {
-      if (_.isArray(update.categories)) {
-        update.categories = _.filter(update.categories, function(cat) { return /^(user|system)-/.test(cat); });
-      } else if (_.isString(update.categories)) {
+      if (_.isString(update.categories)) {
         update.categories = [update.categories];
       }
+      update.categories = _.filter(update.categories, function(cat) { return /^(user|system)-/.test(cat); });
     }
     update.date = new Date();
     // Filter updatable attributes.

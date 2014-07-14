@@ -1,0 +1,16 @@
+{
+  "browser"  : true,
+  "camelcase": true,
+  "indent"   : 2,
+  "quotmark" : "single",
+  "globals"  : {
+    "$"      : false,
+    "angular": true,
+    "browser": false,
+    "alert"  : false,
+    "confirm": false,
+    "moment" : false,
+    "humane" : false,
+    "qrcode" : false
+  }
+}
