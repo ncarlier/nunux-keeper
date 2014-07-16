@@ -53,7 +53,7 @@
     </ul>
   </header>
 
-  <article ng-bind-html="getHtmlContent(doc)" class="readable" ng-if="!editing"></article>
+  <article ng-bind-html="getHtmlContent(doc)" class="readable" ng-if="!editing" app-scrolltop-on="{{doc.opened}}"></article>
   <textarea ckeditor="editorOptions" ng-model="doc.content" ng-if="editing && doc.contentType.indexOf('text/html') === 0"></textarea>
   <textarea ng-model="doc.content" ng-if="editing && doc.contentType == 'text/plain'"></textarea>
 

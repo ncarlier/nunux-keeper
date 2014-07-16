@@ -34,6 +34,22 @@ angular.module('ui.helpers', ['angular-md5'])
     link: link
   };
 }])
+.directive('appScrolltopOn', function() {
+  var link = function($scope, $element, $attributes) {
+    $attributes.$observe(
+      'appScrolltopOn',
+      function(val) {
+        if (val == 'true') {
+          $element.scrollTop(0);
+        }
+      }
+    );
+  };
+  return {
+    restrict: 'A',
+    link: link
+  };
+})
 .directive('draggable', function() {
   return {
     link: function(scope, element, attrs) {
