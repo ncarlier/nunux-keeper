@@ -32,7 +32,17 @@
         </span>
       </header>
       <section class="content" class="readable">
+        <% if (/^text\/plain/.test(doc.contentType)) { %>
+        <pre>
+        <% } %>
+        <% if (/^image\//.test(doc.contentType)) { %>
+        <img src="/api/document/<%= doc._id %>/resource/<%= doc.attachment %>" />
+        <% } else { %>
         <%- doc.content %>
+        <% } %>
+        <% if (/^text\/plain/.test(doc.contentType)) { %>
+        </pre>
+        <% } %>
       </section>
     </article>
   </section>
