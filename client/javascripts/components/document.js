@@ -150,9 +150,13 @@ angular.module('DocumentModule', ['ngRoute', 'ngSanitize', 'ngCkeditor'])
     };
 
     $scope.ok = function () {
-      var data = _.pick($scope.doc, '_id', 'title');
-      documentService.update(data)
-      .then($modalInstance.close, errHandler);
+      if ($scope.doc._id) {
+        var data = _.pick($scope.doc, '_id', 'title');
+        documentService.update(data)
+        .then($modalInstance.close, errHandler);
+      } else {
+        $modalInstance.close($scope.doc);
+      }
     };
 
     $scope.cancel = function () {
