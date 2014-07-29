@@ -11,7 +11,7 @@ module.exports = {
         env: app.get('env'),
         redirect: req.url
       };
-      res.render('login', context);
+      res.render('login.html', context);
     };
   },
   authorize: function(app) {
@@ -24,7 +24,7 @@ module.exports = {
         transactionID: req.oauth2.transactionID,
         client: req.oauth2.client
       };
-      res.render('oauth', context);
+      res.render('oauth.html', context);
     };
   },
   client: client,
