@@ -5,6 +5,7 @@ module.exports =
       cwd: 'client'
       src: [
         'robots.txt'
+        'filters.svg'
         'fonts/**'
         'icons/**'
         'templates/**'
