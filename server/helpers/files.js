@@ -96,13 +96,41 @@ var moveInChroot = function(src, dest) {
 };
 
 /**
+ * Get disk usage of chrooted location.
+ * @param {string} loc
+ * @return {Promise} A promise of th disk usage
+ */
+var getChrootDiskUsage = function(loc) {
+  loc = getChrootPath(loc);
+  return nodefn.call(fs.lstat, loc)
+  .then(function(stats) {
+    if (stats.isDirectory()) {
+      return nodefn.call(fs.readdir, loc)
+      .then(function(list) {
+        var subs = [];
+        list.forEach(function(item) {
+          subs.push(getChrootDiskUsage(path.join(loc, item)));
+        });
+        if (subs.length) {
+          return when.reduce(subs, function(sum, value) {
+            return sum += value;
+          });
+        } else return when.resolve(stats.size);
+      });
+    } else {
+      return when.resolve(stats.size);
+    }
+  });
+};
+
+/**
  * Test if file exists.
- * @param {String} path path to test
+ * @param {String} file file to test
  * @return {Promise} promise of the test
  */
-var chexists = function(path) {
+var chexists = function(file) {
   var found = when.defer();
-  fs.exists(path, function(exists) {
+  fs.exists(file, function(exists) {
     return found.resolve(exists);
   });
   return found.promise;
@@ -143,6 +171,8 @@ module.exports = {
   chmv: moveInChroot,
   /** Remove file or directory in chrooted location. */
   chrm: function() { return nodefn.call(fs.remove, getChrootPath.apply(null, arguments)); },
+  /** Get disk usage in chrooted location. */
+  chdu: getChrootDiskUsage,
   /** Test if path exists. */
   chexists: chexists,
   /** List directory content. */

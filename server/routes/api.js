@@ -31,5 +31,7 @@ module.exports = function(app) {
   app.post('/api/category', api.categories.create);
   app.delete('/api/category/:key', api.categories.del);
   // Admin API:
-  //app.get('/api/admin/user/:id', api.admin.users.get);
+  app.get('/api/admin/stats', api.admin.getStatistics);
+  app.get('/api/admin/user/:id', api.admin.getUser);
+  app.post('/api/admin/user/:id', api.admin.createUser);
 };

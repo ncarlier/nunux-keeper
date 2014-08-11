@@ -1,8 +1,3 @@
-var documents  = require('./document'),
-    categories = require('./category'),
-    resources  = require('./resource'),
-    connector  = require('./connector'),
-    user       = require('./user');
 
 module.exports = {
   info: function(app) {
@@ -14,9 +9,10 @@ module.exports = {
       res.json(info);
     };
   },
-  documents: documents,
-  categories: categories,
-  resources: resources,
-  connector: connector,
-  user: user
+  documents:  require('./document'),
+  categories: require('./category'),
+  resources:  require('./resource'),
+  connector:  require('./connector'),
+  user:       require('./user'),
+  admin:      require('./admin')
 };

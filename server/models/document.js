@@ -67,8 +67,8 @@ var buildQuery = function(owner, params) {
         from: from,
         size: size,
         sort: [
-          "_score",
-          { date: {order: "desc"}}
+          '_score',
+          { date: {order: 'desc'}}
         ],
         query: {
           filtered: {
