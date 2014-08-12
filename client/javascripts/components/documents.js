@@ -13,7 +13,7 @@ angular.module('DocumentsModule', ['ngRoute', 'angularFileUpload', 'infinite-scr
   'documentService', '$modal', '$log', '$timeout',
   function ($rootScope, $scope, $routeParams, categoryService,
             documentService, $modal, $log, $timeout) {
-    var m, size = 20;
+    var m, size = 20, initializing = true;
     $scope.emptyMessage = 'No documents found.';
     $scope.isSearch = false;
     switch (true) {
@@ -40,11 +40,13 @@ angular.module('DocumentsModule', ['ngRoute', 'angularFileUpload', 'infinite-scr
     $scope.documents = [];
     $scope.from = 0;
     $scope.isnext = true;
+    $scope.invert = false;
     $scope.fetchDocuments = function() {
       if (!$scope.isnext) return;
       $log.debug('Fetching documents...');
-      documentService.fetch($routeParams.q, $scope.from, size)
+      documentService.fetch($routeParams.q, $scope.from, size, $scope.invert ? 'asc' : 'desc')
       .then(function(data) {
+        initializing = false;
         if (data.hits.length == size && $scope.from + size < data.total) {
           $scope.from += size;
           $scope.isnext = true;
@@ -66,6 +68,17 @@ angular.module('DocumentsModule', ['ngRoute', 'angularFileUpload', 'infinite-scr
         });
       });
     };
+
+    $scope.refresh = function() {
+      $scope.documents = [];
+      $scope.from = 0;
+      $scope.isnext = true;
+      $scope.fetchDocuments();
+    };
+
+    $scope.$watch('invert', function(newValue) {
+      if (!initializing) $scope.refresh();
+    });
 
     $scope.trashDocuments = function() {
       if (confirm('Are you sure you want to remove the items in the Trash permanently?')) {

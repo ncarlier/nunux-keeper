@@ -62,13 +62,14 @@ var mapping = {
 var buildQuery = function(owner, params) {
   var from = params.from ? params.from : 0,
       size = params.size ? params.size : 20,
+      order = params.order ? params.order : 'desc',
       q = {
         fields: ['title', 'contentType', 'category', 'illustration', 'attachment'],
         from: from,
         size: size,
         sort: [
           '_score',
-          { date: {order: 'desc'}}
+          { date: {order: order}}
         ],
         query: {
           filtered: {

@@ -26,11 +26,12 @@ angular.module('DocumentService', ['angularFileUpload', 'angular-md5'])
       }
     };
 
-    var fetchDocuments = function(query, from, size) {
+    var fetchDocuments = function(query, from, size, order) {
       var params = $.param({
         q: query,
         from: from,
-        size: size
+        size: size,
+        order: order
       });
       var deferred = $q.defer();
       $http.get(url + '?' + params)

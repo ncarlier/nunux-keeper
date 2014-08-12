@@ -1,5 +1,10 @@
 <div class="documents" ng-class="{'one-col': doc}" >
-  <h1>{{ title || category.label }}</h1>
+  <h1>
+    {{ title || category.label }}
+    <span class="fa"
+      ng-class="{ 'fa-sort-numeric-asc': invert, 'fa-sort-numeric-desc': !invert }"
+      ng-click="invert = !invert"></span>
+  </h1>
   <ul class="cards" infinite-scroll="fetchDocuments()" infinite-scroll-parent>
     <li title="Create new document..." ng-click="showDocumentCreationDialog()" ng-if="!trash && !isSearch">
     <div class="fa fa-plus" ></div>
