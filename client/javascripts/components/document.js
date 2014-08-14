@@ -44,7 +44,8 @@ angular.module('DocumentModule', ['ngRoute', 'ngSanitize', 'ngCkeditor'])
 
     $scope.loading = false;
     $scope.editorOptions = {
-      language: 'en'
+      language: 'en',
+      extraAllowedContent: 'img[app-src,data-src]'
     };
 
     $scope.getHtmlContent = function(doc) {
