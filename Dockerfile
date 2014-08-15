@@ -8,6 +8,9 @@ FROM ncarlier/nodejs
 
 MAINTAINER Nicolas Carlier <https://github.com/ncarlier>
 
+# Install packages
+RUN apt-get update && apt-get install -y imagemagick
+
 # Port
 EXPOSE 3000
 
