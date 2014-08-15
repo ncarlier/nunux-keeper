@@ -10,6 +10,7 @@ var when    = require('when'),
  * @return {String} the base URL in the document head.
  */
 var extractBaseUrl = function(document) {
+  if (!document.head) return null;
   var base = document.head.getElementsByTagName('base')[0];
   if (base && base.hasAttribute('href')) {
     var baseUrl = base.getAttribute('href');
