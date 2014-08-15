@@ -1,7 +1,7 @@
 var when       = require('when'),
     nodefn     = require('when/node/function'),
     _          = require('underscore'),
-    im         = require('imagemagick'),
+    gm         = require('gm'),
     logger     = require('../helpers').logger,
     errors     = require('../helpers').errors,
     files      = require('../helpers').files,
@@ -10,7 +10,7 @@ var when       = require('when'),
 
 var oneDay = 86400000,
     imageExtensions = ['png', 'jpg', 'jpeg', 'gif'],
-		sizes = ['200x150', 'x100', 'x150', 'x200', 'x300', 'x480'];
+		sizes = ['200x150'];
 
 /**
  * Get image thumbnail.
@@ -41,27 +41,27 @@ var getThumbnail = function(file, size) {
   .then(function (exists) {
     if (exists) return when.resolve(thumbfile);
     logger.debug('Resizing image %s to %s', file, thumbfile);
-    if (size.charAt(0) === 'x') {
-      size = size + '^';
-    }
-    var args = null;
-    if (size.charAt(0) === 'x') {
-      args = [file, '-resize', size,
-        '-quality', '75', thumbfile];
-    } else {
-      args = [file, '-resize', size + '^',
-        '-quality', '75', '-gravity', 'center',
-        '-extent', size, thumbfile];
-    }
 
-    return nodefn.call(im.convert, args)
-    .then(function(stdout) {
-      logger.debug('Image %s resized: %s', file, stdout);
-      return when.resolve(thumbfile);
-    }, function(e) {
-      logger.error('Unable to resize image %s', file, e);
-      return when.reject(e);
+    var thumbnailed = when.defer();
+
+    var resize = size.split('x');
+
+    gm(file)
+    .options({imageMagick: true})
+    .resize(resize[0], resize[1], '^')
+    .quality(75)
+    .gravity('Center')
+    .extent(size)
+    .write(thumbfile, function (err) {
+      if (err) {
+        logger.error('Unable to resize image %s', file, err);
+        return thumbnailed.reject(err);
+      }
+      logger.debug('Image %s resized.', file);
+      return thumbnailed.resolve(thumbfile);
     });
+
+    return thumbnailed.promise;
   });
 };
 

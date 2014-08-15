@@ -44,7 +44,7 @@ app.on('stop', function() {
       logger.error(err);
       process.exit(1);
     } else {
-      logger.info('Stopping Timeline Updater: done.');
+      logger.info('Stopping Resource Downloader: done.');
       process.exit(0);
     }
   });
