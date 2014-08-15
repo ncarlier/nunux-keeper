@@ -12,14 +12,14 @@ Nunux Keeper allow you to save articles or medias you found on internet in one p
 * Documents attached medias are also saved.
 * Search a document with powerfull full text queries.
 * Access from your mobile or your computer. It's full responsive.
-* Easyly save web content while surfing thanks to the awesome bookmarklet.
+* Easily save web content while surfing thanks to the awesome bookmarklet.
+* Share a document on a public page.
 * Build your own client application thaks to the RESTFul JSON API.
 * Link your account with Twitter and keep your tweets.
 * Import your bookmarks from Pocket.
 
 ## Roadmap
 
-* Share a document using plugins. Share by mail, QRcode, other web sites;
 * Add the ability to choose a different storage system (ftp, remoteStorage, dropbox, etc.);
 * Add a user quota for local storage;
 * Add some user dashboard with stats;
@@ -39,7 +39,7 @@ This installation procedure is from skratch. You can find below an easiest insta
 * [Git](http://git-scm.com/)
 * [Node.js](http://nodejs.org/) ~v0.10.0
 * [MongoDB](http://www.mongodb.org/) ~v2.4
-* [Elasticsearch](http://nodejs.org/) v0.90.10
+* [Elasticsearch](http://www.elasticsearch.org/) v0.90.10
 * [Redis](http://redis.io/) ~v2.8.0 (optional)
 * [Imagemagick](http://www.imagemagick.org/)
 
@@ -74,7 +74,7 @@ Connect to mongodb and enabled replicaset:
 
 ### Run the Keeper
 
-See "etc/default/keeper-server" for environment configuration.
+See "etc/keeper_sample.conf" for environment configuration.
 
     npm start
 
@@ -84,22 +84,41 @@ Open your browser, go to http://localhost:3000 and enjoy!
 
 ### Prerequisites
 
-* [Git](http://git-scm.com/)
 * [Docker](http://www.docker.io/)
 
 or a cool docker hosting service.
 
 ### Start the Keeper
 
-    # Get Keeper sources
-    git clone git@github.com:ncarlier/nunux-keeper.git &&cd keeper
-    # Createreate share volumes
-    docker run -v ~/src/keeper:/opt/keeper -v ~/var/keeper:/var/opt/keeper -name KEEPER_VOLUMES busybox true
-    # Build docker image
-    docker build -runm -t nunux/keeper .
-    # Start the container
-    docker run -rm -link mongodbgo-elastic:db -volumes-from KEEPER_VOLUMES -i -t -p 3000:3000 nunux/keeper /usr/bin/supervisord
+    # Start Redis, MongoDB and ElasticSearch
+    docker run --name redis -d ncarlier/redis
+    docker run --name mongodb -d ncarlier/mongodb
+    docker run --name elasticsearch -d ncarlier/elasticsearch
+
+    # Get and run Keeper
+    docker run \
+      --name="keeper-server" \
+      --link mongodb:db \
+      --link elasticsearch:elasticsearch \
+      --link redis:redis \
+      --env-file="./etc/keeper.conf" \
+      -d \
+      ncarlier/keeper
+
+    # (Optional) Run Keeper downloader deamon
+    # Only if you set APP_DOWNLOADER="async-redis"
+    docker run \
+      --name="keeper-resource-downloader" \
+      --link mongodb:db \
+      --link elasticsearch:elasticsearch \
+      --link redis:redis \
+      --env-file="./etc/keeper.conf" \
+      -d \
+      ncarlier/keeper resource-downloader
+
     # Enjoy!
+
+Note: See ./etc/keeper_sample.conf for configuration variables.
 
 ----------------------------------------------------------------------
 
