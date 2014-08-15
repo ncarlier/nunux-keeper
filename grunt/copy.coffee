@@ -8,6 +8,7 @@ module.exports =
         'filters.svg'
         'fonts/**'
         'icons/**'
+        'images/**'
         'templates/**'
         'html/**'
         '*.js'
