@@ -1,4 +1,0 @@
-#!/bin/bash
-
-docker run --rm --name keeper --link mongodb:db --link elastic:elasticsearch --link redis:redis --volumes-from KEEPER_VOLUMES -i -t nunux/keeper
-

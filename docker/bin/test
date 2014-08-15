@@ -1,4 +1,0 @@
-#!/bin/bash
-
-docker run --rm --link mongodb:db --link elastic:elasticsearch --volumes-from KEEPER_VOLUMES -i -t nunux/keeper test
-
