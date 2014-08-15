@@ -5,6 +5,23 @@ var when    = require('when'),
     readability = require('node-readability');
 
 /**
+ * Extract base URL from the document head.
+ * @param {Object} document DOM
+ * @return {String} the base URL in the document head.
+ */
+var extractBaseUrl = function(document) {
+  var base = document.head.getElementsByTagName('base')[0];
+  if (base && base.hasAttribute('href')) {
+    var baseUrl = base.getAttribute('href');
+    if (/^\/\//i.test(baseUrl)) baseUrl = 'http:' + baseUrl;
+    logger.debug('Base URL found in the head: %s', baseUrl);
+    return baseUrl;
+  } else {
+    return null;
+  }
+};
+
+/**
  * Extract and clean HTML content of a document using Readability.
  * @param {Document} doc
  * @param {Document} extractArticle flag to tell if we have to
@@ -15,7 +32,8 @@ var extractHtml = function(doc, extractArticle) {
   var extracted = when.defer();
   readability(doc.content, function(err, read) {
     if (err) return extracted.reject(err);
-    cleaner.cleanup(read.document, {baseUrl: doc.link});
+    var baseUrl = extractBaseUrl(read.document) || doc.link;
+    cleaner.cleanup(read.document, {baseUrl: baseUrl});
     if (extractArticle) {
       // Try to get page main content...
       doc.content = read.document.body.innerHTML;
@@ -25,7 +43,7 @@ var extractHtml = function(doc, extractArticle) {
       // Get content such as
       doc.content = read.document.body.innerHTML;
     }
-    if (doc.title === 'Undefined') doc.title = read.title;
+    if (!doc.title && read.title) doc.title = read.title;
     doc.illustration = getIllustration(doc.content);
     extracted.resolve(doc);
   });

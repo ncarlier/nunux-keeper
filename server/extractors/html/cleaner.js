@@ -72,7 +72,7 @@ var filterImages = function(document, options) {
       var src = image.getAttribute('src') || image.getAttribute('data-src');
       if (src) {
         // Create absolute URL if possible
-        if (options && options.baseUrl && !/^https?|file|ftps?/i.test(src)) {
+        if (options && options.baseUrl && !/^https?:\/\//i.test(src)) {
           src = url.resolve(options.baseUrl, src);
         }
         // Swapping src and app-src attributes.

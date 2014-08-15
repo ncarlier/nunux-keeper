@@ -25,7 +25,7 @@ module.exports = {
     doc.link = doc.content;
 
     request.head(doc.link, function (err, res) {
-      if (err) return result.reject(err);
+      if (err) return extracted.reject(err);
       doc.contentType = res.headers['content-type'];
       doc.attachment = {
         name: doc.link,
