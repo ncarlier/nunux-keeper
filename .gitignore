@@ -1,5 +1,7 @@
 node_modules/
 client/stylesheets/*.css
+etc/keeper*
+!etc/keeper_sample.conf
 dist/
 var/
 .tmp/
