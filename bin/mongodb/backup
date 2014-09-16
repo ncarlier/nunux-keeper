@@ -1,0 +1,11 @@
+#!/bin/sh
+
+IP=`docker inspect --format '{{ .NetworkSettings.IPAddress }}' mongodb`
+DATE=`date +%Y-%m-%d`
+docker run \
+    --rm \
+    -v ~/var/mongodb:/data/dump \
+    --entrypoint='mongodump' \
+    ncarlier/mongodb \
+    -h $IP \
+    --out /data/dump/$DATE
