@@ -1,8 +1,6 @@
 # Nunux Keeper Docker image.
 #
 # VERSION 0.0.1
-#
-# BUILD:  docker build --rm -t ncarlier/keeper .
 
 FROM ncarlier/nodejs
 
