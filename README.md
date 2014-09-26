@@ -74,7 +74,7 @@ Connect to mongodb and enabled replicaset:
 
 ### Run the Keeper
 
-See "etc/keeper_sample.conf" for environment configuration.
+See "etc/env_sample.conf" for environment configuration.
 
     npm start
 
@@ -101,7 +101,7 @@ or a cool docker hosting service.
       --link mongodb:db \
       --link elasticsearch:elasticsearch \
       --link redis:redis \
-      --env-file="./etc/keeper.conf" \
+      --env-file="./etc/env.conf" \
       -d \
       ncarlier/keeper
 
@@ -112,13 +112,13 @@ or a cool docker hosting service.
       --link mongodb:db \
       --link elasticsearch:elasticsearch \
       --link redis:redis \
-      --env-file="./etc/keeper.conf" \
+      --env-file="./etc/env.conf" \
       -d \
       ncarlier/keeper resource-downloader
 
     # Enjoy!
 
-Note: See ./etc/keeper_sample.conf for configuration variables.
+Note: See ./etc/env_sample.conf for configuration variables.
 
 ----------------------------------------------------------------------
 

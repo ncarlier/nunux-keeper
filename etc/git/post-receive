@@ -1,7 +1,0 @@
-#!/bin/sh
-
-# post-receive hook for this repo. This script is executed whenever new code
-# is successfully pushed to this repo. In this case we're invoking the node-deploy
-# script as root.
-
-sudo bash /etc/node/node-deploy
