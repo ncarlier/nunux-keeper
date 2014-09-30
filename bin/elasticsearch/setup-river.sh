@@ -1,11 +1,16 @@
 #!/bin/sh
+
 HOST=$1
+if [ -z "$HOST" ]; then
+    HOST=`sudo docker inspect --format '{{ .NetworkSettings.IPAddress }}' elasticsearch`
+fi
+
 curl -XPUT $HOST:9200/_river/keeper/_meta -d '
 {
   "type": "mongodb",
   "mongodb": {
     "servers": [
-      { "host": "127.0.0.1", "port": 27017 }
+      { "host": "mongodb", "port": 27017 }
     ],
     "options": { "secondary_read_preference": true },
     "db": "keeper",
