@@ -28,7 +28,7 @@
     "ejs": "1.0.0",
     "less-middleware": "0.2.x",
     "passport": "0.2.x",
-    "passport-google": "0.3.x",
+    "passport-google-oauth": "0.1.x",
     "passport-browserid": "0.1.x",
     "passport-local": "1.0.x",
     "passport-http-bearer": "1.0.x",

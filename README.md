@@ -6,7 +6,7 @@ Nunux Keeper allow you to save articles or medias you found on internet in one p
 
 ## Features
 
-* Connect with your Google account (OpenID) or with Mozilla Persona
+* Connect with your Google account (OAuth2) or with Mozilla Persona
 * Save, classify and index documents.
 * A document can be an html page, notes, images and more!
 * Documents attached medias are also saved.
