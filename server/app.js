@@ -17,8 +17,9 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+process.title = 'keeper-server';
+
 var express        = require('express'),
-    morgan         = require('morgan'),
     bodyParser     = require('body-parser'),
     compress       = require('compression'),
     methodOverride = require('method-override'),
@@ -64,7 +65,7 @@ if (production) {
 }
 
 // Logger
-app.use(morgan('dev'));
+app.use(logger.requestLogger);
 app.use(compress());
 app.use(cookieParser(process.env.APP_SESSION_SECRET || 'NuNUXKeEpR_'));
 app.use(bodyParser());

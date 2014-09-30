@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+process.title = 'keeper-resource-downloader';
+
 var _        = require('underscore'),
     when     = require('when'),
     program  = require('commander'),
@@ -17,7 +19,7 @@ program
   .option('-d, --debug', 'Debug flag')
   .parse(process.argv);
 
-logger.setLevel(program.debug ? 'debug' : program.verbose ? 'info' : 'error');
+logger.level(program.debug ? 'debug' : program.verbose ? 'info' : 'error');
 
 if (!redis) {
   logger.error('Unable to start Resource Downloader daemon. Redis not configured.');
