@@ -5,6 +5,13 @@
   "description": "Keep control on what you find.",
   "license": "gplv3",
   "homepage": "http://keeper.nunux.org",
+  "apidoc": {
+    "title": "Nunux Keeper API documentation",
+    "url" : "http://keeper.nunux.org",
+    "template": {
+        "withCompare": false
+    }
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/ncarlier/nunux-keeper.git"
@@ -70,6 +77,7 @@
     "mocha": "1.18.x",
     "should": "3.3.x",
     "grunt-mocha-test": "0.10.x",
-    "load-grunt-tasks": "^0.6.0"
+    "load-grunt-tasks": "^0.6.0",
+    "grunt-apidoc": "^0.7.0"
   }
 }

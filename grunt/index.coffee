@@ -1,5 +1,6 @@
 module.exports = (grunt) ->
   pkg:            grunt.file.readJSON 'package.json'
+  apidoc:         require './apidoc'
   clean:          require './clean'
   bowercopy:      require './bowercopy'
   'sails-linker': require './sailslinker'

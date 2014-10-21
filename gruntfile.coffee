@@ -24,6 +24,7 @@ module.exports = (grunt) ->
     'cssmin'
     'copy'
     'usemin'
+    'apidoc'
   ]
 
   grunt.registerTask 'dep', 'Get dependencies with Bower.', [
