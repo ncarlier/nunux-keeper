@@ -136,6 +136,7 @@ module.exports = function(app, passport) {
 
   passport.use(new ClientPasswordStrategy(function(clientId, clientSecret, done) {
     Client.findById(clientId, function(err, client) {
+      //logger.debug('CLIENT PASSWORD:\n %j \n %j', err, client);
       if (err) { return done(err); }
       if (!client) { return done(null, false); }
       if (client.secret != clientSecret) { return done(null, false); }

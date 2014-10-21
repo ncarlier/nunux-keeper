@@ -66,4 +66,5 @@ module.exports = function(app, server, passport) {
   app.delete('/api/admin/oauth/client/:id', api.client.del);
   // User API:
   app.get('/api/user/:id/client', api.user.getClients);
+  app.delete('/api/user/:uid/client/:cid', api.user.revokeClient);
 };

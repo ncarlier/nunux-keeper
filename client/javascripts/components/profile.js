@@ -26,6 +26,17 @@ angular.module('ProfileModule', [])
       });
     });
     $scope.realm = $location.protocol() + '://' + $location.host() + ($location.port() === 80 ? '' : ':' + $location.port());
+
+    $scope.revokeClient = function(app) {
+      userService.revokeLinkedApp($scope.user, app).then(function() {
+        $scope.message = {clazz: 'alert-success', text: 'App ' + app.name + ' access revoked.'};
+        userService.getLinkedApp($scope.user).then(function(apps) {
+          $scope.apps = apps;
+        });
+      }), function(err) {
+        $scope.message = {clazz: 'alert-danger', text: err};
+      }
+    }
   }
 ]);
 

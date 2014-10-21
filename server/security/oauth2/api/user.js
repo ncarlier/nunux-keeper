@@ -24,5 +24,22 @@ module.exports = {
     .then(function(clients) {
       res.json(clients);
     }, next);
+  },
+  /**
+   * Revoke user's client.
+   */
+  revokeClient: function(req, res, next) {
+    var uid = req.params.uid;
+    if (uid !== req.user.uid) {
+      return next(new errors.Forbidden());
+    }
+    var cid = req.params.cid;
+
+    AccessToken.remove({userId: uid, clientId: cid}).exec()
+    .then(function() {
+      logger.info('Access revoked of app %s for user %', uid, cid);
+      res.send(205);
+    }, next);
   }
+
 };

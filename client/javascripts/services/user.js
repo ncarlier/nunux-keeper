@@ -45,9 +45,18 @@ angular.module('UserService', [])
       return deferred.promise;
     };
 
+    var revokeLinkedApp = function(user, app) {
+      var deferred = $q.defer();
+      $http.delete(url + '/' + user.uid + '/client/' + app._id)
+      .success(deferred.resolve)
+      .error(deferred.reject);
+      return deferred.promise;
+    };
+
     return {
       get: getUser,
-      getLinkedApp: getLinkedApp
+      getLinkedApp: getLinkedApp,
+      revokeLinkedApp: revokeLinkedApp
     };
   }
 ]);
