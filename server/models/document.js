@@ -219,13 +219,13 @@ module.exports = function(db, conn) {
       }
       update.categories = _.filter(update.categories, function(cat) { return /^(user|system)-/.test(cat); });
     }
-    update.date = new Date();
     // Filter updatable attributes.
     update = _.pick(update, 'title', 'date', 'categories', 'content', 'illustration');
     return self.findByIdAndUpdate(doc._id, update).exec()
     .then(function(_doc) {
       logger.info('Document updated: %j', _doc);
       if (update.content) {
+        update.date = new Date();
         // Download document resources if contente changed
         logger.debug('Updating document\'s resources...');
         return downloadResources(_doc);
