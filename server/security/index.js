@@ -1,4 +1,5 @@
-var nodefn  = require('when/node/function'),
+var _       = require('underscore'),
+    nodefn  = require('when/node/function'),
     errors  = require('../helpers').errors,
     User    = require('../models').User,
     http    = require('http'),
@@ -11,7 +12,8 @@ var nodefn  = require('when/node/function'),
  * @api public
  */
 request.isAdmin = function() {
-  return this.user && this.user.uid === process.env.APP_ADMIN;
+  var admins = process.env.APP_ADMIN ? process.env.APP_ADMIN.split(/[\s,]+/) : [];
+  return this.user && _.contains(admins, this.user.uid);
 };
 
 /**
