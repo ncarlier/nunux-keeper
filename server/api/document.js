@@ -122,14 +122,16 @@ module.exports = {
         return Document.extract(doc).then(function(_doc) {
           // Udpate content
           update.content = _doc.content;
-          if (_doc.illustration) {
-            update.illustration = _doc.illustration;
+          update.resources = _doc.resources;
+          if (update.resources.length) {
+            update.illustration = update.resources[0].url;
           }
-          return Document.update(doc, update);
+
+          return Document.modify(doc, update);
         });
       }
       // Update document
-      return Document.update(doc, update);
+      return Document.modify(doc, update);
     })
     .then(function(doc) {
       res.status(200).json(doc);

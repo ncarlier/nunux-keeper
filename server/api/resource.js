@@ -88,12 +88,22 @@ module.exports = {
         return when.reject(new errors.Forbidden());
       }
 
+      var isAttachment = req.params.key.indexOf('_') === 0;
+      var resource = _.findWhere(doc.resources, {key: req.params.key});
+      if (!resource && !isAttachment) {
+        return when.reject(new errors.NotFound('Resource not found in the document.'));
+      }
+
       file = files.chpath(req.user.uid, 'documents', doc._id.toString(), req.params.key);
       return files.chexists(file)
       .then(function(exists) {
         if (!exists) {
-          // TODO return 404 image instead
-          return when.reject(new errors.NotFound('Resource not found.'));
+          if (isAttachment) {
+            return when.reject(new errors.NotFound('Resource not found.'));
+          }
+          // Resource not yet available: redirect to the source
+          res.redirect(302, resource.url);
+          return when.resolve(null);
         }
         if (req.query.size) {
           return getThumbnail(file, req.query.size);
@@ -102,7 +112,7 @@ module.exports = {
       });
     })
     .then(function(file) {
-      res.sendfile(file, {maxAge: oneDay});
+      if (file) res.sendfile(file, {maxAge: oneDay});
     }, next);
   }
 };

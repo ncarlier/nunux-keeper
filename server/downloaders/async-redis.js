@@ -7,14 +7,14 @@ var _      = require('underscore'),
 /**
  * Download resources.
  * Send resources to Redis queue.
- * @param {Array} urls Array of URL
+ * @param {Array} resources Array of Resource
  * @param {String} dest Destination directory
  * @returns {Promise} Promise of download
  */
-var download = function(urls, dest) {
+var download = function(resources, dest) {
   var data = {
     dest: dest,
-    urls: urls
+    resources: resources
   };
 
   logger.debug('Delegating downloading with redis: %j ...', data);

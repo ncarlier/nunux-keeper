@@ -2,7 +2,6 @@ var when   = require('when'),
     path   = require('path'),
     fs     = require('fs-extra'),
     nodefn = require('when/node/function'),
-    crypto = require('crypto'),
     logger = require('./logger');
 
 var varDir = process.env.APP_VAR_DIR || path.normalize(path.join(__dirname, '..', '..', 'var'));
@@ -137,28 +136,10 @@ var chexists = function(file) {
 };
 
 /**
- * Get a hashed name.
- * The name can be a file name or an url.
- * @param {String} name
- * @returns {String} hash
- */
-var getHashName = function(name) {
-  // Clean query if URL
-  var cleanName = name.replace(/\?.*$/,'');
-  // Extract extension
-  var ext = cleanName.split('.').pop();
-  if (ext) ext = ext.match(/^[a-zA-Z0-9]+/)[0];
-  // Return hash
-  return crypto.createHash('md5').update(cleanName).digest('hex') + (ext ? '.' + ext : '');
-};
-
-/**
  * File system helpers.
  * @module files
  */
 module.exports = {
-  /** @see getHashName() */
-  getHashName: getHashName,
   /** Get main chroot directory. */
   chpwd: function() { return varDir; },
   /** @see getChrootPath() */

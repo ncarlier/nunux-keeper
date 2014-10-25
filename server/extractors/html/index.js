@@ -1,6 +1,7 @@
 var when    = require('when'),
     cleaner = require('./cleaner'),
     logger  = require('../../helpers').logger,
+    hash    = require('../../helpers').hash,
     validators  = require('../../helpers').validators,
     readability = require('node-readability');
 
@@ -45,22 +46,32 @@ var extractHtml = function(doc, extractArticle) {
       doc.content = read.document.body.innerHTML;
     }
     if (!doc.title && read.title) doc.title = read.title;
-    doc.illustration = getIllustration(doc.content);
+    doc.resources = extractResources(doc.content);
+    if (doc.resources.length) {
+      doc.illustration = doc.resources[0].url;
+    }
     extracted.resolve(doc);
   });
   return extracted.promise;
 };
 
 /**
- * Retrieve main illustration.
+ * Extract resources from document content.
+ * For now, only images are extracted.
  * @param {String} content HTML content
- * @return {String} illustration URL
+ * @return {Object} resources
  */
-var getIllustration = function(content) {
-  var rex = /<img[^>]+app\-src="?([^"\s]+)"?/g,
-  m = rex.exec(content);
-
-  return m ? m[1] : null;
+var extractResources = function(content) {
+  var m, resource = [], rex = /<img[^>]+src="?([^"\s]+)"?/g;
+  while ((m = rex.exec(content)) !== null) {
+    var url = m[1];
+    resource.push({
+      key: hash.hashUrl(url),
+      type: 'image',
+      url: url
+    });
+  }
+  return resource;
 };
 
 /**

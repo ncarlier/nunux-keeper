@@ -6,26 +6,24 @@ var _        = require('underscore'),
     url        = require('url'),
     request    = require('request'),
     files      = require('../helpers').files,
+    hash       = require('../helpers').hash,
     validators = require('../helpers').validators,
     logger     = require('../helpers').logger;
 
-process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 /**
  * Clean destination directory.
- * Remove all hash files not in the URL list.
+ * Remove all hash files not in the resource list.
  */
-var cleanDirectory = function(dir, urls) {
-  // Create hash list
-  var hashList = _.map(urls, function(_url) {
-    return files.getHashName(_url);
-  });
+var cleanDirectory = function(dir, resources) {
+  var keys = _.pluck(resources, 'key');
 
   // List directory content...
   return files.chls(dir)
   .then(function(entries) {
-    // Get delta between directory content and hash list
-    var delta = _.difference(entries, hashList);
+    // Get delta between directory content and key list
+    var delta = _.difference(entries, keys);
     return when.map(delta, function(entry) {
       // Ignore files prefixed by '_' (attachment file)
       if (entry.indexOf('_') === 0) return null;
@@ -38,43 +36,45 @@ var cleanDirectory = function(dir, urls) {
 
 /**
  * Download resources.
- * @param {Array} urls Array of URL
+ * @param {Array} resources Array of Resource
  * @param {String} dest Destination directory
  * @returns {Promise} Promise of download
  */
-var download = function(urls, dest) {
-  var down = function(_url) {
-    if (!validators.isURL(_url)) {
-      logger.error('Unable to download %s. Bad URL.', _url);
-      return when.resolve('Bad URL: ' + _url);
+var download = function(resources, dest) {
+  var down = function(resource) {
+    if (!validators.isURL(resource.url)) {
+      logger.error('Unable to download %s. Bad URL.', resource.url);
+      return when.resolve('Bad URL: ' + resource.url);
     }
-    var to = files.chpath(dest, files.getHashName(_url));
+    // TODO use resource.type in the destination path
+    var to = files.chpath(dest, resource.key);
 
-    logger.debug('Downloading %s to %s...', _url, to);
+    logger.debug('Downloading %s to %s...', resource.url, to);
 
     var tryDownload = function() {
-      return files.chwrite(request(_url), to);
+      return files.chwrite(request(resource.url), to);
     };
 
-    var hostname = url.parse(_url).hostname;
+    var hostname = url.parse(resource.url).hostname;
     return nodefn.call(dns.resolve4, hostname)
     .then(tryDownload, function(e) {
-      logger.error('Unable to download %s. Host cannot be resolved: %s', _url, hostname);
+      logger.error('Unable to download %s. Host cannot be resolved: %s', resource.url, hostname);
       return when.reject('Host cannot be resolved: %s', hostname);
     });
   };
 
+  logger.debug('Downloading resources to %s...', dest);
   return files.chmkdir(dest)
   .then(function() {
     var tasks = [];
-    urls.forEach(function(url) {
-      tasks.push(function() { return down(url); });
+    resources.forEach(function(resource) {
+      tasks.push(function() { return down(resource); });
     });
     return sequence(tasks);
   })
   .then(function() {
     logger.debug('Cleaning directory %s ...', dest);
-    return cleanDirectory(dest, urls);
+    return cleanDirectory(dest, resources);
   });
 };
 

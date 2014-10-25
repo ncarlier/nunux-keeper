@@ -1,3 +1,5 @@
+/* jshint -W030 */
+
 var _          = require('underscore'),
     should     = require('should'),
     fs         = require('fs'),
@@ -5,6 +7,7 @@ var _          = require('underscore'),
     request    = require('request'),
     mockServer = require('./common/mock-server'),
     logger     = require('../helpers').logger,
+    hash       = require('../helpers').hash,
     files      = require('../helpers').files;
 
 
@@ -118,6 +121,10 @@ describe('Check document API', function() {
       body.content.should.equal(expectedContent);
       body.contentType.should.equal('text/html');
       body.illustration.should.equal(imageUrl);
+      body.resources.should.have.length(2);
+      body.resources[0].url.should.equal(imageUrl);
+      body.resources[0].type.should.equal('image');
+      body.resources[0].key.should.equal(hash.hashUrl(imageUrl));
       done();
     });
   });
@@ -159,6 +166,7 @@ describe('Check document API', function() {
       body.content.should.equal(expectedContent);
       body.categories.should.have.length(1);
       body.categories.should.include('system-trash');
+      body.resources.should.have.length(1);
       done();
     });
   });
@@ -181,6 +189,7 @@ describe('Check document API', function() {
       body.title.should.equal(title);
       body.owner.should.equal(uid);
       body.contentType.should.match(/^text\/html/);
+      body.resources.should.have.length(0);
       done();
     }));
   });
@@ -203,6 +212,7 @@ describe('Check document API', function() {
       body.title.should.equal(title);
       body.owner.should.equal(uid);
       body.contentType.should.match(/^text\/html/);
+      body.resources.should.have.length(0);
       done();
     });
 
@@ -229,6 +239,7 @@ describe('Check document API', function() {
       body.title.should.equal(title);
       body.owner.should.equal(uid);
       body.contentType.should.match(/^image\/png/);
+      body.resources.should.have.length(0);
       done();
     });
     var form = r.form();
@@ -256,6 +267,7 @@ describe('Check document API', function() {
       body.title.should.equal(title);
       body.owner.should.equal(uid);
       body.contentType.should.match(/^text\/html/);
+      body.resources.length.should.be.above(0);
       done();
     });
   });
@@ -280,16 +292,17 @@ describe('Check document API', function() {
       body.should.have.properties('_id', 'date', 'attachment');
       body.title.should.equal(title);
       body.owner.should.equal(uid);
-      var file = files.chpath(uid, 'documents', body._id, '_' + files.getHashName(imageUrl));
+      var file = files.chpath(uid, 'documents', body._id, '_' + hash.hashFilename(imageUrl));
       fs.existsSync(file).should.be.true;
-      body.attachment.should.equal('_' + files.getHashName(imageUrl));
+      body.attachment.should.equal('_' + hash.hashFilename(imageUrl));
       body.contentType.should.equal('image/png');
+      body.resources.should.have.length(0);
       done();
     });
   });
 
   it('should retrieve document resource (Image)', function(done) {
-    var key = files.getHashName(imageUrl);
+    var key = hash.hashUrl(imageUrl);
     request.head({
       url: url + '/' + docId + '/resource/_' + key,
       jar: true

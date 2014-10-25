@@ -3,6 +3,7 @@ var _        = require('underscore'),
     logger   = require('../helpers').logger,
     errors   = require('../helpers').errors,
     files    = require('../helpers').files,
+    hash     = require('../helpers').hash,
     download = require('../downloaders'),
     elasticsearch    = require('../helpers').elasticsearch,
     contentExtractor = require('../extractors');
@@ -34,6 +35,9 @@ var getRiverConf = function(conn) {
 
 /**
  * Document mapping configuration.
+ * TODO illustration should be replace by first image resource
+ * But to do this we should use ES 1.3 mapping transform feature.
+ * @see http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/mapping-transform.html
  */
 var mapping = {
   document: {
@@ -62,22 +66,22 @@ var mapping = {
 var buildQuery = function(owner, params) {
   var from = params.from ? params.from : 0,
       size = params.size ? params.size : 20,
-      order = params.order ? params.order : 'desc',
-      q = {
-        fields: ['title', 'contentType', 'category', 'illustration', 'attachment'],
-        from: from,
-        size: size,
-        sort: [
-          '_score',
-          { date: {order: order}}
-        ],
-        query: {
-          filtered: {
-            query: { match_all: {} },
-            filter : { term : { owner : owner } }
-          }
-        }
-      };
+      order = params.order ? params.order : 'desc';
+  var q = {
+    fields: ['title', 'contentType', 'category', 'illustration', 'attachment'],
+    from: from,
+    size: size,
+    sort: [
+      '_score',
+      { date: {order: order}}
+    ],
+    query: {
+      filtered: {
+        query: { match_all: {} },
+        filter : { term : { owner : owner } }
+      }
+    }
+  };
 
   if (params.q) {
     q.query.filtered.query = {
@@ -92,18 +96,13 @@ var buildQuery = function(owner, params) {
 };
 
 /**
- * Download document resources (just images for now).
+ * Download document resources.
  * @param {Document} doc
  * @returns {Promise} Promise with doc in params
  */
 var downloadResources = function(doc) {
-  var m, urls = [], rex = /<img[^>]+src="?([^"\s]+)"?/g;
-  while (m = rex.exec(doc.content)) {
-    urls.push(m[1]);
-  }
-
-  if (urls.length) {
-    return download(urls, files.chpath(doc.owner, 'documents', doc._id.toString()))
+  if (doc.resources.length) {
+    return download(doc.resources, files.chpath(doc.owner, 'documents', doc._id.toString()))
     .then(function() {
       return when.resolve(doc);
     }, function() {
@@ -125,7 +124,7 @@ var saveAttachment = function(doc) {
   }
 
   // Prefix filename by '_' to distinct attachment file and resource file.
-  var filename = '_' + files.getHashName(doc.attachment.name);
+  var filename = '_' + hash.hashFilename(doc.attachment.name);
   return files.chmkdir(doc.owner, 'tmp')
   .then(function(dir) {
     var path = files.chpath(dir, filename);
@@ -152,6 +151,12 @@ module.exports = function(db, conn) {
     categories:   { type: [String] },
     attachment:   { type: String },
     illustration: { type: String },
+    resources:    [{
+      _id:  false,
+      key:  { type: String },
+      type: { type: String },
+      url:  { type: String }
+    }],
     link:         { type: String },
     owner:        { type: String, required: true },
     date:         { type: Date, default: Date.now }
@@ -207,9 +212,8 @@ module.exports = function(db, conn) {
     });
   });
 
-  DocumentSchema.static('update', function(doc, update) {
+  DocumentSchema.static('modify', function(doc, update) {
     var self = this;
-    logger.debug('Updating document "%s" %j ...', doc._id, update);
     // Filter title
     if (update.title) update.title = update.title.trim();
     // TODO filter categories
@@ -219,16 +223,33 @@ module.exports = function(db, conn) {
       }
       update.categories = _.filter(update.categories, function(cat) { return /^(user|system)-/.test(cat); });
     }
+    var resources = update.resources;
     // Filter updatable attributes.
-    update = _.pick(update, 'title', 'date', 'categories', 'content', 'illustration');
-    return self.findByIdAndUpdate(doc._id, update).exec()
+    update = _.pick(update, 'title', 'categories', 'content', 'illustration');
+    // Update date if content is updated
+    if (update.content) {
+      update.date = new Date();
+      update.resources = [];
+    }
+
+    logger.debug('Updating document "%s" %j ...', doc._id, update);
+    return self.findByIdAndUpdate(doc._id, {$set: update}).exec()
     .then(function(_doc) {
       logger.info('Document updated: %j', _doc);
       if (update.content) {
-        update.date = new Date();
-        // Download document resources if contente changed
-        logger.debug('Updating document\'s resources...');
-        return downloadResources(_doc);
+        // Updating resources if content is updated
+        // It's a big mess but it's the only way until this:
+        // https://github.com/LearnBoost/mongoose/pull/585
+        logger.debug('Updating document "%s" resources...', _doc._id);
+        return self.update(_doc, {$addToSet: {resources: resources}}).exec()
+        .then(function() {
+          return self.findById(doc._id).exec();
+        })
+        .then(function(d) {
+          logger.debug('Document resources updated: %j', d);
+          // Download document resources if contente changed
+          return downloadResources(d);
+        });
       }
       return when.resolve(_doc);
     });
