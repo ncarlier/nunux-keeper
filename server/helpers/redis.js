@@ -1,4 +1,5 @@
-var redis   = require('redis');
+var redis  = require('redis'),
+    logger = require('./logger');
 
 
 /**
@@ -6,14 +7,9 @@ var redis   = require('redis');
  * @return {String} Redis string URI
  */
 var getRedisUri = function() {
-  var uri = 'redis://localhost:6379/9';
-  if (process.env.APP_REDIS_URI) {
-    uri = process.env.APP_REDIS_URI;
-  } else if (process.env.REDIS_PORT) { // Docker
-    uri = process.env.REDIS_PORT.replace(/^tcp/, 'redis');
-    uri = uri + '/9';
-  }
-  return uri;
+  return process.env.APP_REDIS_URI ?
+    process.env.APP_REDIS_URI :
+    'redis://localhost:6379/9';
 };
 
 /**
@@ -34,10 +30,19 @@ var connect = function(str) {
   return redisClient;
 };
 
+var client = connect(getRedisUri());
+
+client.on("error", function (err) {
+  logger.error("Redis error encountered", err);
+});
+
+client.on("end", function() {
+  logger.info("Redis connection closed");
+});
+
 /**
  * Redis helper.
  * @module redis
  */
-module.exports = connect(getRedisUri());
-
+module.exports = client;
 
