@@ -257,7 +257,7 @@ module.exports = function(db, conn) {
 
   DocumentSchema.static('del', function(doc) {
     logger.info('Deleting document #%s "%s" of %s ...', doc._id, doc.title, doc.owner);
-    return this.remove(doc).exec().then(function() {
+    return this.remove({_id: doc._id}).exec().then(function() {
       logger.debug('Deleting document #%s files: %s...',
                    doc._id, files.chpath(doc.owner, type, doc._id.toString()));
       return files.chrm(doc.owner, type, doc._id.toString());
