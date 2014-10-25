@@ -1,7 +1,7 @@
 var when        = require('when'),
     errors      = require('../../../helpers').errors,
     logger      = require('../../../helpers').logger,
-    AccessToken = require('../models').AccessToken;
+    AccessToken = require('../models').AccessToken,
     Client      = require('../models').Client;
 
 module.exports = {

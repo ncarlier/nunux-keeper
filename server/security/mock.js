@@ -21,6 +21,7 @@ module.exports = function(app, passport, options) {
    * Mock auth entry point.
    */
   app.get('/auth/mock', passport.authenticate('mock', {
-    successRedirect: '/', failureRedirect: '/welcome?error=unauthorized'
+    successRedirect: '/',
+    failureRedirect: '/welcome?error=unauthorized'
   }));
 };

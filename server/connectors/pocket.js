@@ -6,7 +6,7 @@ var _        = require('underscore'),
     Document = require('../models').Document,
     qs       = require('querystring'),
     url      = require('url'),
-    errors   = require('../helpers').errors;
+    errors   = require('../helpers').errors,
     logger   = require('../helpers').logger;
 
 

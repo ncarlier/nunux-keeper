@@ -4,7 +4,7 @@ var passport = require('passport'),
 function MockStrategy(options, verify) {
   this.name = 'mock';
   this.passAuthentication = options.passAuthentication || true;
-  this.uid = options.uid || "foo@bar.com";
+  this.uid = options.uid || 'foo@bar.com';
   this.verify = verify;
 }
 
