@@ -1,4 +1,3 @@
-'use strict';
 
 angular.module('NavbarModule', [])
 .directive('appNavbar', ['$location', function($location) {
@@ -11,6 +10,7 @@ angular.module('NavbarModule', [])
 .controller('NavbarCtrl', [
   '$scope', '$rootScope', '$location', '$routeParams',
   function ($scope, $rootScope, $location, $routeParams) {
+    'use strict';
     if ($routeParams.q) {
       $scope.query = decodeURIComponent($routeParams.q);
     }

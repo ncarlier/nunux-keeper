@@ -17,10 +17,10 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-'use strict';
-
 angular.module('KeeperBookmarklet', ['DocumentService'])
 .factory('$messenger', ['$window', function ($window) {
+  'use strict';
+
   var messages = [], onMessageClbk;
 
   var sendMessage = function(message) {
@@ -52,6 +52,7 @@ angular.module('KeeperBookmarklet', ['DocumentService'])
 .controller('BookmarkletCtrl', [
   '$scope', '$messenger', '$window', 'documentService',
   function ($scope, $messenger, $window, documentService) {
+    'use strict';
     var data = null, match,
         pl     = /\+/g,  // Regex for replacing addition symbol with a space
         search = /([^&=]+)=?([^&]*)/g,
@@ -59,8 +60,8 @@ angular.module('KeeperBookmarklet', ['DocumentService'])
         query  = $window.location.search.substring(1),
         params = {};
 
-    while (match = search.exec(query))
-          params[decode(match[1])] = decode(match[2]);
+    while ((match = search.exec(query)) !== null)
+      params[decode(match[1])] = decode(match[2]);
 
     $scope.busy = false;
     $scope.url = params.url;

@@ -1,9 +1,9 @@
-'use strict';
 
 angular.module('DocumentService', ['angularFileUpload', 'angular-md5'])
 .factory('documentService', [
   '$rootScope', '$q', '$http', '$upload', '$log', 'md5',
   function ($rootScope, $q, $http, $upload, $log, md5) {
+    'use strict';
     var url = '/api/document';
 
     var _processContent = function(doc) {

@@ -1,10 +1,9 @@
 /* global angular */
 
-'use strict';
-
 angular.module('ui.helpers', ['angular-md5'])
 .directive('appSrc', ['md5', function(md5) {
 
+  'use strict';
   var link = function($scope, $element, $attributes) {
     if (!$scope.doc || !$scope.doc._id) return;
     var resourcePath = '/api/document/' + $scope.doc._id + '/resource/';
@@ -35,6 +34,7 @@ angular.module('ui.helpers', ['angular-md5'])
   };
 }])
 .directive('appScrolltopOn', function() {
+  'use strict';
   var link = function($scope, $element, $attributes) {
     $attributes.$observe(
       'appScrolltopOn',
@@ -51,6 +51,7 @@ angular.module('ui.helpers', ['angular-md5'])
   };
 })
 .directive('draggable', function() {
+  'use strict';
   return {
     link: function(scope, element, attrs) {
       // this gives us the native JS object
@@ -77,6 +78,7 @@ angular.module('ui.helpers', ['angular-md5'])
   };
 })
 .directive('droppable', function() {
+  'use strict';
   return {
     scope: {
       drop: '&',

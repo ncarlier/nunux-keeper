@@ -1,7 +1,5 @@
 /* global angular, alert */
 
-'use strict';
-
 angular.module('ProfileModule', [])
 .directive('appProfile', ['$location', function($location) {
   return {
@@ -13,6 +11,7 @@ angular.module('ProfileModule', [])
 .controller('ProfileCtrl', [
   '$scope', '$location', '$routeParams', 'userService',
   function ($scope, $location, $routeParams, userService) {
+    'use strict';
     if ($routeParams.error) {
       $scope.message = {clazz: 'alert-danger', text: $routeParams.error};
     } else if ($routeParams.info) {
@@ -33,10 +32,10 @@ angular.module('ProfileModule', [])
         userService.getLinkedApp($scope.user).then(function(apps) {
           $scope.apps = apps;
         });
-      }), function(err) {
+      }, function(err) {
         $scope.message = {clazz: 'alert-danger', text: err};
-      }
-    }
+      });
+    };
   }
 ]);
 

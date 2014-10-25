@@ -1,4 +1,3 @@
-'use strict';
 
 angular.module('DocumentsModule', ['ngRoute', 'angularFileUpload', 'infinite-scroll'])
 .directive('appDocuments', ['$location', function($location) {
@@ -13,28 +12,29 @@ angular.module('DocumentsModule', ['ngRoute', 'angularFileUpload', 'infinite-scr
   'documentService', '$modal', '$log', '$timeout',
   function ($rootScope, $scope, $routeParams, categoryService,
             documentService, $modal, $log, $timeout) {
+    'use strict';
     var m, size = 20, initializing = true;
     $scope.emptyMessage = 'No documents found.';
     $scope.isSearch = false;
     switch (true) {
       case !$routeParams.q:
         $scope.title = 'All';
-      break;
+        break;
       case '_missing_:category' === $routeParams.q:
         $scope.title = 'Uncategorized';
-      break;
+        break;
       case (m = $routeParams.q.match(/^category:([a-z\-]+)$/)) !== null:
         $scope.category = categoryService.get(m[1]);
-      if ($scope.category) {
-        $scope.trash = $scope.category.key === 'system-trash';
-        if ($scope.trash) {
-          $scope.emptyMessage = 'Trash bin is empty.';
+        if ($scope.category) {
+          $scope.trash = $scope.category.key === 'system-trash';
+          if ($scope.trash) {
+            $scope.emptyMessage = 'Trash bin is empty.';
+          }
         }
-      }
-      break;
+        break;
       default:
         $scope.title = 'Search';
-      $scope.isSearch = true;
+        $scope.isSearch = true;
     }
 
     $scope.documents = [];
@@ -167,6 +167,7 @@ angular.module('DocumentsModule', ['ngRoute', 'angularFileUpload', 'infinite-scr
 .controller('DocumentCreationModalCtrl', [
   '$log', '$scope', '$modalInstance', '$upload', 'documentService', 'category',
   function ($log, $scope, $modalInstance, $upload, documentService, category) {
+    'use strict';
     $scope.category = category;
     var doc = {
       categories: $scope.category ? [$scope.category.key] : []
@@ -217,6 +218,7 @@ angular.module('DocumentsModule', ['ngRoute', 'angularFileUpload', 'infinite-scr
   }
 ])
 .filter('categoryColor', ['categoryService', function(categoryService) {
+  'use strict';
   return function(val) {
     var cat = categoryService.get(val);
     return cat ? cat.color : '#fff';

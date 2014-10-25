@@ -17,8 +17,6 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-'use strict';
-
 angular.module('KeeperApp', [
   'ngRoute',
   'CategoryService',
@@ -31,7 +29,8 @@ angular.module('KeeperApp', [
   'ProfileModule',
   'ui.helpers',
   'ui.bootstrap',
-  'angular-md5'])
+  'angular-md5'
+])
 .config(['$routeProvider', function($routeProvider) {
   $routeProvider
   .when('/document', {

@@ -1,7 +1,5 @@
 /* global angular, $ ,_, confirm, alert */
 
-'use strict';
-
 angular.module('DocumentModule', ['ngRoute', 'ngSanitize', 'ngCkeditor'])
 .directive('appDocument', ['$location', function($location) {
   return {
@@ -13,6 +11,7 @@ angular.module('DocumentModule', ['ngRoute', 'ngSanitize', 'ngCkeditor'])
 .directive('appCategoryTag', [
   'categoryService', '$filter',
   function(categoryService, $filter) {
+    'use strict';
     function link(scope, element, attrs) {
       var category;
 
@@ -38,6 +37,7 @@ angular.module('DocumentModule', ['ngRoute', 'ngSanitize', 'ngCkeditor'])
   'categoryService', 'documentService', '$timeout',
   function ($rootScope, $scope, $sce, $modal, $log,
             categoryService, documentService, $timeout) {
+    'use strict';
     categoryService.getAll().then(function(categories) {
       $scope.categories = categories;
     });
@@ -148,6 +148,7 @@ angular.module('DocumentModule', ['ngRoute', 'ngSanitize', 'ngCkeditor'])
 .controller('DocumentTitleEditionModalCtrl', [
   '$scope', '$modalInstance', 'documentService', 'doc',
   function ($scope, $modalInstance, documentService, doc) {
+    'use strict';
     $scope.doc = doc;
     var errHandler = function(err) {
       alert('Error: ' + err);

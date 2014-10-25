@@ -1,11 +1,10 @@
 /* global alert, angular */
 
-'use strict';
-
 angular.module('UserService', [])
 .factory('userService', [
   '$q', '$http', '$log',
   function ($q, $http, $log) {
+    'use strict';
     var url = '/api/user',
         user = null;
 

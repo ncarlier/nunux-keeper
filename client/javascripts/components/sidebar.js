@@ -1,9 +1,8 @@
 /* global $, angular, alert, Mousetrap ,_ */
 
-'use strict';
-
 angular.module('SidebarModule', [])
 .directive('appSidebar', ['$location', function($location) {
+  'use strict';
   return {
     restrict: 'E',
     templateUrl: 'templates/components/sidebar.html',
@@ -39,6 +38,7 @@ angular.module('SidebarModule', [])
   '$modal', '$log', '$location', '$timeout',
   function ($scope, userService, categoryService, documentService,
             $modal, $log, $location, $timeout) {
+    'use strict';
     userService.get().then(function(user) {
       $scope.user = user;
     });
@@ -171,6 +171,7 @@ angular.module('SidebarModule', [])
 .controller('CategoryEditionModalCtrl', [
   '$scope', '$modalInstance', 'categoryService',
   function ($scope, $modalInstance, categoryService) {
+    'use strict';
     var errHandler = function(err) {
       alert('Error: ' + err);
       $modalInstance.dismiss('Error: ' + err);
@@ -208,6 +209,7 @@ angular.module('SidebarModule', [])
 .controller('KeybindingsHelpModalCtrl', [
   '$scope', '$modalInstance',
   function($scope, $modalInstance) {
+    'use strict';
     $scope.ok = function () {
       $modalInstance.dismiss('ok');
     };

@@ -1,9 +1,10 @@
-'use strict';
+/* global _, angular */
 
 angular.module('CategoryService', [])
 .factory('categoryService', [
   '$rootScope', '$q', '$http', '$log',
   function ($rootScope, $q, $http, $log) {
+    'use strict';
     var url = '/api/category',
     categories = [];
 
