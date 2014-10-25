@@ -41,31 +41,25 @@ module.exports = function(app) {
    * @apiParam {Integer} [size]  Nb of items to retrieve
    * @apiParam {String}  [order] Sort order (asc or desc)
    *
-   * @apiSuccess {Object}   hits Hits
-   * @apiSuccess {Integer}  hits.total Total nb of documents found.
-   * @apiSuccess {Object[]} hits.hits  Documents found.
-   * @apiSuccess {String}   hits.hits._id ID of the document.
-   * @apiSuccess {Object}   hits.hits.fields Fields of the document.
-   * @apiSuccess {String}   hits.hits.fields.contentType Content-type of the document.
-   * @apiSuccess {String}   hits.hits.fields.illustration Illustration of the document.
-   * @apiSuccess {String}   hits.hits.fields.title Title of the document.
+   * @apiSuccess {Integer}  total             Total nb of documents found.
+   * @apiSuccess {Object[]} hits              Documents found.
+   * @apiSuccess {String}   hits._id          ID of the document.
+   * @apiSuccess {String}   hits.contentType  Content-type of the document.
+   * @apiSuccess {String}   hits.illustration Illustration of the document.
+   * @apiSuccess {String}   hits.title        Title of the document.
    *
    * @apiSuccessExample Success-Response:
    *     HTTP/1.1 200 OK
    *     {
-   *        "hits" {
-   *          "total": 123,
-   *          hits: [{
-   *            _id: "544272014c7473672f95d849",
-   *            fields: {
-   *              "title": "Foo",
-   *              "contentType": "text/html",
-   *              "illustration": "http://foo.bar/foo.jpg"
-   *            }
-   *          },
-   *          {...}
-   *          ]
-   *        }
+   *        "total": 123,
+   *        hits: [{
+   *          "_id": "544272014c7473672f95d849",
+              "title": "Foo",
+   *          "contentType": "text/html",
+   *          "illustration": "http://foo.bar/foo.jpg"
+   *        },
+   *        {...}
+   *        ]
    *     }
    */
   app.get('/api/document', api.documents.search);

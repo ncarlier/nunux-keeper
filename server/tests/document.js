@@ -324,9 +324,9 @@ describe('Check document API', function() {
     }, function(err, res, body) {
       if (err) return done(err);
       res.statusCode.should.equal(200);
-      body.should.have.property('hits');
-      body.hits.total.should.be.above(0);
-      hits = body.hits.hits;
+      body.should.have.properties('total', 'hits');
+      body.total.should.be.above(0);
+      hits = body.hits;
       done();
     });
   });

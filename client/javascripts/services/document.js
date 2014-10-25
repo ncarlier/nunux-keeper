@@ -35,9 +35,7 @@ angular.module('DocumentService', ['angularFileUpload', 'angular-md5'])
       });
       var deferred = $q.defer();
       $http.get(url + '?' + params)
-      .success(function(data) {
-        deferred.resolve(data.hits);
-      })
+      .success(deferred.resolve)
       .error(deferred.reject);
 
       return deferred.promise;

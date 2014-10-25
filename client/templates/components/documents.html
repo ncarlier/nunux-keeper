@@ -17,19 +17,19 @@
     </li>
 
     <li ng-repeat="doc in documents"
-        id="{{ doc._id }}" title="{{ doc.fields.title }}"
+        id="{{ doc._id }}" title="{{ doc.title }}"
         ng-click="openDocument(doc._id)"
         ng-class="doc.clazz"
         draggable dragdata="getDraggableData(doc)">
     <div class="fa fa-file" ></div>
-    <div class="doc-illustration" ng-if="doc.fields.illustration">
-      <img src="" app-src="{{doc.fields.illustration}}" size="200x150" onerror="this.src='/icons/404.png'">
+    <div class="doc-illustration" ng-if="doc.illustration">
+      <img src="" app-src="{{doc.illustration}}" size="200x150" onerror="this.src='/icons/404.png'">
     </div>
     <div class="doc-title">
-      <h3>{{ doc.fields.title }}</h3>
+      <h3>{{ doc.title }}</h3>
     </div>
-    <ul ng-if="doc.fields.category" class="categories">
-      <li ng-repeat="cat in doc.fields.category | toArray" style="background-color: {{cat | categoryColor}}" title="{{cat}}"></li>
+    <ul ng-if="doc.category" class="categories">
+      <li ng-repeat="cat in doc.category | toArray" style="background-color: {{cat | categoryColor}}" title="{{cat}}"></li>
     </ul>
     </li>
   </ul>

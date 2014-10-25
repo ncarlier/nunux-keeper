@@ -265,7 +265,20 @@ module.exports = function(db, conn) {
   });
 
   DocumentSchema.static('search', function(uid, params) {
-    return elasticsearch.search(type, buildQuery(uid, params));
+    return elasticsearch.search(type, buildQuery(uid, params))
+    .then(function(data) {
+      var result = {};
+      result.total = data.hits.total;
+      result.hits = [];
+      data.hits.hits.forEach(function(hit) {
+        var doc = {_id: hit._id};
+        for (var field in hit.fields) {
+          doc[field] = _.isArray(hit.fields[field]) ? hit.fields[field][0] : hit.fields[field];
+        }
+        result.hits.push(doc);
+      });
+      return when.resolve(result);
+    });
   });
 
   return conn.model('Document', DocumentSchema);

@@ -55,9 +55,9 @@ angular.module('DocumentsModule', ['ngRoute', 'angularFileUpload', 'infinite-scr
         }
 
         _.each(data.hits, function(doc) {
-          if (/^image\//.test(doc.fields.contentType)) {
-            doc.fields.illustration = '/api/document/' + doc._id +
-              '/resource/' + doc.fields.attachment;
+          if (/^image\//.test(doc.contentType)) {
+            doc.illustration = '/api/document/' + doc._id +
+              '/resource/' + doc.attachment;
           }
           $scope.documents.push(doc);
         });
@@ -124,10 +124,7 @@ angular.module('DocumentsModule', ['ngRoute', 'angularFileUpload', 'infinite-scr
           $scope.editing = true;
           $scope.doc = doc;
         } else {
-          $scope.documents.unshift({
-            _id: doc._id,
-            fields: doc
-          });
+          $scope.documents.unshift(doc);
         }
         $timeout(function() {
           $scope.doc.opened = true;
@@ -143,17 +140,14 @@ angular.module('DocumentsModule', ['ngRoute', 'angularFileUpload', 'infinite-scr
     };
 
     $scope.addDocument = function(doc) {
-      $scope.documents.push({
-        _id: doc._id,
-        fields: doc
-      });
+      $scope.documents.push(doc);
     };
 
     $scope.getDraggableData = function(doc) {
       var data = {
         document: {
           _id: doc._id,
-          categories: doc.fields.category
+          categories: doc.category
         }
       };
       return JSON.stringify(data);
