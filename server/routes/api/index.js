@@ -14,4 +14,6 @@ module.exports = function(app) {
   require('./category')(app);
   // User API
   require('./user')(app);
+  // Connector API
+  require('./connector')(app);
 };
