@@ -59,10 +59,10 @@ test:
 	sudo docker run $(docker_run_flags) $(IMAGE) test
 
 publish:
-ifndef REGISTRY
-    $(error REGISTRY is undefined)
-else
-	echo "Publish image into the registry..."
-	sudo docker tag $(IMAGE) $(REGISTRY)/$(IMAGE)
-	sudo docker push $(REGISTRY)/$(IMAGE)
-endif
+	ifndef REGISTRY
+		$(error REGISTRY is undefined)
+	else
+		echo "Publish image into the registry..."
+		sudo docker tag $(IMAGE) $(REGISTRY)/$(IMAGE)
+		sudo docker push $(REGISTRY)/$(IMAGE)
+	endif
