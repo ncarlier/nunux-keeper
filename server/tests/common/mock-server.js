@@ -3,7 +3,7 @@ var app = require('../../app'),
     passport = require('passport');
 
 
-require('../../security/mock')(app, passport, {
+require('../../security/providers/mock')(app, passport, {
   passAuthentication: true,
   uid: 'foo@bar.com'
 });

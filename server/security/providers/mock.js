@@ -1,6 +1,6 @@
 var MockStrategy = require('./strategy/MockStrategy'),
     nodefn = require('when/node/function'),
-    User = require('../models').User;
+    User = require('../../models').User;
 
 /**
  * Mock auth provider configuration.

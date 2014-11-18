@@ -1,8 +1,8 @@
 var BrowserIDStrategy = require('passport-browserid').Strategy,
     nodefn      = require('when/node/function'),
-    middlewares = require('./middlewares'),
-    redirect    = require('./helpers').redirect,
-    User        = require('../models').User;
+    middlewares = require('../middlewares'),
+    redirect    = require('../helpers').redirect,
+    User        = require('../../models').User;
 
 /**
  * Browser ID configuration.

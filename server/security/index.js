@@ -45,7 +45,7 @@ module.exports = function(app, passport) {
 
 
   // Register Google auth provider.
-  require('./google')(app, passport);
+  require('./providers/google')(app, passport);
   // Register BrowserId auth provider.
-  require('./browserid')(app, passport);
+  require('./providers/browserid')(app, passport);
 };

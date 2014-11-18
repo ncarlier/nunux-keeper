@@ -1,7 +1,7 @@
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy,
     nodefn         = require('when/node/function'),
-    middlewares    = require('./middlewares'),
-    User           = require('../models').User;
+    middlewares    = require('../middlewares'),
+    User           = require('../../models').User;
 
 /**
  * Google auth provider configuration.
