@@ -9,5 +9,6 @@ module.exports = {
   elasticsearch: require('./elasticsearch'),
   validators: require('./validators'),
   blacklist: require('./blacklist')(),
-  hash: require('./hash')
+  hash: require('./hash'),
+  thumbnail: require('./thumbnail')
 };

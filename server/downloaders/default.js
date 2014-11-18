@@ -5,54 +5,28 @@ var _        = require('underscore'),
     dns        = require('dns'),
     url        = require('url'),
     request    = require('request'),
-    files      = require('../helpers').files,
-    hash       = require('../helpers').hash,
+    storage    = require('../storage'),
     validators = require('../helpers').validators,
     logger     = require('../helpers').logger;
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 /**
- * Clean destination directory.
- * Remove all hash files not in the resource list.
- */
-var cleanDirectory = function(dir, resources) {
-  var keys = _.pluck(resources, 'key');
-
-  // List directory content...
-  return files.chls(dir)
-  .then(function(entries) {
-    // Get delta between directory content and key list
-    var delta = _.difference(entries, keys);
-    return when.map(delta, function(entry) {
-      // Ignore files prefixed by '_' (attachment file)
-      if (entry.indexOf('_') === 0) return null;
-      // Remove file not in hash list.
-      logger.debug('Removing unused resource: %s ...', entry);
-      return files.chrm(files.chpath(dir, entry));
-    });
-  });
-};
-
-/**
  * Download resources.
  * @param {Array} resources Array of Resource
- * @param {String} dest Destination directory
+ * @param {String} container Destination container
  * @returns {Promise} Promise of download
  */
-var download = function(resources, dest) {
+var download = function(resources, container) {
   var down = function(resource) {
     if (!validators.isURL(resource.url)) {
       logger.error('Unable to download %s. Bad URL.', resource.url);
       return when.resolve('Bad URL: ' + resource.url);
     }
-    // TODO use resource.type in the destination path
-    var to = files.chpath(dest, resource.key);
-
-    logger.debug('Downloading %s to %s...', resource.url, to);
+    logger.debug('Downloading %s to container %s...', resource.url, container);
 
     var tryDownload = function() {
-      return files.chwrite(request(resource.url), to);
+      return storage.store(container, resource.key, request(resource.url));
     };
 
     var hostname = url.parse(resource.url).hostname;
@@ -63,18 +37,15 @@ var download = function(resources, dest) {
     });
   };
 
-  logger.debug('Downloading resources to %s...', dest);
-  return files.chmkdir(dest)
+  logger.debug('Downloading resources to %s...', container);
+  var tasks = [];
+  resources.forEach(function(resource) {
+    tasks.push(function() { return down(resource); });
+  });
+  return sequence(tasks)
   .then(function() {
-    var tasks = [];
-    resources.forEach(function(resource) {
-      tasks.push(function() { return down(resource); });
-    });
-    return sequence(tasks);
-  })
-  .then(function() {
-    logger.debug('Cleaning directory %s ...', dest);
-    return cleanDirectory(dest, resources);
+    logger.debug('Cleaning container %s ...', container);
+    return storage.cleanContainer(container, resources);
   });
 };
 

@@ -1,4 +1,5 @@
 var when    = require('when'),
+    mime    = require('mime'),
     cleaner = require('./cleaner'),
     logger  = require('../../helpers').logger,
     hash    = require('../../helpers').hash,
@@ -67,7 +68,7 @@ var extractResources = function(content) {
     var url = m[1];
     resource.push({
       key: hash.hashUrl(url),
-      type: 'image',
+      type: mime.lookup(url.replace(/\?.*$/,'')),
       url: url
     });
   }

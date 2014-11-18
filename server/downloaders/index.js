@@ -6,15 +6,15 @@ var when   = require('when'),
  * Downloaders.
  * @module downloader
  */
-module.exports = function(resources, dest) {
+module.exports = function(resources, container) {
   switch (process.env.APP_DOWNLOADER) {
     case 'async-redis':
-      return require('./async-redis')(resources, dest);
+      return require('./async-redis')(resources, container);
     case 'none':
     case 'disabled':
       logger.debug('Resource downloader disabled.');
       return when.resolve();
     default:
-      return require('./default')(resources, dest);
+      return require('./default')(resources, container);
   }
 };

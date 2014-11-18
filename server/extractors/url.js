@@ -1,4 +1,5 @@
 var when       = require('when'),
+    url        = require('url'),
     logger     = require('../helpers').logger,
     errors     = require('../helpers').errors,
     validators = require('../helpers').validators,
@@ -26,9 +27,11 @@ module.exports = {
 
     request.head(doc.link, function (err, res) {
       if (err) return extracted.reject(err);
+      var filename = url.parse(doc.link).pathname;
+      filename = filename.substring(filename.lastIndexOf('/') + 1);
       doc.contentType = res.headers['content-type'];
       doc.attachment = {
-        name: doc.link,
+        name: filename,
         stream: request.get(doc.link)
       };
       // Get HTTP content...

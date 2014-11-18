@@ -152,6 +152,10 @@ module.exports = {
   chmv: moveInChroot,
   /** Remove file or directory in chrooted location. */
   chrm: function() { return nodefn.call(fs.remove, getChrootPath.apply(null, arguments)); },
+  /** Get file stream in chrooted location. */
+  chstream: function() { return when.resolve(fs.createReadStream(getChrootPath.apply(null, arguments))); },
+  /** Get file stat in chrooted location. */
+  chstat: function() { return nodefn.call(fs.stat, getChrootPath.apply(null, arguments)); },
   /** Get disk usage in chrooted location. */
   chdu: getChrootDiskUsage,
   /** Test if path exists. */

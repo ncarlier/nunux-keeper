@@ -7,9 +7,9 @@
   "homepage": "http://keeper.nunux.org",
   "apidoc": {
     "title": "Nunux Keeper API documentation",
-    "url" : "http://keeper.nunux.org",
+    "url": "http://keeper.nunux.org",
     "template": {
-        "withCompare": false
+      "withCompare": false
     }
   },
   "repository": {
@@ -58,7 +58,8 @@
     "multiparty": "3.2.x",
     "connect-redis": "2.0.x",
     "gm": "1.16.x",
-    "bunyan": "1.1.x"
+    "bunyan": "1.1.x",
+    "mime": "1.2.x"
   },
   "devDependencies": {
     "grunt": "^0.4.5",

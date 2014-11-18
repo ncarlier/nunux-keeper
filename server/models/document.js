@@ -2,8 +2,8 @@ var _        = require('underscore'),
     when     = require('when'),
     logger   = require('../helpers').logger,
     errors   = require('../helpers').errors,
-    files    = require('../helpers').files,
     hash     = require('../helpers').hash,
+    storage  = require('../storage'),
     download = require('../downloaders'),
     elasticsearch    = require('../helpers').elasticsearch,
     contentExtractor = require('../extractors');
@@ -102,7 +102,7 @@ var buildQuery = function(owner, params) {
  */
 var downloadResources = function(doc) {
   if (doc.resources.length) {
-    return download(doc.resources, files.chpath(doc.owner, 'documents', doc._id.toString()))
+    return download(doc.resources, storage.getContainerName(doc.owner, 'documents', doc._id.toString()))
     .then(function() {
       return when.resolve(doc);
     }, function() {
@@ -123,16 +123,10 @@ var saveAttachment = function(doc) {
     return when.resolve(doc);
   }
 
-  // Prefix filename by '_' to distinct attachment file and resource file.
-  var filename = '_' + hash.hashFilename(doc.attachment.name);
-  return files.chmkdir(doc.owner, 'tmp')
-  .then(function(dir) {
-    var path = files.chpath(dir, filename);
-    return files.chwrite(doc.attachment.stream, path);
-  })
+  return storage.store(storage.getContainerName(doc.owner, 'tmp'), doc.attachment.name, doc.attachment.stream)
   .then(function(file) {
     logger.debug('Attachment saved: ', file);
-    doc.attachment = filename;
+    doc.attachment = doc.attachment.name;
     return when.resolve(doc);
   }, when.reject);
 };
@@ -201,9 +195,11 @@ module.exports = function(db, conn) {
     .then(function(_doc) {
       if (doc.attachment) {
         // Move attachment to document directory...
-        return files.chmkdir(doc.owner, type, _doc._id.toString()).then(function(dir) {
-          return files.chmv(files.chpath(doc.owner, 'tmp', doc.attachment), dir);
-        }).then(function() {
+        return storage.move(
+          storage.getContainerName(doc.owner, 'tmp'),
+          doc.attachment,
+          storage.getContainerName(doc.owner, 'documents', _doc._id.toString() + '_attachment')
+        ).then(function() {
           return when.resolve(_doc);
         });
       } else {
@@ -258,9 +254,9 @@ module.exports = function(db, conn) {
   DocumentSchema.static('del', function(doc) {
     logger.info('Deleting document #%s "%s" of %s ...', doc._id, doc.title, doc.owner);
     return this.remove({_id: doc._id}).exec().then(function() {
-      logger.debug('Deleting document #%s files: %s...',
-                   doc._id, files.chpath(doc.owner, type, doc._id.toString()));
-      return files.chrm(doc.owner, type, doc._id.toString());
+      logger.debug('Deleting document #%s files...',
+                   doc._id);
+      return storage.remove(storage.getContainerName(doc.owner, type, doc._id.toString()));
     });
   });
 

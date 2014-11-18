@@ -15,7 +15,7 @@ describe('Check document API', function() {
   var url = mockServer.getRealm() + '/api/document',
       imageUrl = 'http://reader.nunux.org/icons/favicon.png?foo=bar',
       uid = 'foo@bar.com';
-  var docId, hits;
+  var docId, hits, resourceKey;
 
   before(function(done) {
     mockServer.start(function() {
@@ -123,7 +123,7 @@ describe('Check document API', function() {
       body.illustration.should.equal(imageUrl);
       body.resources.should.have.length(2);
       body.resources[0].url.should.equal(imageUrl);
-      body.resources[0].type.should.equal('image');
+      body.resources[0].type.should.equal('image/png');
       body.resources[0].key.should.equal(hash.hashUrl(imageUrl));
       done();
     });
@@ -263,11 +263,13 @@ describe('Check document API', function() {
       if (err) return done(err);
       res.statusCode.should.equal(201);
       body = JSON.parse(body);
+      docId = body._id;
       body.should.have.properties('_id', 'date');
       body.title.should.equal(title);
       body.owner.should.equal(uid);
       body.contentType.should.match(/^text\/html/);
       body.resources.length.should.be.above(0);
+      resourceKey = body.resources[0].key;
       done();
     });
   });
@@ -288,13 +290,12 @@ describe('Check document API', function() {
       if (err) return done(err);
       res.statusCode.should.equal(201);
       body = JSON.parse(body);
-      docId = body._id;
       body.should.have.properties('_id', 'date', 'attachment');
       body.title.should.equal(title);
       body.owner.should.equal(uid);
-      var file = files.chpath(uid, 'documents', body._id, '_' + hash.hashFilename(imageUrl));
+      var file = files.chpath(uid, 'documents', body._id + '_attachment', 'favicon.png');
       fs.existsSync(file).should.be.true;
-      body.attachment.should.equal('_' + hash.hashFilename(imageUrl));
+      body.attachment.should.equal('favicon.png');
       body.contentType.should.equal('image/png');
       body.resources.should.have.length(0);
       done();
@@ -302,9 +303,8 @@ describe('Check document API', function() {
   });
 
   it('should retrieve document resource (Image)', function(done) {
-    var key = hash.hashUrl(imageUrl);
     request.head({
-      url: url + '/' + docId + '/resource/_' + key,
+      url: url + '/' + docId + '/resource/' + resourceKey,
       jar: true
     }, function(err, res, body) {
       if (err) return done(err);

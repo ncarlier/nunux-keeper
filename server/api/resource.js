@@ -1,69 +1,11 @@
 var when       = require('when'),
-    nodefn     = require('when/node/function'),
     _          = require('underscore'),
-    gm         = require('gm'),
+    storage    = require('../storage'),
     logger     = require('../helpers').logger,
     errors     = require('../helpers').errors,
-    files      = require('../helpers').files,
+    thumbnail  = require('../helpers').thumbnail,
     validators = require('../helpers').validators,
     Document   = require('../models').Document;
-
-var oneDay = 86400000,
-    imageExtensions = ['png', 'jpg', 'jpeg', 'gif'],
-		sizes = ['200x150'];
-
-/**
- * Get image thumbnail.
- * @param {File} file
- * @param {String} size
- * @return {Promise} promise of the thumbnail
- */
-var getThumbnail = function(file, size) {
-  var ext = file.split('.').pop();
-  if (ext) {
-    ext = ext.toLowerCase();
-  }
-  if (!_.contains(imageExtensions, ext)) {
-    return when.reject(new errors.BadRequest('Requested resource is not an image.'));
-  }
-  if (!_.contains(sizes, size)) {
-    return when.reject(new errors.BadRequest('Requested size is not available.'));
-  }
-
-  var filename = file.split('/').pop(),
-      thumbfile = null;
-
-  return files.chmkdir('tmp', 'thumb')
-  .then(function(dir) {
-    thumbfile = files.chpath(dir, filename);
-    return files.chexists(thumbfile);
-  })
-  .then(function (exists) {
-    if (exists) return when.resolve(thumbfile);
-    logger.debug('Resizing image %s to %s', file, thumbfile);
-
-    var thumbnailed = when.defer();
-
-    var resize = size.split('x');
-
-    gm(file)
-    .options({imageMagick: true})
-    .resize(resize[0], resize[1], '^')
-    .quality(75)
-    .gravity('Center')
-    .extent(size)
-    .write(thumbfile, function (err) {
-      if (err) {
-        logger.error('Unable to resize image %s', file, err);
-        return thumbnailed.reject(err);
-      }
-      logger.debug('Image %s resized.', file);
-      return thumbnailed.resolve(thumbfile);
-    });
-
-    return thumbnailed.promise;
-  });
-};
 
 /**
  * API to get document resource.
@@ -78,41 +20,52 @@ module.exports = {
       return next(new errors.BadRequest());
     }
 
-    var file;
     Document.findById(req.params.id).exec()
     .then(function(doc) {
       if (!doc) {
         return when.reject(new errors.NotFound('Document not found.'));
       }
-      if (doc.owner !== req.user.uid) {
+      if (doc.owner !== req.user.uid && !_.contains(doc.categories, 'system-public')) {
         return when.reject(new errors.Forbidden());
       }
 
-      var isAttachment = req.params.key.indexOf('_') === 0;
       var resource = _.findWhere(doc.resources, {key: req.params.key});
-      if (!resource && !isAttachment) {
+      if (!resource) {
         return when.reject(new errors.NotFound('Resource not found in the document.'));
       }
 
-      file = files.chpath(req.user.uid, 'documents', doc._id.toString(), req.params.key);
-      return files.chexists(file)
-      .then(function(exists) {
-        if (!exists) {
-          if (isAttachment) {
-            return when.reject(new errors.NotFound('Resource not found.'));
-          }
+      var container = storage.getContainerName(req.user.uid, 'documents', doc._id.toString());
+      return storage.info(container, req.params.key)
+      .then(function(infos) {
+        if (!infos) {
           // Resource not yet available: redirect to the source
-          res.redirect(302, resource.url);
-          return when.resolve(null);
+          return res.redirect(302, resource.url);
         }
+
+        // Get thumbnail if size is define
         if (req.query.size) {
-          return getThumbnail(file, req.query.size);
+          // Get a local copy of the file (it's a noop if the driver is 'local')
+          return storage.localCopy(container, req.params.key)
+          .then(function(localPath) {
+            return thumbnail(localPath, req.query.size)
+            .then(function(thumbPath) {
+              res.sendFile(thumbPath, {maxAge: '86400000'});
+              // Remove copied file only if driver is not 'local'
+              if (infos.driver !== 'local') storage.localRemove(container, req.params.key);
+            });
+          });
+        } else {
+          // Send the resource file content...
+          logger.debug('RESOURCE: STREAM', req.params);
+          res.set('Content-Length', infos.size);
+          res.set('Content-Type', resource.type);
+          res.set('Cache-Control', 'max-age=86400000');
+          return storage.stream(container, req.params.key)
+          .then(function(s) {
+            s.pipe(res);
+          });
         }
-        return when.resolve(file);
       });
-    })
-    .then(function(file) {
-      if (file) res.sendfile(file, {maxAge: oneDay});
     }, next);
   }
 };
