@@ -52,7 +52,7 @@ angular.module('DocumentModule', ['ngRoute', 'ngSanitize', 'ngCkeditor'])
       if (/^text\/html/.test(doc.contentType)) {
         return $sce.trustAsHtml(doc.content);
       } else if (/^image\//.test(doc.contentType)) {
-        var src = '/api/document/' + doc._id + '/resource/' + doc.attachment;
+        var src = '/api/document/' + doc._id + '/attachment';
         var $img = $('<img>');
         $img.attr('src', src);
         return $sce.trustAsHtml($('<div>').append($img).html());

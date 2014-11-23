@@ -6,12 +6,13 @@ angular.module('ui.helpers', ['angular-md5'])
   'use strict';
   var link = function($scope, $element, $attributes) {
     if (!$scope.doc || !$scope.doc._id) return;
-    var resourcePath = '/api/document/' + $scope.doc._id + '/resource/';
-    var size = $attributes.size;
+    var basePath = '/api/document/' + $scope.doc._id + '/',
+        resourcePath = basePath + 'resource/',
+        size = $attributes.size;
     $attributes.$observe(
       'appSrc',
       function(newSource) {
-        if (newSource.indexOf(resourcePath) === 0) {
+        if (newSource.indexOf(basePath) === 0) {
           $element[0].src = newSource +
             ($attributes.size ? '?size=' + $attributes.size : '');
           return;
