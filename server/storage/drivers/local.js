@@ -31,6 +31,7 @@ var info = function(container, entry) {
       var infos = {
         driver: 'local',
         size: stats.size,
+        mtime: stats.mtime,
         path: p,
         container: container,
         key: entry

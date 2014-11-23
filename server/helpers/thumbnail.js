@@ -1,8 +1,8 @@
 var when       = require('when'),
     _          = require('underscore'),
     gm         = require('gm'),
-    logger     = require('../helpers').logger,
-    files      = require('../helpers').files;
+    logger     = require('./logger'),
+    files      = require('./files');
 
 var imageExtensions = ['png', 'jpg', 'jpeg', 'gif'],
 		sizes = ['200x150'];
@@ -11,9 +11,10 @@ var imageExtensions = ['png', 'jpg', 'jpeg', 'gif'],
  * Get image thumbnail.
  * @param {File} file
  * @param {String} size
+ * @param {String} group sub directory group to put in
  * @return {Promise} promise of the thumbnail
  */
-var getThumbnail = function(file, size) {
+var getThumbnail = function(file, size, group) {
   var ext = file.split('.').pop();
   if (ext) {
     ext = ext.toLowerCase();
@@ -28,12 +29,12 @@ var getThumbnail = function(file, size) {
   var filename = file.split('/').pop(),
       thumbfile = null;
 
-  return files.chmkdir('tmp', 'thumb')
+  return files.chmkdir('tmp', 'thumb', group)
   .then(function(dir) {
     thumbfile = files.chpath(dir, filename);
     return files.chexists(thumbfile);
   })
-  .then(function (exists) {
+  .then(function(exists) {
     if (exists) return when.resolve(thumbfile);
     logger.debug('Resizing image %s to %s', file, thumbfile);
 

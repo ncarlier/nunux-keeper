@@ -8,14 +8,15 @@ var when       = require('when'),
     Document   = require('../models').Document;
 
 /**
- * API to get document resource.
+ * API to get document attachment.
  * @module resource
  */
 module.exports = {
   /**
-   * Get document's resource.
+   * Get document's attachment.
    */
   get: function(req, res, next) {
+    console.log('ATTACMENT - ATTACHMENT - ATTACHMENT');
     if (!validators.isDocId(req.params.id)) {
       return next(new errors.BadRequest());
     }
@@ -29,38 +30,36 @@ module.exports = {
         return next(new errors.Forbidden());
       }
 
-      var resource = _.findWhere(doc.resources, {key: req.params.key});
-      if (!resource) {
-        return next(new errors.NotFound('Resource not found in the document.'));
+      if (doc.attachment === null) {
+        return next(new errors.NotFound('Document has no attachment.'));
       }
 
-      var container = storage.getContainerName(req.user.uid, 'documents', doc._id.toString(), 'resources');
-      return storage.info(container, req.params.key)
+      var container = storage.getContainerName(req.user.uid, 'documents', doc._id.toString(), 'attachment');
+      return storage.info(container, doc.attachment)
       .then(function(infos) {
         if (!infos) {
-          // Resource not yet available: redirect to the source
-          return res.redirect(302, resource.url);
+          return next(new errors.NotFound('Document attachment not found.'));
         }
 
-        // Get thumbnail if size parameter is defined
-        if (req.query.size) {
+        // If conten-type is an image and the parameter size is defined, then get the thumbnail
+        if (req.query.size && /^image\//.test(doc.contentType)) {
           // Get a local copy of the file (it's a noop if the driver is 'local')
-          return storage.localCopy(container, req.params.key)
+          return storage.localCopy(container, doc.attachment)
           .then(function(localPath) {
             return thumbnail(localPath, req.query.size, doc._id.toString());
           })
           .then(function(thumbPath) {
             // Remove copied file only if driver is not 'local'
-            if (infos.driver !== 'local') storage.localRemove(container, req.params.key);
+            if (infos.driver !== 'local') storage.localRemove(container, doc.attachment);
             res.sendfile(thumbPath, {maxAge: 86400000});
           });
         } else {
           // Send the resource file content...
           res.set('Content-Length', infos.size);
-          res.set('Content-Type', resource.type);
+          res.set('Content-Type', doc.contentType);
           res.set('Cache-Control', 'public, max-age=86400');
           res.set('Last-Modified', infos.mtime.toUTCString());
-          return storage.stream(container, req.params.key)
+          return storage.stream(container, doc.attachment)
           .then(function(s) {
             s.pipe(res);
           });

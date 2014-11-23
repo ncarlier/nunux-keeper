@@ -147,7 +147,7 @@ module.exports = function(app) {
    * @api {get} /api/document/:id/resource/:key Get document resource
    * @apiDescription A document resource is an URL inside the content of the document.
    *
-   * Currently only image resources are supported (png,gif, jpg).
+   * Currently only image resources are supported (png, gif, jpg).
    * @apiVersion 0.0.1
    * @apiName GetDocumentResource
    * @apiGroup document
@@ -163,11 +163,30 @@ module.exports = function(app) {
    * - Concat the previous extension to the previous hash
    * @apiParam {String} [size] Size of the resource.
    *
-   * This is useful to get a thumbnail of the image resource. 
+   * This is useful to get a thumbnail of the image resource.
    * Only the size "200x150" is supported.
    *
    * @apiSuccessExample Success-Response:
    *     HTTP/1.1 200 OK
    */
   app.get('/api/document/:id/resource/:key', api.resources.get);
+
+  /**
+   * @api {get} /api/document/:id/attachment Get document attachment
+   *
+   * @apiVersion 0.0.1
+   * @apiName GetDocumentAttachment
+   * @apiGroup document
+   * @apiPermission user
+   *
+   * @apiParam {String} id  ID of the document
+   * @apiParam {String} [size] Size of the attachment.
+   *
+   * This is useful to get a thumbnail of the attachment (if the attachment is an image).
+   * Only the size "200x150" is supported.
+   *
+   * @apiSuccessExample Success-Response:
+   *     HTTP/1.1 200 OK
+   */
+  app.get('/api/document/:id/attachment', api.attachment.get);
 };

@@ -102,7 +102,7 @@ var buildQuery = function(owner, params) {
  */
 var downloadResources = function(doc) {
   if (doc.resources.length) {
-    return download(doc.resources, storage.getContainerName(doc.owner, 'documents', doc._id.toString()))
+    return download(doc.resources, storage.getContainerName(doc.owner, 'documents', doc._id.toString(), 'resources'))
     .then(function() {
       return when.resolve(doc);
     }, function() {
@@ -198,7 +198,7 @@ module.exports = function(db, conn) {
         return storage.move(
           storage.getContainerName(doc.owner, 'tmp'),
           doc.attachment,
-          storage.getContainerName(doc.owner, 'documents', _doc._id.toString() + '_attachment')
+          storage.getContainerName(doc.owner, 'documents', _doc._id.toString(), 'attachment')
         ).then(function() {
           return when.resolve(_doc);
         });

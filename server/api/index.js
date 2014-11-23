@@ -12,6 +12,7 @@ module.exports = {
   documents:  require('./document'),
   categories: require('./category'),
   resources:  require('./resource'),
+  attachment: require('./attachment'),
   connector:  require('./connector'),
   user:       require('./user'),
   admin:      require('./admin')
