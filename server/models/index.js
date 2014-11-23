@@ -8,14 +8,9 @@ var mongoose  = require('mongoose'),
  * @return {String} MongoDB string URI
  */
 var getMongoDBUri = function() {
-  var uri = 'mongodb://localhost/keeper';
-  if (process.env.APP_MONGO_URI) {
-    uri = process.env.APP_MONGO_URI;
-  } else if (process.env.DB_PORT) { // Docker
-    uri = process.env.DB_PORT.replace(/^tcp/, 'mongodb');
-    uri = uri + '/keeper';
-  }
-  return uri;
+  return process.env.APP_MONGO_URI ?
+    process.env.APP_MONGO_URI :
+    'mongodb://localhost/keeper';
 };
 
 var conn = mongoose.createConnection(getMongoDBUri());

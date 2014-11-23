@@ -6,13 +6,9 @@ var when    = require('when'),
  * Get Elasticsearch docker URI.
  */
 var getElasticSearchUri = function() {
-  var _uri = 'http://localhost:9200';
-  if (process.env.APP_ELASTICSEARCH_URI) {
-    _uri = process.env.APP_ELASTICSEARCH_URI;
-  } else if (process.env.ELASTICSEARCH_PORT) { // Docker
-    _uri = process.env.ELASTICSEARCH_PORT.replace(/^tcp/, 'http');
-  }
-  return _uri;
+  return process.env.APP_ELASTICSEARCH_URI ?
+    process.env.APP_ELASTICSEARCH_URI :
+    'http://localhost:9200';
 };
 
 var uri = getElasticSearchUri();
