@@ -57,7 +57,7 @@ angular.module('DocumentsModule', ['ngRoute', 'angularFileUpload', 'infinite-scr
         _.each(data.hits, function(doc) {
           if (/^image\//.test(doc.contentType)) {
             doc.illustration = '/api/document/' +
-              doc._id + '/attachment'
+              doc._id + '/attachment';
           }
           $scope.documents.push(doc);
         });
