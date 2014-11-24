@@ -64,7 +64,7 @@ var writeToChroot = function(stream, to) {
     try {
       var r = stream.pipe(writer);
       r.on('error', function(err) {
-        logger.error('Error while creatinfg file: %s', to, err);
+        logger.error('Error while creating file: %s', to, err);
         writed.reject(err);
       });
       r.on('close', function() {
