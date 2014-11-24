@@ -96,7 +96,7 @@ var getContainerName = function() {
  * @param {String} container container name
  * @return {Promise} Promise of the action
  */
-var listContainer = function(container) {
+var _listContainer = function(container) {
   return files.chls(container);
 };
 
@@ -110,7 +110,7 @@ var cleanContainer = function(container, resources) {
   var keys = _.pluck(resources, 'key');
 
   // List directory content...
-  return listContainer(container)
+  return _listContainer(container)
   .then(function(entries) {
     // Get delta between directory content and key list
     var delta = _.difference(entries, keys);
@@ -155,7 +155,6 @@ module.exports = {
   move: move,
   remove: remove,
   getContainerName: getContainerName,
-  listContainer: listContainer,
   cleanContainer: cleanContainer,
   localCopy: localCopy,
   localRemove: localRemove
