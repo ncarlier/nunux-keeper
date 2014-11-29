@@ -32,7 +32,9 @@ module.exports = {
       doc.contentType = res.headers['content-type'];
       doc.attachment = {
         name: filename,
-        stream: request.get(doc.link)
+        stream: request.get(doc.link),
+        contentType: res.headers['content-type'],
+        contentLength: res.headers['content-length']
       };
       // Get HTTP content...
       module.parent.exports.get(doc.contentType).extract(doc)

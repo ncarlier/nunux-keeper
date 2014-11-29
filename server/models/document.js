@@ -123,8 +123,12 @@ var saveAttachment = function(doc) {
     return when.resolve(doc);
   }
 
-  return storage.store(storage.getContainerName(doc.owner, 'tmp'), doc.attachment.name, doc.attachment.stream)
-  .then(function(file) {
+  return storage.store(
+    storage.getContainerName(doc.owner, 'tmp'),
+    doc.attachment.name,
+    doc.attachment.stream,
+    {'Content-Type': doc.attachment.contentType, 'Content-Length': doc.attachment.contentLength}
+  ).then(function(file) {
     logger.debug('Attachment saved: ', file);
     doc.attachment = doc.attachment.name;
     return when.resolve(doc);

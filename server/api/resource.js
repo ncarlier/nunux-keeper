@@ -43,7 +43,7 @@ module.exports = {
         }
 
         // Get thumbnail if size parameter is defined
-        if (req.query.size) {
+        if (req.query && req.query.size) {
           // Get a local copy of the file (it's a noop if the driver is 'local')
           return storage.localCopy(container, req.params.key)
           .then(function(localPath) {

@@ -26,7 +26,7 @@ var download = function(resources, container) {
     logger.debug('Downloading %s to container %s...', resource.url, container);
 
     var tryDownload = function() {
-      return storage.store(container, resource.key, request(resource.url));
+      return storage.store(container, resource.key, request(resource.url), {'Content-Type': resource.type});
     };
 
     var hostname = url.parse(resource.url).hostname;

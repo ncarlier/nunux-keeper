@@ -16,11 +16,11 @@ Nunux Keeper allow you to save articles or medias you found on internet in one p
 * Share a document on a public page.
 * Build your own client application thaks to the RESTFul JSON API.
 * Link your account with Twitter and keep your tweets.
-* Import your bookmarks from Pocket.
+* Import your bookmarks from Pocket
+* Store medias on the local disk or on S3
 
 ## Roadmap
 
-* Add the ability to choose a different storage system (ftp, remoteStorage, dropbox, etc.);
 * Add a user quota for local storage;
 * Add some user dashboard with stats;
 

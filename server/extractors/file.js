@@ -17,7 +17,9 @@ var importFile = function(file, doc) {
   }
   doc.attachment = {
     name: file.originalFilename,
-    stream: fs.createReadStream(file.path)
+    stream: fs.createReadStream(file.path),
+    contentType: file.headers['content-type'],
+    contentLength: file.headers['content-length']
   };
   // Get content...
   return module.parent.exports.get(doc.contentType).extract(doc);

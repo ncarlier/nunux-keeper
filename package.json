@@ -59,7 +59,8 @@
     "connect-redis": "2.0.x",
     "gm": "1.16.x",
     "bunyan": "1.1.x",
-    "mime": "1.2.x"
+    "mime": "1.2.x",
+    "knox": "0.9.x"
   },
   "devDependencies": {
     "grunt": "^0.4.5",

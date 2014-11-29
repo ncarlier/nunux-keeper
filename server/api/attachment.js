@@ -16,7 +16,6 @@ module.exports = {
    * Get document's attachment.
    */
   get: function(req, res, next) {
-    console.log('ATTACMENT - ATTACHMENT - ATTACHMENT');
     if (!validators.isDocId(req.params.id)) {
       return next(new errors.BadRequest());
     }
