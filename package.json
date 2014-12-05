@@ -2,7 +2,7 @@
   "author": "Nicolas Carlier (https://github.com/ncarlier/)",
   "name": "keeper",
   "version": "0.0.1",
-  "description": "Keep control on what you find.",
+  "description": "Keep the best of your internet surfing in one place.",
   "license": "gplv3",
   "homepage": "http://keeper.nunux.org",
   "apidoc": {
@@ -18,9 +18,10 @@
   },
   "scripts": {
     "start": "node server/app",
-    "debug": "node-inspector --web-port=3009 & node --debug server/app",
+    "debug": "node-inspector & node --debug server/app",
     "test": "grunt",
-    "postinstall": "grunt dist"
+    "postinstall": "grunt dist",
+    "document-updater": "APP_DOWNLOADER=disabled node server/jobs/document-updater -v"
   },
   "dependencies": {
     "morgan": "1.0.0",
