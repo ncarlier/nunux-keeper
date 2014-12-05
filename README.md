@@ -1,6 +1,6 @@
 # NUNUX Keeper
 
-> Keep control on what you find.
+> Keep the best of your internet surfing in one place.
 
 Nunux Keeper allow you to save articles or medias you found on internet in one place. And this place can be yours.
 
