@@ -212,8 +212,11 @@ module.exports = function(db, conn) {
     });
   });
 
-  DocumentSchema.static('modify', function(doc, update) {
+  DocumentSchema.static('modify', function(doc, update, options) {
     var self = this;
+    options = _.defaults(options, {
+      updateDate: true
+    });
     // Filter title
     if (update.title) update.title = update.title.trim();
     // TODO filter categories
@@ -227,7 +230,7 @@ module.exports = function(db, conn) {
     // Filter updatable attributes.
     update = _.pick(update, 'title', 'categories', 'content', 'illustration');
     // Update date if content is updated
-    if (update.content) {
+    if (options.updateDate && update.content) {
       update.date = new Date();
       update.resources = [];
     }
