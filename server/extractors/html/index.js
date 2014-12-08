@@ -63,7 +63,7 @@ var extractHtml = function(doc, extractArticle) {
  * @return {Object} resources
  */
 var extractResources = function(content) {
-  var m, resource = [], rex = /<img[^>]+src="?([^"\s]+)"?/g;
+  var m, resource = [], rex = /<img[^>]+app-src="?([^"\s]+)"?/g;
   while ((m = rex.exec(content)) !== null) {
     var url = m[1];
     resource.push({

@@ -214,7 +214,7 @@ module.exports = function(db, conn) {
 
   DocumentSchema.static('modify', function(doc, update, options) {
     var self = this;
-    options = _.defaults(options, {
+    options = _.defaults(options || {}, {
       updateDate: true
     });
     // Filter title
@@ -232,6 +232,9 @@ module.exports = function(db, conn) {
     // Update date if content is updated
     if (options.updateDate && update.content) {
       update.date = new Date();
+    }
+    // Reset resources array if content is updated
+    if (update.content) {
       update.resources = [];
     }
 
@@ -244,7 +247,7 @@ module.exports = function(db, conn) {
         // It's a big mess but it's the only way until this:
         // https://github.com/LearnBoost/mongoose/pull/585
         logger.debug('Updating document "%s" resources...', _doc._id);
-        return self.update(_doc, {$addToSet: {resources: resources}}).exec()
+        return self.update(_doc, {$addToSet: {resources: {$each: resources}}}).exec()
         .then(function() {
           return self.findById(doc._id).exec();
         })
@@ -283,6 +286,8 @@ module.exports = function(db, conn) {
       return when.resolve(result);
     });
   });
+
+  DocumentSchema.static('downloadResources', downloadResources);
 
   return conn.model('Document', DocumentSchema);
 };
