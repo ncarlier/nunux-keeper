@@ -67,7 +67,7 @@ app.on('nextresource', function() {
       return app.emit('nextresource');
     }
     var resource = JSON.parse(bulk[1]);
-    download(resource.urls, resource.dest)
+    download(resource.resources, resource.dest)
     .then(function() {
       app.emit('nextresource');
     }, function(err) {
