@@ -1,7 +1,9 @@
 var when     = require('when'),
     User     = require('../models').User,
     Document = require('../models').Document,
-    files = require('../helpers').files;
+    storage  = require('../storage'),
+    logger   = require('../helpers').logger,
+    files    = require('../helpers').files;
 
 
 var getUserStats = function(user) {
@@ -18,7 +20,7 @@ var getUserStats = function(user) {
       stats.diskUsage = usage;
       return when.resolve(stats);
     }, function(err) {
-      stats.diskUsage = err;
+      stats.diskUsage = err.errno == 34 ? 0 : err;
       return when.resolve(stats);
     });
   });
@@ -70,4 +72,29 @@ module.exports = {
       res.status(201).json({msg: 'User ' + req.params.id + ' created.'});
     }, next);
   },
+
+  /**
+   * Delete an user.
+   */
+  deleteUser: function(req, res, next) {
+    var uid = req.params.id;
+    if (req.user.uid == uid) {
+      return next(new errors.BadRequest('Unable to self destroy.'));
+    }
+    logger.info('Deleting documents of user %s ...', uid);
+    Document.remove({owner: uid}).exec()
+    .then(function() {
+      logger.info('Deleting files of user %s ...', uid);
+      return storage.remove(storage.getContainerName(uid));
+    })
+    .then(function() {
+      logger.info('Deleting user %s ...', uid);
+      return User.remove({uid: uid}).exec();
+    })
+    .then(function() {
+      logger.info('User %s deleted.', uid);
+      res.send(205);
+    }, next);
+  }
+
 };
