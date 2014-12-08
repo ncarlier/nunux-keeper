@@ -36,6 +36,13 @@
           Refetch from source
         </a>
         </li>
+
+        <li>
+        <a ng-if="doc.link" ng-click="fetchResources()" class="pointer" title="Redownload the resources of this document">
+          <span class="fa fa-fw fa-cloud-download"></span>
+          Redownload resources
+        </a>
+        </li>
       </ul>
     </div>
 

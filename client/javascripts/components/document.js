@@ -143,6 +143,15 @@ angular.module('DocumentModule', ['ngRoute', 'ngSanitize', 'ngCkeditor'])
         .then(refreshHandler, errorHandler);
       }
     };
+
+    $scope.fetchResources = function() {
+      if (confirm('Are you sure to download again the resources of this document ?')) {
+        $scope.loading = true;
+        documentService.fetchResources($scope.doc)
+        .then(refreshHandler, errorHandler);
+      }
+    };
+
   }
 ])
 .controller('DocumentTitleEditionModalCtrl', [

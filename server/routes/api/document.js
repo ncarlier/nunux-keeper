@@ -189,4 +189,20 @@ module.exports = function(app) {
    *     HTTP/1.1 200 OK
    */
   app.get('/api/document/:id/attachment', api.attachment.get);
+
+  /**
+   * @api {post} /api/document/:id/resource Ask to fetch all resources from their URL
+   *
+   * @apiVersion 0.0.1
+   * @apiName FetchDocumentResources
+   * @apiGroup document
+   * @apiPermission user
+   *
+   * @apiParam {String} id  ID of the document
+   *
+   * @apiSuccessExample Success-Response:
+   *     HTTP/1.1 200 OK
+   */
+  app.post('/api/document/:id/resource', api.resources.fetch);
+
 };

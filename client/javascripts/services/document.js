@@ -125,12 +125,27 @@ angular.module('DocumentService', ['angularFileUpload', 'angular-md5'])
       return deferred.promise;
     };
 
+    var fetchResources = function(doc) {
+      var deferred = $q.defer();
+      $http.post(url + '/' + doc._id + '/resource')
+      .success(function() {
+        $log.info('Resources fetched.');
+        deferred.resolve();
+      })
+      .error(function(err) {
+        $log.error('Unable to fetch resources:', err);
+        deferred.reject(err);
+      });
+      return deferred.promise;
+    };
+
     return {
       fetch: fetchDocuments,
       get: getDocument,
       create: createDocument,
       update: updateDocument,
-      trash: trashDocuments
+      trash: trashDocuments,
+      fetchResources: fetchResources
     };
   }
 ]);

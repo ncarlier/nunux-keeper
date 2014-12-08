@@ -20,7 +20,7 @@ module.exports = {
       return next(new errors.BadRequest());
     }
 
-    Document.findById(req.params.id).exec()
+    Document.findById(req.params.id).lean().exec()
     .then(function(doc) {
       if (!doc) {
         return next(new errors.NotFound('Document not found.'));
@@ -53,7 +53,7 @@ module.exports = {
             // Remove copied file only if driver is not 'local'
             if (infos.driver !== 'local') storage.localRemove(container, req.params.key);
             res.sendfile(thumbPath, {maxAge: 86400000});
-          });
+          }, next);
         } else {
           // Send the resource file content...
           res.set('Content-Length', infos.size);
@@ -63,9 +63,32 @@ module.exports = {
           return storage.stream(container, req.params.key)
           .then(function(s) {
             s.pipe(res);
-          });
+          }, next);
         }
       });
+    }, next);
+  },
+
+  /**
+   * Fetch document's resources.
+   */
+  fetch: function(req, res, next) {
+    if (!validators.isDocId(req.params.id)) {
+      return next(new errors.BadRequest());
+    }
+
+    Document.findById(req.params.id).lean().exec()
+    .then(function(doc) {
+      if (!doc) {
+        return next(new errors.NotFound('Document not found.'));
+      }
+      if (doc.owner !== req.user.uid) {
+        return next(new errors.Forbidden());
+      }
+      return Document.downloadResources(doc);
+    })
+    .then(function(doc) {
+      res.send(204);
     }, next);
   }
 };
