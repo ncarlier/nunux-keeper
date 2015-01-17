@@ -1,8 +1,15 @@
-var logger  = require('../../helpers').logger,
-    when    = require('when'),
-    greader = require('./googlereader'),
-    twitter = require('./twitter'),
-    pocket  = require('./pocket');
+var logger = require('../../helpers').logger,
+    path   = require('path'),
+    when   = require('when');
+
+// Load json extractors
+var jsonExtractors = {};
+require('fs').readdirSync(__dirname).forEach(function (file) {
+  if (file === 'index.js') return;
+  var name = path.basename(file, '.js');
+  jsonExtractors[name] = require(path.join(__dirname, file));
+  logger.debug('JSON extractor %s registered.', name);
+});
 
 /**
  * JSON content extractor.
@@ -17,23 +24,18 @@ module.exports = {
    */
   extract: function(doc) {
     logger.debug('Using JSON extractor.');
-
-    if (doc.attachment) {
-      // Only GoogleReader exports can be import as an attachment.
-      // So try to import...
-      return greader.extract(doc);
-    } else {
-      // Try to analyse JSON to see if content is support...
-      if (twitter.detect(doc.content)) {
-        // Detect a Tweet JSON.
-        return twitter.extract(doc);
-      } else if (pocket.detect(doc.content)) {
-        // Detect a Pocket JSON.
-        return pocket.extract(doc);
-      } else {
-        // Nothing else to do... forward the doc.
+    // Default extractor
+    var extractor = {
+      extract: function(doc) {
         return when.resolve(doc);
       }
+    };
+    for (var ext in jsonExtractors) {
+      if (jsonExtractors[ext].detect(doc)) {
+        extractor = jsonExtractors[ext];
+        break;
+      }
     }
+    return extractor.extract(doc);
   }
 };

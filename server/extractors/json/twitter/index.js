@@ -1,4 +1,4 @@
-var logger     = require('../../helpers').logger,
+var logger     = require('../../../helpers').logger,
     when       = require('when');
 
 /**
@@ -22,17 +22,17 @@ module.exports = {
   },
 
   /**
-   * Detect if the JSON is a Tweet JSON.
-   * @param {Object} json JSON to test
+   * Detect if the document content is a Tweet JSON.
+   * @param {Document} doc
    * @return {Boolean} True if the JSON is a Tweet.
    */
-  detect: function(json) {
-    if (typeof json == 'string' || json instanceof String) {
+  detect: function(doc) {
+    if (typeof doc.content == 'string' || doc.content instanceof String) {
       // Ignore JSON String
       return false;
     }
-    return json.retweeted !== undefined &&
-      json.id !== undefined &&
-      json.text !== undefined;
+    return doc.content.retweeted !== undefined &&
+      doc.content.id !== undefined &&
+      doc.content.text !== undefined;
   }
 };

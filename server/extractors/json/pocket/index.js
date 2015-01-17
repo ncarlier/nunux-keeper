@@ -1,4 +1,4 @@
-var logger     = require('../../helpers').logger,
+var logger     = require('../../../helpers').logger,
     when       = require('when');
 
 /**
@@ -32,17 +32,17 @@ module.exports = {
   },
 
   /**
-   * Detect if the JSON is a Pocket JSON.
-   * @param {Object} json JSON to test
+   * Detect if the document content is a Pocket JSON.
+   * @param {Document} doc
    * @return {Boolean} True if the JSON is Pocket data.
    */
-  detect: function(json) {
-    if (typeof json == 'string' || json instanceof String) {
+  detect: function(doc) {
+    if (typeof doc.content == 'string' || doc.content instanceof String) {
       // Ignore JSON String
       return false;
     }
-    return json.resolved_title !== undefined &&
-      json.resolved_url !== undefined &&
-      json.is_article !== undefined;
+    return doc.content.resolved_title !== undefined &&
+      doc.content.resolved_url !== undefined &&
+      doc.content.is_article !== undefined;
   }
 };

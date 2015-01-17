@@ -1,5 +1,4 @@
-var logger     = require('../../helpers').logger,
-    extractors = require('../../extractors'),
+var logger     = require('../../../helpers').logger,
     when       = require('when'),
     fs         = require('fs'),
     JSONStream = require('JSONStream');
@@ -75,5 +74,15 @@ module.exports = {
   extract: function(doc) {
     logger.debug('Using GoogleReader exports extractor.');
     return importAttachedJSON(doc);
+  },
+
+  /**
+   * Detect if content can be extracted.
+   * Only GoogleReader exports can be import as an attachment.
+   * @param {Document} doc
+   * @return {Promise} Promise of detection.
+   */
+  detect: function(doc) {
+    return doc.attachment !== undefined;
   }
 };
