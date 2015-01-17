@@ -241,7 +241,7 @@ module.exports = function(db, conn) {
     logger.debug('Updating document "%s" %j ...', doc._id, update);
     return self.findByIdAndUpdate(doc._id, {$set: update}).exec()
     .then(function(_doc) {
-      logger.info('Document updated: %j', _doc);
+      logger.debug('Document updated: %j', _doc);
       if (update.content) {
         // Updating resources if content is updated
         // It's a big mess but it's the only way until this:

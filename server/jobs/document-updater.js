@@ -37,6 +37,7 @@ stream.on('data', function (doc) {
     return app.emit('stop');
   }
   if (/^text\/html/.test(doc.contentType)) {
+    logger.info('Processing document #%s of user %s ...', doc._id, doc.owner);
     this.pause();
     var self = this;
     htmlExtractor.extract(doc)
@@ -55,6 +56,7 @@ stream.on('data', function (doc) {
     })
     .then(function(_doc) {
       self.resume();
+      logger.info('Processing document #%s of user %s (done)', _doc._id, _doc.owner);
     });
   }
 }).on('error', function (err) {
