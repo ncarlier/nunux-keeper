@@ -5,6 +5,10 @@ var when       = require('when'),
     validators = require('../helpers').validators,
     request    = require('request');
 
+var kRequest = request.defaults({
+  headers: {'User-Agent': process.env.APP_USER_AGENT || 'Mozilla/5.0 (compatible; Keeperbot/1.0)'}
+});
+
 /**
  * URL content extractor.
  * @module url
@@ -25,14 +29,14 @@ module.exports = {
     }
     doc.link = doc.content;
 
-    request.head(doc.link, function (err, res) {
+    kRequest.head(doc.link, function (err, res) {
       if (err) return extracted.reject(err);
       var filename = url.parse(doc.link).pathname;
       filename = filename.substring(filename.lastIndexOf('/') + 1);
       doc.contentType = res.headers['content-type'];
       doc.attachment = {
         name: filename,
-        stream: request.get(doc.link),
+        stream: kRequest.get(doc.link),
         contentType: res.headers['content-type'],
         contentLength: res.headers['content-length']
       };

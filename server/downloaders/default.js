@@ -1,4 +1,4 @@
-var _        = require('underscore'),
+var _          = require('underscore'),
     when       = require('when'),
     nodefn     = require('when/node/function'),
     sequence   = require('when/sequence'),
@@ -10,6 +10,10 @@ var _        = require('underscore'),
     logger     = require('../helpers').logger;
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
+var kRequest = request.defaults({
+  headers: {'User-Agent': process.env.APP_USER_AGENT || 'Mozilla/5.0 (compatible; Keeperbot/1.0)'}
+});
 
 /**
  * Download resources.
@@ -26,7 +30,7 @@ var download = function(resources, container) {
     logger.debug('Downloading %s to container %s...', resource.url, container);
 
     var tryDownload = function() {
-      return storage.store(container, resource.key, request(resource.url), {'Content-Type': resource.type});
+      return storage.store(container, resource.key, kRequest(resource.url), {'Content-Type': resource.type});
     };
 
     var hostname = url.parse(resource.url).hostname;
