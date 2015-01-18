@@ -156,6 +156,28 @@ angular.module('DocumentsModule', ['ngRoute', 'angularFileUpload', 'infinite-scr
     $scope.$on('document-created', function(event, data) {
       $scope.addDocument(data.doc);
     });
+
+    Mousetrap.bind(['n'], function() {
+      if ($scope.doc) {
+        var el = document.getElementById($scope.doc._id);
+        el = el.nextElementSibling;
+        if (el) {
+          el.scrollIntoView(true);
+          el.click();
+        }
+      }
+    });
+    Mousetrap.bind(['p'], function() {
+      if ($scope.doc) {
+        var el = document.getElementById($scope.doc._id);
+        el = el.previousElementSibling;
+        if (el && el.hasAttribute('id')) {
+          el.scrollIntoView(true);
+          el.click();
+        }
+      }
+    });
+
   }
 ])
 .controller('DocumentCreationModalCtrl', [
