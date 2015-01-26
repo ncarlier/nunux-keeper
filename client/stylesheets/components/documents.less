@@ -6,6 +6,9 @@
   height: 100%;
   div.one-col {
     width: @k-sidebar-width !important;
+    button {
+      display: none;
+    }
   }
   div.documents {
     width: 100%;
@@ -44,6 +47,17 @@
     }
     .active {
       background: @k-panel-bg-color !important;
+    }
+    button {
+      width: 50px;
+      height: 50px;
+      border-radius: 25px;
+      font-size: 2em;
+      position: fixed;
+      right: 20px;
+      bottom: 10px;
+      z-index: 999;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     }
     ul {
       margin: 0;

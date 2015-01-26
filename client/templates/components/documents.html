@@ -5,17 +5,15 @@
       ng-class="{ 'fa-sort-numeric-asc': invert, 'fa-sort-numeric-desc': !invert }"
       ng-click="invert = !invert"></span>
   </h1>
-  <ul class="cards" infinite-scroll="fetchDocuments()" infinite-scroll-parent>
-    <li title="Create new document..." ng-click="showDocumentCreationDialog()" ng-if="!trash && !isSearch">
+
+  <button class="btn btn-primary" title="Create new document..." ng-click="showDocumentCreationDialog()" ng-if="!trash && !isSearch" >
     <div class="fa fa-plus" ></div>
-    <div class="doc-title"><h3>Create new document</h3></div>
-    </li>
-
-    <li title="Empty trash bin!" ng-click="trashDocuments()" ng-if="trash && documents.length">
+  </button>
+  <button class="btn btn-danger" title="Empty trash bin!" ng-click="trashDocuments()" ng-if="trash && documents.length" >
     <div class="fa fa-trash-o" ></div>
-    <div class="doc-title"><h3>Empty trash bin!</h3></div>
-    </li>
+  </button>
 
+  <ul class="cards" infinite-scroll="fetchDocuments()" infinite-scroll-parent>
     <li ng-repeat="doc in documents"
         id="{{ doc._id }}" title="{{ doc.title }}"
         ng-click="openDocument(doc._id)"
