@@ -56,9 +56,9 @@ cleanup:
 	echo "Removing dangling docker images..."
 	-sudo docker images -q --filter 'dangling=true' | xargs sudo docker rmi
 
-## Run the container
-run:
-	echo "Running $(IMAGE) docker image..."
+## Start the container
+start:
+	echo "Starting $(IMAGE) docker image..."
 	sudo docker run $(docker_run_flags) --name $(APPNAME) $(IMAGE)
 
 ## Run the container in debug mode
