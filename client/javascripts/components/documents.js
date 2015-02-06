@@ -122,10 +122,10 @@ angular.module('DocumentsModule', ['ngRoute', 'angularFileUpload', 'infinite-scr
       modalInstance.result.then(function(doc) {
         if (!doc._id) {
           $scope.editing = true;
-          $scope.doc = doc;
         } else {
           $scope.documents.unshift(doc);
         }
+        $scope.doc = doc;
         $timeout(function() {
           $scope.doc.opened = true;
         }, 300);
@@ -185,16 +185,14 @@ angular.module('DocumentsModule', ['ngRoute', 'angularFileUpload', 'infinite-scr
   function ($log, $scope, $modalInstance, $upload, documentService, category) {
     'use strict';
     $scope.category = category;
+    $scope.processing = false;
     var doc = {
       categories: $scope.category ? [$scope.category.key] : []
     };
 
-    $scope.onFileSelect = function($files) {
-      $scope.files = $files;
-    };
-
     var errHandler = function(err) {
       alert('Error: ' + err);
+      $scope.processing = false;
       $modalInstance.dismiss('Error: ' + err);
     };
 
@@ -214,15 +212,17 @@ angular.module('DocumentsModule', ['ngRoute', 'angularFileUpload', 'infinite-scr
 
     $scope.postUrl = function() {
       if (!this.urlForm.$valid) return;
+      $scope.processing = true;
       doc.content = this.url;
       doc.contentType = 'text/vnd.curl';
       documentService.create(doc)
       .then($modalInstance.close, errHandler);
     };
 
-    $scope.postFile = function() {
-      if (!this.fileForm.$valid || !$scope.files) return;
-      doc.file = $scope.files[0];
+    $scope.postFile = function(files) {
+      if (!this.fileForm.$valid || !files) return;
+      $scope.processing = true;
+      doc.file = files[0];
       doc.contentType = 'multipart/form-data';
       documentService.create(doc)
       .then($modalInstance.close, errHandler);

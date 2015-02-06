@@ -14,7 +14,7 @@
   </button>
 
   <ul class="cards" infinite-scroll="fetchDocuments()" infinite-scroll-parent>
-    <li ng-repeat="doc in documents"
+    <li ng-repeat="doc in documents track by $index"
         id="{{ doc._id }}" title="{{ doc.title }}"
         ng-click="openDocument(doc._id)"
         ng-class="doc.clazz"
@@ -43,32 +43,41 @@
     <span ng-if="category" ng-style="{color: category.color}"> in {{ category.label }}</span>
   </h3>
 </div>
-<div class="modal-body">
-<tabset justified="true">
-  <tab heading="Simple">
-    <p>Open document creation form.</p>
-    <button class="btn btn-primary" ng-click="postSimpleHtml()" >Html</button>
-    <button class="btn btn-primary" ng-click="postSimpleText()" >Text</button>
-  </tab>
-  <tab heading="Online">
-    <form name="urlForm" ng-submit="postUrl()" novalidate>
-      <div class="form-group" ng-class="{true: 'has-error', false: 'has-success'}[urlForm.url.$invalid]">
-        <label for="documentUrl">URL</label>
-        <input type="url" name="url" class="form-control" id="documentUrl" ng-model="url" required />
-      </div>
-      <button class="btn btn-primary" type="submit" ng-disabled="!urlForm.$valid">Get</button>
-    </form>
-  </tab>
-  <tab heading="Upload">
-    <form name="fileForm" ng-submit="postFile()" novalidate>
-      <div class="form-group" ng-class="{true: 'has-error', false: 'has-success'}[fileForm.file.$invalid]">
-        <label for="documentFile">File</label>
-        <input id="documentFile" type="file" name="file" ng-file-select="onFileSelect($files)" required />
-      </div>
-      <button class="btn btn-primary" type="submit" ng-disabled="!fileForm.$valid || !files">Upload</button>
-    </form>
-  </tab>
-</tabset>
+<div class="modal-body" id="new-doc-modal">
+  <div class="processing" ng-show="processing"><span class="fa fa-cog fa-spin"></span></div>
+  <ul class="buttons" ng-show="!isUrlFormOpen">
+    <li>
+      <button class="btn" ng-click="postSimpleHtml()" title="Create new HTML document" >
+        <span class="fa fa-code"></span>HTML
+      </button>
+    </li>
+    <li>
+      <button class="btn" ng-click="postSimpleText()" title="Create new text document">
+        <span class="fa fa-font"></span>TXT
+      </button>
+    </li>
+    <li>
+      <button class="btn" onclick="$('#documentFile').click()" title="Upload document">
+        <span class="fa fa-paperclip"></span>UPLOAD
+      </button>
+    </li>
+    <li>
+      <button class="btn" ng-click="isUrlFormOpen = !isUrlFormOpen" title="Get online document">
+        <span class="fa fa-link"></span>URL
+      </button>
+    </li>
+  </ul>
+
+  <form name="fileForm" novalidate style="display:none;"><input id="documentFile" type="file" name="file"
+    ng-file-select="postFile($files)" /></form>
+
+  <form name="urlForm" ng-submit="postUrl()" novalidate ng-show="isUrlFormOpen" ng-init="isUrlFormOpen = false">
+    <div class="form-group" ng-class="{true: 'has-error', false: 'has-success'}[urlForm.url.$invalid]">
+      <label for="documentUrl">URL</label>
+      <input type="url" name="url" class="form-control" id="documentUrl" ng-model="url" required />
+    </div>
+    <button class="btn btn-primary" type="submit" ng-disabled="!urlForm.$valid">Get</button>
+  </form>
 </div>
 <div class="modal-footer">
   <button class="btn btn-warning" ng-click="cancel()">Cancel</button>

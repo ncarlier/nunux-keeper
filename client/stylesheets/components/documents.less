@@ -124,3 +124,41 @@
   }
 }
 
+#new-doc-modal {
+  padding: 0;
+  form {
+    padding: 20px;
+  }
+  .processing {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.6);
+    font-size: 4em;
+    text-align: center;
+    padding-top: 0.5em;
+  }
+  ul.buttons {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    list-style: none;
+    padding: 0;
+    button {
+      margin: 1em;
+      height: 7em;
+      width: 7em;
+      &:hover {
+        .button-variant(@btn-primary-color; @btn-primary-bg; @btn-primary-border);
+      }
+      span {
+        display: block;
+      }
+      .fa {
+        font-size: 4em;
+        padding: 0 0.2em;
+      }
+    }
+  }
+}
+
