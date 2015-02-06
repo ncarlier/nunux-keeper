@@ -63,7 +63,6 @@ angular.module('KeeperBookmarklet', ['DocumentService'])
     while ((match = search.exec(query)) !== null)
       params[decode(match[1])] = decode(match[2]);
 
-    $scope.busy = false;
     $scope.url = params.url;
     $scope.btnLabel = 'Keep this page';
     $scope.icon = 'fa-cloud-upload';
@@ -77,7 +76,6 @@ angular.module('KeeperBookmarklet', ['DocumentService'])
           $scope.ready = true;
           $scope.error = false;
           $scope.btnLabel = 'Keep this !';
-          $scope.busy = false;
           $scope.icon = 'fa-cloud-upload';
         }
       });
@@ -88,8 +86,7 @@ angular.module('KeeperBookmarklet', ['DocumentService'])
     };
 
     $scope.saveDocument = function() {
-      $scope.busy = true;
-      $scope.icon = 'fa-repeat';
+      $scope.icon = 'fa-cog';
       var newDoc = null;
       if (data) {
         newDoc = {

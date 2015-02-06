@@ -40,6 +40,9 @@ header {
     span {
       font-size: 4em;
       line-height: 100px;
+      &.fa-cog {
+        .animation(spin 2s infinite linear);
+      }
     }
     &.over {
       background: blue;
@@ -49,11 +52,6 @@ header {
     }
     &.error {
       background: red;
-    }
-    &.busy {
-      span {
-        .animation(spin, 1000ms, infinite, linear);
-      }
     }
   }
   .login {
