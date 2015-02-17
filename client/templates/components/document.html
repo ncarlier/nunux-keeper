@@ -53,6 +53,8 @@
       <a href="{{doc.link}}" title="View source" ng-if="doc.link" target="_blank">{{ doc.link | domain }}</a>
       <span class="fa fa-link" ng-if="isPublic(doc)"></span>
       <a href="/doc/{{doc._id}}" title="View public document" target="_blank" ng-if="isPublic(doc)">public link</a>
+      <span class="fa fa-paperclip" ng-if="doc.attachment"></span>
+      <a href="/api/document/{{doc._id}}/attachment" title="Download attachment" target="_blank" ng-if="doc.attachment">attachment</a>
     </span>
     <ul class="categories" ng-show="editing || doc.categories.length">
       <li app-category-tag="cat" ng-repeat="cat in doc.categories" class="category" ></li>

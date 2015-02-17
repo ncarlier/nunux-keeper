@@ -29,6 +29,10 @@
           <span class="fa fa-globe"></span>
           <a href="<%= doc.link %>" title="View source" target="_blank">source</a>
           <% } %>
+          <% if (doc.attachment) { %>
+          <span class="fa fa-paperclip"></span>
+          <a href="/doc/<%= doc._id %>/raw" title="Get attachment" target="_blank">attachment</a>
+          <% } %>
         </span>
       </header>
       <section class="content" class="readable">
@@ -36,7 +40,7 @@
         <pre>
         <% } %>
         <% if (/^image\//.test(doc.contentType)) { %>
-        <img src="/api/document/<%= doc._id %>/resource/<%= doc.attachment %>" />
+        <img src="/doc/<%= doc._id %>/raw" />
         <% } else { %>
         <%- doc.content %>
         <% } %>
