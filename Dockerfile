@@ -11,8 +11,14 @@ RUN apt-get update && apt-get install -y imagemagick
 
 # Add files
 ADD . /opt/keeper
+
+# Create var directory and fix rights
+RUN mkdir /var/opt/keeper && \
+    chown node.node -R /opt/keeper && \
+    chown node.node -R /var/opt/keeper
+
+# Def. working directory
 WORKDIR /opt/keeper
-RUN chown node.node -R /opt/keeper
 
 # Def. user
 USER node
