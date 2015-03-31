@@ -51,6 +51,7 @@ var readLines = function(input, func) {
 module.exports = function() {
   // Init. with custom links:
   blacklistUrl('feeds.feedburner.com');
+  blacklistUrl('doubleclick.net');
 
   // Load blacklist from file...
   var blacklistFile = files.chpath('blacklist.txt');
