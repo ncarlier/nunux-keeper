@@ -1,8 +1,8 @@
 # NUNUX Keeper
 
-> Keep the best of your internet surfing in one place.
+> Your personal content curation service.
 
-Nunux Keeper allow you to save articles or medias you found on internet in one place. And this place can be yours.
+Nunux Keeper allow you to collect, organize, and display articles or medias you found on the internet.
 
 ## Features
 
@@ -11,18 +11,21 @@ Nunux Keeper allow you to save articles or medias you found on internet in one p
 * A document can be an html page, notes, images and more!
 * Documents attached medias are also saved.
 * Search a document with powerfull full text queries.
-* Access from your mobile or your computer. It's full responsive.
+* Access from your mobile or your computer. It's fully responsive.
 * Easily save web content while surfing thanks to the awesome bookmarklet.
 * Share a document on a public page.
-* Build your own client application thaks to the RESTFul JSON API.
+* Build your own client application thanks to the [RESTFul JSON API](http://keeper.nunux.org/doc).
 * Link your account with Twitter and keep your tweets.
 * Import your bookmarks from Pocket
 * Store medias on the local disk or on S3
 
 ## Roadmap
 
-* Add a user quota for local storage;
-* Add some user dashboard with stats;
+* Add a user quota for local storage
+* Export a document to PDF
+* Add new document type support (Markdown, Bookmark, ...)
+* Improve sharing features
+* ...
 
 ## Under the hood
 
