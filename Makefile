@@ -1,5 +1,5 @@
 .SILENT :
-.PHONY : help volume dev build clean cleanup run debug shell test publish
+.PHONY : help volume mount build clean cleanup run debug shell test publish
 
 USERNAME:=ncarlier
 APPNAME:=keeper
@@ -36,10 +36,10 @@ volume:
 	echo "Building $(APPNAME) volumes..."
 	sudo docker run -v $(PWD):/opt/$(APPNAME) -v ~/var/$(APPNAME):/var/opt/$(APPNAME) --name $(APPNAME)_volumes busybox true
 
-## Enable DEVMODE (mount volumes)
-dev:
+## Mount volumes
+mount:
 	$(eval docker_run_flags += --volumes-from $(APPNAME)_volumes)
-	echo "DEVMODE: Using volumes from $(APPNAME)_volumes"
+	echo "Using volumes from $(APPNAME)_volumes"
 
 ## Build the image
 build:
