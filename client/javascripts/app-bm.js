@@ -99,7 +99,7 @@ angular.module('KeeperBookmarklet', ['DocumentService'])
         newDoc = {
           title: params.title,
           content: params.url,
-          contentType: 'text/vnd.curl'
+          contentType: 'text/uri'
         };
       }
       documentService.create(newDoc)

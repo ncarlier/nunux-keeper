@@ -256,7 +256,7 @@ describe('Check document API', function() {
       jar: true,
       qs:  {title: title},
       headers: {
-        'Content-Type': 'text/vnd.curl'
+        'Content-Type': 'text/uri'
       },
       body: content
     }, function(err, res, body) {
@@ -309,7 +309,7 @@ describe('Check document API', function() {
       jar: true,
       qs:  {title: title},
       headers: {
-        'Content-Type': 'text/vnd.curl'
+        'Content-Type': 'text/uri'
       },
       body: imageUrl
     }, function(err, res, body) {

@@ -136,7 +136,7 @@ angular.module('DocumentModule', ['ngRoute', 'ngSanitize', 'ngCkeditor'])
         var doc = {
           title: $scope.doc.title,
           content: $scope.doc.link,
-          contentType: 'text/vnd.curl'
+          contentType: 'text/uri'
         };
         $scope.loading = true;
         documentService.create(doc)

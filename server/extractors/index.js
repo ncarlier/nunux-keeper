@@ -16,7 +16,7 @@ var getExtractor = function(ct) {
       return htmlExtractor;
     case /^application\/json/.test(ct):
       return jsonExtractor;
-    case /^text\/vnd\.curl/.test(ct):
+    case /^text\/uri/.test(ct):
       return urlExtractor;
     case /^multipart\/form-data/.test(ct):
       return fileExtractor;

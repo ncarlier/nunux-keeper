@@ -214,7 +214,7 @@ angular.module('DocumentsModule', ['ngRoute', 'angularFileUpload', 'infinite-scr
       if (!this.urlForm.$valid) return;
       $scope.processing = true;
       doc.content = this.url;
-      doc.contentType = 'text/vnd.curl';
+      doc.contentType = 'text/uri';
       documentService.create(doc)
       .then($modalInstance.close, errHandler);
     };
