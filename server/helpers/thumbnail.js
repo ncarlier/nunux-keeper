@@ -1,6 +1,8 @@
 var when       = require('when'),
     _          = require('underscore'),
     gm         = require('gm'),
+    crypto     = require('crypto'),
+    webshot    = require('webshot'),
     logger     = require('./logger'),
     files      = require('./files');
 
@@ -8,13 +10,13 @@ var imageExtensions = ['png', 'jpg', 'jpeg', 'gif'],
 		sizes = ['200x150'];
 
 /**
- * Get image thumbnail.
+ * Make thumbnail of a file.
  * @param {File} file
  * @param {String} size
  * @param {String} group sub directory group to put in
  * @return {Promise} promise of the thumbnail
  */
-var getThumbnail = function(file, size, group) {
+var thumbnailFile = function(file, size, group) {
   var ext = file.split('.').pop();
   if (ext) {
     ext = ext.toLowerCase();
@@ -62,7 +64,43 @@ var getThumbnail = function(file, size, group) {
 };
 
 /**
- * Thumbnail an image.
+ * Make thumbnail of a page.
+ * @param {String} url
+ * @return {Promise} promise of the thumbnail
+ */
+var thumbnailPage = function(url) {
+  var urlHash = crypto.createHash('md5').update(url).digest('hex'),
+      filename = urlHash + '.png';
+
+  return files.chmkdir('tmp', 'thumbpages')
+  .then(function(dir) {
+    thumbfile = files.chpath(dir, filename);
+    return files.chexists(thumbfile);
+  })
+  .then(function(exists) {
+    if (exists) return when.resolve(thumbfile);
+    logger.debug('Making thumbnail of the web page: %s -> %s', url, thumbfile);
+
+    var thumbnailed = when.defer();
+
+    webshot(url, thumbfile, function(err) {
+      if (err) {
+        logger.error('Unable to thumbnail the web page %s', url, err);
+        return thumbnailed.reject(err);
+      }
+      logger.debug('Web page %s thumnailed.', url);
+      return thumbnailed.resolve(thumbfile);
+    });
+
+    return thumbnailed.promise;
+  });
+};
+
+/**
+ * Thumbnail toolkit.
  * @module thumbnail
  */
-module.exports = getThumbnail;
+module.exports = {
+  page: thumbnailPage,
+  file: thumbnailFile
+};

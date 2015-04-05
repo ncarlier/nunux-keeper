@@ -1,27 +1,45 @@
 var logger = require('../helpers').logger,
-    defaultExtractor = require('./default'),
-    htmlExtractor    = require('./html'),
-    urlExtractor     = require('./url'),
-    fileExtractor    = require('./file'),
-    jsonExtractor    = require('./json');
+    path   = require('path'),
+    when   = require('when');
+
+// Load extractors
+var extractors = {};
+require('fs').readdirSync(__dirname).forEach(function (file) {
+  if (file === 'index.js') return;
+  var name = path.basename(file, '.js');
+  extractors[name] = require(path.join(__dirname, file));
+  logger.debug('%s extractor registered.', name.toUpperCase());
+});
 
 /**
  * Get proper extractor regarding content-type.
- * @param {String} ct - Content type
- * @returns {Module} proper extractor (default if not found)
+ * @param {String} ct Content type
+ * @returns {Module} proper extractor (null if not found)
  */
 var getExtractor = function(ct) {
-  switch (true) {
-    case /^text\/html/.test(ct):
-      return htmlExtractor;
-    case /^application\/json/.test(ct):
-      return jsonExtractor;
-    case /^text\/uri/.test(ct):
-      return urlExtractor;
-    case /^multipart\/form-data/.test(ct):
-      return fileExtractor;
-    default:
-      return null;
+  var extractor = null;
+  for (var ext in extractors) {
+    if (extractors[ext].support && extractors[ext].support(ct)) {
+      extractor = extractors[ext];
+      break;
+    }
+  }
+  return extractor;
+};
+
+/**
+ * Default content extractor.
+ */
+var defaultExtractor = {
+  /**
+   * Extract content of a document.
+   * @param {Document} doc
+   * @return {Promise} Promise of the document with extracted content.
+   */
+  extract: function(doc) {
+    logger.debug('Using default extractor.');
+    // TODO sanitize body
+    return when.resolve(doc);
   }
 };
 

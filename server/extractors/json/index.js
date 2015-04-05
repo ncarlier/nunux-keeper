@@ -18,6 +18,14 @@ require('fs').readdirSync(__dirname).forEach(function (file) {
  */
 module.exports = {
   /**
+   * Test if the extractor support the provided content-type.
+   * @param {String} ct the conten-type
+   * @return {Boolean} support status
+   */
+  support: function(ct) {
+    return /^application\/json/.test(ct);
+  },
+  /**
    * Extract content of a document.
    * @param {Document} doc
    * @return {Promise} Promise of the document with extracted content.

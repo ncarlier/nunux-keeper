@@ -81,6 +81,14 @@ var extractResources = function(content) {
  */
 module.exports = {
   /**
+   * Test if the extractor support the provided content-type.
+   * @param {String} ct the conten-type
+   * @return {Boolean} support status
+   */
+  support: function(ct) {
+    return /^text\/html/.test(ct);
+  },
+  /**
    * Extract HTML content a document.
    * HTML can be :
    * - refered as a link (@see doc.link or doc.content)

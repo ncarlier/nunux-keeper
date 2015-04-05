@@ -61,7 +61,8 @@
     "gm": "1.16.x",
     "bunyan": "1.1.x",
     "mime": "1.2.x",
-    "knox": "0.9.x"
+    "knox": "0.9.x",
+    "webshot": "0.15.x"
   },
   "devDependencies": {
     "grunt": "^0.4.5",

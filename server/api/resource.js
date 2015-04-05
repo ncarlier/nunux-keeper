@@ -47,7 +47,7 @@ module.exports = {
           // Get a local copy of the file (it's a noop if the driver is 'local')
           return storage.localCopy(container, req.params.key)
           .then(function(localPath) {
-            return thumbnail(localPath, req.query.size, doc._id.toString());
+            return thumbnail.file(localPath, req.query.size, doc._id.toString());
           })
           .then(function(thumbPath) {
             // Remove copied file only if driver is not 'local'

@@ -25,6 +25,14 @@ require('fs').readdirSync(__dirname).forEach(function (file) {
  */
 module.exports = {
   /**
+   * Test if the extractor support the provided content-type.
+   * @param {String} ct the conten-type
+   * @return {Boolean} support status
+   */
+  support: function(ct) {
+    return /^text\/uri/.test(ct);
+  },
+  /**
    * Extract online content of a document.
    * Redirect to proper extractor regarding content-type.
    * If content-type is not supported, document is return as is.
@@ -33,7 +41,6 @@ module.exports = {
    */
   extract: function(doc) {
     logger.debug('Using URL extractor.');
-    var extracted = when.defer();
     if (!validators.isURL(doc.content)) {
       return when.reject(new errors.BadRequest('URL not valid: ' + doc.content));
     }
@@ -49,6 +56,7 @@ module.exports = {
     if (extractor) {
       return extractor.extract(doc);
     } else {
+      var extracted = when.defer();
       kRequest.head(doc.link, function (err, res) {
         if (err) return extracted.reject(err);
         var filename = url.parse(doc.link).pathname;

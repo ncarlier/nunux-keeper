@@ -1,6 +1,6 @@
 var when     = require('when'),
     fs       = require('fs'),
-    logger   = require('../helpers').logger;
+    logger   = require('../../helpers').logger;
 
 /**
  * Import file.
@@ -30,6 +30,14 @@ var importFile = function(file, doc) {
  * @module file
  */
 module.exports = {
+  /**
+   * Test if the extractor support the provided content-type.
+   * @param {String} ct the conten-type
+   * @return {Boolean} support status
+   */
+  support: function(ct) {
+    return /^multipart\/form-data/.test(ct);
+  },
   /**
    * Extract uploaded content of a document.
    * If content-type is not supported, document is return as is.
