@@ -1,21 +1,18 @@
 /* jshint -W030 */
 
-var _          = require('underscore'),
-    should     = require('should'),
+var should     = require('should'),
     fs         = require('fs'),
     path       = require('path'),
     request    = require('request'),
     mockServer = require('./common/mock-server'),
-    logger     = require('../helpers').logger,
-    hash       = require('../helpers').hash,
-    files      = require('../helpers').files;
+    hash       = require('../helpers').hash;
 
 
-describe('Check document API', function() {
+describe('Check HTML document API', function() {
   var url = mockServer.getRealm() + '/api/document',
       imageUrl = 'http://reader.nunux.org/icons/favicon.png?foo=bar',
       uid = 'foo@bar.com';
-  var docId, hits, resourceKey;
+  var docId, resourceKey;
 
   before(function(done) {
     mockServer.start(function() {
@@ -29,68 +26,7 @@ describe('Check document API', function() {
 
   after(mockServer.stop);
 
-  it('should not found fake document', function(done) {
-    request.get({
-      url:  url + '/50341373e894ad16347efe01',
-      jar:  true,
-      json: true
-    }, function (err, res, body) {
-      if (err) return done(err);
-      res.statusCode.should.equal(404);
-      done();
-    });
-  });
-
-  it('should create new document (JSON body)', function(done) {
-    var title   = 'Sample JSON document',
-        content = {test: true};
-
-    request.post({
-      url: url,
-      jar: true,
-      qs:  {title: title},
-      json: true,
-      body: content
-    }, function(err, res, body) {
-      if (err) return done(err);
-      res.statusCode.should.equal(201);
-      body.should.have.properties('_id', 'date');
-      body.title.should.equal(title);
-      body.owner.should.equal(uid);
-      var c = JSON.parse(body.content);
-      c.test.should.be.true;
-      body.contentType.should.equal('application/json');
-      done();
-    });
-  });
-
-  it('should create new documents (JSON uploaded file)', function(done) {
-    this.timeout(5000);
-    var title = '-- Not used here --',
-        file  = path.join(__dirname, 'assets', 'import.json');
-
-    var r = request.post({
-      url: url,
-      jar: true,
-      qs:  {title: title}
-    }, function(err, res, body) {
-      if (err) return done(err);
-      res.statusCode.should.equal(201);
-      //console.log(body);
-      body = JSON.parse(body);
-      body.should.have.length(2);
-      body[0].should.have.property('_id');
-      body[0].should.have.property('date');
-      body[0].title.should.equal('Sample Google Reader item');
-      body[0].owner.should.equal(uid);
-      body[0].contentType.should.match(/^text\/html/);
-      done();
-    });
-    var form = r.form();
-    form.append('my_file', fs.createReadStream(file));
-  });
-
-  it('should create new document (HTML body)', function(done) {
+  it('should create new HTML document', function(done) {
     var title   = 'Sample simple HTML document',
         content = '<p id="toclean">sample</P><img src="' + imageUrl + '"/>' +
           '<img class="bad" src = "http://feeds.feedburner.com/~r/azerty" />' +
@@ -129,7 +65,7 @@ describe('Check document API', function() {
     });
   });
 
-  it('should found previous document', function(done) {
+  it('should found previous HTML document', function(done) {
     request.get({
       url:  url + '/' + docId,
       jar:  true,
@@ -143,7 +79,7 @@ describe('Check document API', function() {
     });
   });
 
-  it('should update previous created document (HTML body)', function(done) {
+  it('should update previous HTML document', function(done) {
     var title   = 'Updated sample simple HTML document',
         content = '<p>updated sample</P><img src="' + imageUrl + '"/>',
         expectedContent = '<p>updated sample</p><img app-src="' + imageUrl + '" />',
@@ -171,7 +107,19 @@ describe('Check document API', function() {
     });
   });
 
-  it('should create new document (HTML streamed file)', function(done) {
+  it('should delete previous HTML document', function(done) {
+    request.del({
+      url:  url + '/' + docId,
+      jar:  true,
+      json: true
+    }, function(err, res, body) {
+      if (err) return done(err);
+      res.statusCode.should.equal(205);
+      done();
+    });
+  });
+
+  it('should create new HTML document (streamed file)', function(done) {
     var title = 'Sample streamed HTML document',
         file  = path.join(__dirname, 'assets', 'gpl.html');
 
@@ -194,7 +142,7 @@ describe('Check document API', function() {
     }));
   });
 
-  it('should create new document (HTML uploaded file)', function(done) {
+  it('should create new HTML document (uploaded file)', function(done) {
     var title = 'Sample uploaded HTML document',
         file  = path.join(__dirname, 'assets', 'gpl.html');
 
@@ -220,33 +168,7 @@ describe('Check document API', function() {
     form.append('my_file', fs.createReadStream(file));
   });
 
-  it('should create new document (Image uploaded file)', function(done) {
-    var title = 'Sample uploaded image  document',
-        file  = path.join(__dirname, 'assets', 'oss.png');
-
-    var r = request.post({
-      url: url,
-      jar: true,
-      qs:  {title: title}
-    }, function(err, res, body) {
-      if (err) return done(err);
-      res.statusCode.should.equal(201);
-      //console.log(body);
-      body = JSON.parse(body);
-      body.should.have.property('_id');
-      body.should.have.property('date');
-      body.should.have.property('attachment');
-      body.title.should.equal(title);
-      body.owner.should.equal(uid);
-      body.contentType.should.match(/^image\/png/);
-      body.resources.should.have.length(0);
-      done();
-    });
-    var form = r.form();
-    form.append('my_file', fs.createReadStream(file));
-  });
-
-  it('should create new document (HTML URL)', function(done) {
+  it('should create new HTML document (given URL)', function(done) {
     this.timeout(5000);
     var title   = 'Sample online HTML document',
         content = 'http://reader.nunux.org';
@@ -274,7 +196,7 @@ describe('Check document API', function() {
     });
   });
 
-  it('should retrieve document resource (Image)', function(done) {
+  it('should retrieve previous HTML document resource', function(done) {
     request.head({
       url: url + '/' + docId + '/resource/' + resourceKey,
       jar: true
@@ -287,7 +209,7 @@ describe('Check document API', function() {
     });
   });
 
-  it('should retrieve document resource as thumbnail (Image)', function(done) {
+  it('should retrieve previous HTML document resource thumbnail', function(done) {
     request.head({
       url: url + '/' + docId + '/resource/' + resourceKey,
       qs:  {size: '200x150'},
@@ -300,88 +222,4 @@ describe('Check document API', function() {
     });
   });
 
-  it('should create new document (Image URL)', function(done) {
-    this.timeout(5000);
-    var title = 'Sample online image document';
-
-    request.post({
-      url: url,
-      jar: true,
-      qs:  {title: title},
-      headers: {
-        'Content-Type': 'text/uri'
-      },
-      body: imageUrl
-    }, function(err, res, body) {
-      if (err) return done(err);
-      res.statusCode.should.equal(201);
-      body = JSON.parse(body);
-      docId = body._id;
-      body.should.have.properties('_id', 'date', 'attachment');
-      body.title.should.equal(title);
-      body.owner.should.equal(uid);
-      var file = files.chpath(uid, 'documents', body._id, 'attachment', 'favicon.png');
-      fs.existsSync(file).should.be.true;
-      body.attachment.should.equal('favicon.png');
-      body.contentType.should.equal('image/png');
-      body.resources.should.have.length(0);
-      done();
-    });
-  });
-
-  it('should retrieve document attachment (Image)', function(done) {
-    request.head({
-      url: url + '/' + docId + '/attachment',
-      jar: true
-    }, function(err, res, body) {
-      if (err) return done(err);
-      //console.log(res);
-      res.statusCode.should.equal(200);
-      res.headers['content-type'].should.equal('image/png');
-      done();
-    });
-  });
-
-  it('should find documents', function(done) {
-    request.get({
-      url: url,
-      jar: true,
-      qs:  {q: 'Sample'},
-      json: true
-    }, function(err, res, body) {
-      if (err) return done(err);
-      res.statusCode.should.equal(200);
-      body.should.have.properties('total', 'hits');
-      body.total.should.be.above(0);
-      hits = body.hits;
-      done();
-    });
-  });
-
-  it('should delete previous created document (HTML body)', function(done) {
-    request.del({
-      url:  url + '/' + docId,
-      jar:  true,
-      json: true
-    }, function(err, res, body) {
-      if (err) return done(err);
-      res.statusCode.should.equal(205);
-      done();
-    });
-  });
-
-  it('should delete multiple documents', function(done) {
-    var ids = _.pluck(hits, '_id');
-    ids = _.without(ids, docId);
-    request.del({
-      url:  url,
-      jar:  true,
-      json: true,
-      body: ids
-    }, function(err, res, body) {
-      if (err) return done(err);
-      res.statusCode.should.equal(205);
-      done();
-    });
-  });
 });
