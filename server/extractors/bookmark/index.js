@@ -49,6 +49,7 @@ module.exports = {
         logger.debug('Page thumnailed: ' + thumbnailFile);
         return files.chdu(thumbnailFile)
         .then(function(size) {
+          doc.title = doc.link.replace(/.*?:\/\//g, "");
           doc.contentType = 'image/png';
           doc.attachment = {
             name: 'capture.png',

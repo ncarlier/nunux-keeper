@@ -83,7 +83,17 @@ var thumbnailPage = function(url) {
 
     var thumbnailed = when.defer();
 
-    webshot(url, thumbfile, function(err) {
+    var options = {
+      shotSize: {
+        width: 'window',
+        height: 'all'
+      },
+      phantomConfig: {
+        'ignore-ssl-errors': true
+      }
+    };
+
+    webshot(url, thumbfile, options, function(err) {
       if (err) {
         logger.error('Unable to thumbnail the web page %s', url, err);
         return thumbnailed.reject(err);

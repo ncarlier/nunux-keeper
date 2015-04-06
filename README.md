@@ -23,7 +23,7 @@ Nunux Keeper allow you to collect, organize, and display articles or medias you 
 
 * Add a user quota for local storage
 * Export a document to PDF
-* Add new document type support (Markdown, Bookmark, ...)
+* Add new document type support (Markdown, ...)
 * Improve sharing features
 * ...
 

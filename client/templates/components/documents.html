@@ -76,6 +76,10 @@
       <label for="documentUrl">URL</label>
       <input type="url" name="url" class="form-control" id="documentUrl" ng-model="url" required />
     </div>
+    <div class="checkbox" >
+      <input type="checkbox" name="isBookmark" id="isBookmark" ng-model="isBookmark" />
+      <label for="isBookmark">Create a bookmark (not extract the content)</label>
+    </div>
     <button class="btn btn-primary" type="submit" ng-disabled="!urlForm.$valid">Get</button>
   </form>
 </div>

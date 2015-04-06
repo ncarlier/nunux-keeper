@@ -8,7 +8,7 @@ require('fs').readdirSync(__dirname).forEach(function (file) {
   if (file === 'index.js') return;
   var name = path.basename(file, '.js');
   jsonExtractors[name] = require(path.join(__dirname, file));
-  logger.debug('JSON extractor %s registered.', name);
+  logger.debug('%s JSON extractor registered.', name.toUpperCase());
 });
 
 /**
