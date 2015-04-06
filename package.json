@@ -82,6 +82,8 @@
     "should": "3.3.x",
     "grunt-mocha-test": "0.10.x",
     "load-grunt-tasks": "^0.6.0",
-    "grunt-apidoc": "^0.7.0"
+    "grunt-apidoc": "^0.7.0",
+    "grunt-blanket": "0.0.8",
+    "blanket": "^1.1.6"
   }
 }

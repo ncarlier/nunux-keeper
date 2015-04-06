@@ -9,9 +9,13 @@ module.exports = (grunt) ->
 
   # Register tasks...
 
-  grunt.registerTask 'test', '*Lint* javascript and coffee files.', [
+  grunt.registerTask 'test', '*Lint* files and run tests.', [
     'coffeelint'
     'jshint'
+    'mochaTest:test'
+  ]
+
+  grunt.registerTask 'coverage', 'Run tests coverage.', [
     'mochaTest'
   ]
 
