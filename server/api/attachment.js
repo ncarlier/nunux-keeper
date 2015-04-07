@@ -25,7 +25,9 @@ module.exports = {
       if (!doc) {
         return next(new errors.NotFound('Document not found.'));
       }
-      if (doc.owner !== req.user.uid && !_.contains(doc.categories, 'system-public')) {
+      // Only allow to see public or own document.
+      var isPublic = _.contains(doc.categories, 'system-public');
+      if (!isPublic && (!req.isAuthenticated() || doc.owner !== req.user.uid)) {
         return next(new errors.Forbidden());
       }
 

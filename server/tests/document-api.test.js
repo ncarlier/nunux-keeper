@@ -73,6 +73,57 @@ describe('Check basic document API', function() {
     });
   });
 
+  it('should NOT retrieve previous private TEXT document if not connected', function(done) {
+    request.get({
+      url:  url + '/' + docId,
+      json: true
+    }, function (err, res, body) {
+      if (err) return done(err);
+      res.statusCode.should.equal(403);
+      done();
+    });
+  });
+
+  it('should update previous TEXT document to be public', function(done) {
+    var title   = 'Updated sample TEXT document',
+        content = 'hello world!!!',
+        categories = ['system-public'];
+
+    request.put({
+      url: url + '/' + docId,
+      jar: true,
+      qs:  {title: title, categories: categories},
+      headers: {
+        'Content-Type': 'text/plain'
+      },
+      body: content
+    }, function(err, res, body) {
+      if (err) return done(err);
+      res.statusCode.should.equal(200);
+      body = JSON.parse(body);
+      body.should.have.property('_id');
+      body.title.should.equal(title);
+      body.content.should.equal(content);
+      body.categories.should.have.length(1);
+      body.categories.should.include('system-public');
+      done();
+    });
+  });
+
+  it('should retrieve previous public TEXT document if not connected', function(done) {
+    request.get({
+      url:  url + '/' + docId,
+      json: true
+    }, function (err, res, body) {
+      if (err) return done(err);
+      res.statusCode.should.equal(200);
+      body.should.have.properties('_id', 'categories');
+      body.categories.should.have.length(1);
+      body.categories.should.include('system-public');
+      done();
+    });
+  });
+
   it('should delete previous TEXT document', function(done) {
     request.del({
       url:  url + '/' + docId,

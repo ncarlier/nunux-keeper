@@ -31,7 +31,6 @@ var express        = require('express'),
     logger         = require('./helpers').logger,
     files          = require('./helpers').files,
     middleware     = require('./middlewares'),
-    secMiddleware  = require('./security/middlewares'),
     appInfo        = require('../package.json'),
     Document       = require('./models').Document;
 
@@ -41,6 +40,8 @@ var env = process.env.NODE_ENV || 'development',
     uploadDir = process.env.APP_VAR_DIR ? path.join(process.env.APP_VAR_DIR, 'upload') : os.tmpdir(),
     production = 'production' == env,
     assetsPath = production ? path.join(__dirname, '../dist') : path.join(__dirname, '../client');
+
+app.security = require('./security/middlewares');
 
 app.set('info', {
   name: appInfo.name,
@@ -87,8 +88,10 @@ if (production) {
 
 app.use(passport.initialize());
 app.use(passport.session());
-app.use('/api', secMiddleware.token(passport), middleware.cors());
-app.use('/api/admin', secMiddleware.ensureIsAdmin);
+app.use('/api', app.security.token(passport), middleware.cors());
+app.use('/api/category', app.security.ensureAuthenticated);
+app.use('/api/user', app.security.ensureAuthenticated);
+app.use('/api/admin', app.security.ensureAuthenticated, app.security.ensureIsAdmin);
 app.use(methodOverride());
 
 // Set up security

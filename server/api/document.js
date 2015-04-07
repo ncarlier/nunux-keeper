@@ -16,7 +16,9 @@ module.exports = {
     Document.findById(req.params.id).exec()
     .then(function(doc) {
       if (doc) {
-        if (doc.owner !== req.user.uid) {
+        // Only allow to see public or own document.
+        var isPublic = _.contains(doc.categories, 'system-public');
+        if (!isPublic && (!req.isAuthenticated() || doc.owner !== req.user.uid)) {
           return next(new errors.Forbidden());
         }
         return res.json(doc);

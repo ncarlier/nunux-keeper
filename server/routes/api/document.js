@@ -62,7 +62,7 @@ module.exports = function(app) {
    *        ]
    *     }
    */
-  app.get('/api/document', api.documents.search);
+  app.get('/api/document', app.security.ensureAuthenticated, api.documents.search);
 
   /**
    * @api {get} /api/document Get document
@@ -92,7 +92,7 @@ module.exports = function(app) {
    *
    * @apiSuccessStructure Document
    */
-  app.put('/api/document/:id', api.documents.update);
+  app.put('/api/document/:id', app.security.ensureAuthenticated, api.documents.update);
 
   /**
    * @api {post} /api/document Create document
@@ -112,7 +112,7 @@ module.exports = function(app) {
    *
    * @apiSuccessStructure Document
    */
-  app.post('/api/document', api.documents.create);
+  app.post('/api/document', app.security.ensureAuthenticated, api.documents.create);
 
   /**
    * @api {delete} /api/document Delete list of documents
@@ -127,7 +127,7 @@ module.exports = function(app) {
    * @apiSuccessExample Success-Response:
    *     HTTP/1.1 204 OK
    */
-  app.delete('/api/document', api.documents.del);
+  app.delete('/api/document', app.security.ensureAuthenticated, api.documents.del);
 
   /**
    * @api {delete} /api/documenti/:id Delete a document
@@ -141,7 +141,7 @@ module.exports = function(app) {
    * @apiSuccessExample Success-Response:
    *     HTTP/1.1 204 OK
    */
-  app.delete('/api/document/:id', api.documents.del);
+  app.delete('/api/document/:id', app.security.ensureAuthenticated, api.documents.del);
 
   /**
    * @api {get} /api/document/:id/resource/:key Get document resource
@@ -203,6 +203,6 @@ module.exports = function(app) {
    * @apiSuccessExample Success-Response:
    *     HTTP/1.1 200 OK
    */
-  app.post('/api/document/:id/resource', api.resources.fetch);
+  app.post('/api/document/:id/resource', app.security.ensureAuthenticated, api.resources.fetch);
 
 };

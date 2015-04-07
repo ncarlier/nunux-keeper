@@ -10,8 +10,12 @@ module.exports = {
    */
   token: function(passport) {
     return function(req, res, next) {
+      // Bypass if already authenticated
       if (req.isAuthenticated()) { return next(); }
-      passport.authenticate(['bearer'])(req, res, next);
+      passport.authenticate('bearer', function(err, user, info) {
+        if (err) { return next(err); }
+        next();
+      })(req, res, next);
     };
   },
   /**
