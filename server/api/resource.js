@@ -36,7 +36,7 @@ module.exports = {
         return next(new errors.NotFound('Resource not found in the document.'));
       }
 
-      var container = storage.getContainerName(req.user.uid, 'documents', doc._id.toString(), 'resources');
+      var container = storage.getContainerName(doc.owner, 'documents', doc._id.toString(), 'resources');
       return storage.info(container, req.params.key)
       .then(function(infos) {
         if (!infos) {

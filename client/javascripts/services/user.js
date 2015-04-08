@@ -31,6 +31,19 @@ angular.module('UserService', [])
       return deferred.promise;
     };
 
+    var updateUser = function(user) {
+      var deferred = $q.defer();
+      $http.put(url + '/current', user)
+      .success(function(_user) {
+        $log.debug('User updated: ' + _user.uid);
+        user = _user;
+        user.registrationDate = new Date(parseInt(_user.registrationDate));
+        deferred.resolve(user);
+      })
+      .error(deferred.reject);
+      return deferred.promise;
+    };
+
     var getLinkedApp = function(user) {
       var deferred = $q.defer();
       $http.get(url + '/' + user.uid + '/client')
@@ -54,6 +67,7 @@ angular.module('UserService', [])
 
     return {
       get: getUser,
+      update: updateUser,
       getLinkedApp: getLinkedApp,
       revokeLinkedApp: revokeLinkedApp
     };

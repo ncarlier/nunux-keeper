@@ -11,6 +11,8 @@ module.exports = function(app) {
   app.get('/login', contextHandler, controller.login);
   app.get('/welcome', contextHandler, controller.welcomepage);
   app.get('/bookmarklet', contextHandler, controller.bookmarklet);
-  app.get('/doc/:id', contextHandler, controller.pub.get);
-  app.get('/doc/:id/raw', contextHandler, controller.pub.getRaw);
+  app.get('/doc/:id', contextHandler, controller.pub.getDoc);
+  app.get('/doc/:id/raw', contextHandler, controller.pub.getRawDoc);
+  app.get('/page/:alias', contextHandler, controller.pub.getPage);
+  app.get('/rss/:alias', contextHandler, controller.pub.getRss);
 };

@@ -1,4 +1,5 @@
 var when     = require('when'),
+    crypto   = require('crypto'),
     User     = require('../models').User,
     Document = require('../models').Document,
     storage  = require('../storage'),
@@ -67,7 +68,8 @@ module.exports = {
    * Create new user.
    */
   createUser: function(req, res, next) {
-    User.create({uid: req.params.id})
+    var alias = crypto.createHash('md5').update(req.params.id).digest('hex');
+    User.create({uid: req.params.id, publicAlias: alias})
     .then(function(result) {
       res.status(201).json({msg: 'User ' + req.params.id + ' created.'});
     }, next);

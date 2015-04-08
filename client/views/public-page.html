@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title><%= info.title %> | <%= doc.title %></title>
+  <title><%= info.title %> | <%= user.publicAlias %>'s public page</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
   <meta name="description" content="<%= info.description %>" />
   <meta name="author" content="<%= info.author %>">
@@ -11,44 +11,28 @@
   <link rel="apple-touch-icon-precomposed" sizes="120x120" href="icons/icon_120.png">
   <link rel="apple-touch-icon-precomposed" href="icons/icon_57.png">
   <link rel="shortcut icon" href="icons/favicon.png">
+  <link rel="alternate" type="application/rss+xml" title="<%= user.publicAlias %>'s public feed" href="<%= realm %>/rss/<%= user.publicAlias %>" />
 </head>
 <body>
   <header>
     <img src="/icons/icon_57.png"
     alt="Powered by Nunux <%= info.name %>"
     title="Powered by Nunux <%= info.name %>">
+    <h1><%= user.publicAlias %>'s public page</h1>
   </header>
-  <section class="content">
-    <article class="document">
-      <header>
-        <h1><%= doc.title %></h1>
-        <span class="doc-meta">
-          <span class="fa fa-clock-o"></span>
-          <time><%= doc.date %></time>
-          <% if (doc.link) { %>
-          <span class="fa fa-globe"></span>
-          <a href="<%= doc.link %>" title="View source" target="_blank">source</a>
-          <% } %>
-          <% if (doc.attachment) { %>
-          <span class="fa fa-paperclip"></span>
-          <a href="/doc/<%= doc._id %>/raw" title="Get attachment" target="_blank">attachment</a>
-          <% } %>
-        </span>
-      </header>
-      <section class="content" class="readable">
-        <% if (/^text\/plain/.test(doc.contentType)) { %>
-        <pre>
-        <% } %>
-        <% if (/^image\//.test(doc.contentType)) { %>
-        <img src="/doc/<%= doc._id %>/raw" />
-        <% } else { %>
-        <%- doc.content %>
-        <% } %>
-        <% if (/^text\/plain/.test(doc.contentType)) { %>
-        </pre>
-        <% } %>
-      </section>
-      <footer>
+  <section class="content grid">
+    <% for (var i in docs) { %>
+    <% var doc = docs[i] %>
+      <article class="card" >
+        <a href="/doc/<%= doc._id %>" target="_blank">
+        <img data-src="<%= doc.illustration %>" data-id="<%= doc._id %>" />
+        <header>
+          <h1>i<%= doc.title %></h1>
+        </header>
+        </a>
+      </article>
+      <% } %>
+      <footer class="share">
         <span class='st_sharethis' displayText='ShareThis'></span>
         <span class='st_facebook' displayText='Facebook'></span>
         <span class='st_twitter' displayText='Tweet'></span>
@@ -56,21 +40,36 @@
         <span class='st_pinterest' displayText='Pinterest'></span>
         <span class='st_email' displayText='Email'></span>
       </footer>
-    </article>
   </section>
-<script>
+  <script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/md5.js"></script>
+  <script>
 var _init = function () {
+  var resolveResourceUrl = function(docId, source) {
+    var baseUri = '/api/document/' + docId + '/',
+    rUri = baseUri + 'resource/';
+
+    if (source.indexOf(baseUri) === 0) {
+      return source + '?size=200x150'
+    }
+    var cleanName = source.replace(/\?.*$/, '');
+    var ext = cleanName.split('.').pop();
+    if (ext) ext = ext.match(/^[a-zA-Z0-9]+/)[0];
+    return rUri + CryptoJS.MD5(cleanName) +
+      (ext ? '.' + ext : '') + '?size=200x150';
+  }
+
   var imgs = document.getElementsByTagName('img');
   for (var i = 0; i < imgs.length; i++) {
     var img = imgs[i],
-        data = img.dataset,
-        src = img.getAttribute('data-app-src') || img.getAttribute('app-src');
-    if (src) {
-      img.src = src;
+      data = img.dataset,
+      src = img.getAttribute('data-src'),
+      docId = img.getAttribute('data-id');
+    if (src && docId) {
+      img.src = resolveResourceUrl(docId, src);
     }
   }
 }();
-</script>
+  </script>
 <script type="text/javascript">var switchTo5x=true;</script>
 <script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
 <script type="text/javascript">stLight.options({publisher: "ur-7b7490-1ab2-9bf1-3c22-a9bd13c279d6", doNotHash: false, doNotCopy: false, hashAddressBar: false});</script>

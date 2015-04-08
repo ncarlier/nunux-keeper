@@ -1,7 +1,9 @@
 var _          = require('underscore'),
+    when       = require('when'),
     storage    = require('../storage'),
     errors     = require('../helpers').errors,
     validators = require('../helpers').validators,
+    User       = require('../models').User,
     Document   = require('../models').Document;
 
 /**
@@ -11,7 +13,7 @@ module.exports = {
   /**
    * Get public document.
    */
-  get: function(req, res, next) {
+  getDoc: function(req, res, next) {
     if (!validators.isDocId(req.params.id)) {
       return next(new errors.NotFound('Document not found.'));
     }
@@ -22,14 +24,63 @@ module.exports = {
         return next(new errors.NotFound('Document not found.'));
       }
       req.context.doc = doc;
-      res.render('public.html', req.context);
+      res.render('public-doc.html', req.context);
+    }, next);
+  },
+
+  /**
+   * Get public page of an user.
+   */
+  getPage: function(req, res, next) {
+    var query = User.findOne().where('publicAlias').equals(req.params.alias);
+
+    query.exec()
+    .then(function(user) {
+      if (!user) {
+        return when.reject(new errors.NotFound('User not found.'));
+      }
+      req.context.user = user;
+      return Document.find().where('owner').equals(user.uid)
+      .where('categories').in(['system-public'])
+      .limit(100)
+      .sort('-date')
+      .exec();
+    })
+    .then(function(docs) {
+      req.context.docs = docs;
+      res.render('public-page.html', req.context);
+    }, next);
+  },
+
+  /**
+   * Get public RSS of an user.
+   */
+  getRss: function(req, res, next) {
+    var query = User.findOne().where('publicAlias').equals(req.params.alias);
+
+    query.exec()
+    .then(function(user) {
+      if (!user) {
+        return when.reject(new errors.NotFound('User not found.'));
+      }
+      req.context.user = user;
+      return Document.find().where('owner').equals(user.uid)
+      .where('categories').in(['system-public'])
+      .limit(100)
+      .sort('-date')
+      .exec();
+    })
+    .then(function(docs) {
+      req.context.docs = docs;
+      res.set('Content-Type', 'application/atom+xml');
+      res.render('public-rss.ejs', req.context);
     }, next);
   },
 
   /**
    * Get public document in its raw format.
    */
-  getRaw: function(req, res, next) {
+  getRawDoc: function(req, res, next) {
     if (!validators.isDocId(req.params.id)) {
       return next(new errors.NotFound('Document not found.'));
     }

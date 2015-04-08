@@ -19,17 +19,23 @@ body {
     margin: auto;
     text-align: center;
     padding: @k-pub-padding 0;
+    h1 {
+      color: white;
+    }
   }
 
   > section.content {
     max-width: @k-pub-width;
     margin: auto;
     background: #F5F5F5;
+    margin-bottom: @k-pub-padding;
+    footer.share {
+      padding: @k-pub-padding;
+    }
   }
 }
 
 article.document {
-  margin-bottom: @k-pub-padding;
   header {
     text-align: center;
     padding: @k-pub-padding;
@@ -64,7 +70,44 @@ article.document {
       max-width: 860px;
     }
   }
-  footer {
-    padding: @k-pub-padding;
+}
+
+.grid {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-around;
+}
+.grid > .card {
+  width: @k-grid-card-width;
+  height: @k-grid-card-height - 20px;
+  padding: 10px;
+  margin: 10px;
+  color: @k-grid-card-fg-color;
+  background-color: @k-grid-card-bg-color;
+  box-shadow: 2px 2px 5px @k-grid-card-fg-color;
+  position: relative;
+  cursor: pointer;
+  .transition(all 0.2s ease);
+  a {
+    text-decoration: none;
+    color: @k-panel-text-color;
+  }
+  header {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    left: 10px;
+    background: @k-grid-card-fg-color;
+    color: @k-panel-text-color;
+    h1 {
+      font-size: 16px;
+      margin: 0;
+      padding: 5px;
+      font-weight: bold;
+      word-break: break-word;
+    }
   }
 }
+

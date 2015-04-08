@@ -33,6 +33,15 @@
     </ul>
   </section>
   <section>
+    <h2>Public page</h2>
+    <p>Documents in public category are published on your public page.
+    <a href="{{ realm }}/page/{{ user.publicAlias }}" target="_blank" title="Your public page">
+      {{ realm }}/page/{{ user.publicAlias }}
+    </a>
+    </p>
+    <a class="pointer" ng-click="editUserDialog(user)" title="Edit your public alias">[edit]</a>
+  </section>
+  <section>
     <h2>Twitter</h2>
     <p ng-if="!user.twitter">
     Connect Twitter with your account.
@@ -64,3 +73,21 @@
   </section>
 </div>
 
+<script type="text/ng-template" id="templates/dialog/user/edit.html">
+<div class="modal-header">
+  <h3>Edit user: {{ user.username }}</h3>
+</div>
+<div class="modal-body">
+  <form role="form" ng-submit="ok()">
+    <div class="form-group">
+      <label for="publicAlias">Public page alias</label>
+      <input type="text" class="form-control" id="publicAlias"
+      placeholder="Enter your public alias" ng-model="user.publicAlias">
+    </div>
+  </form>
+</div>
+<div class="modal-footer">
+  <button class="btn btn-primary" ng-click="ok()">OK</button>
+  <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+</div>
+</script>

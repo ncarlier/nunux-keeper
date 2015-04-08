@@ -52,7 +52,7 @@ app.set('info', {
 });
 app.set('port', process.env.APP_PORT || 3000);
 app.set('realm', process.env.APP_REALM || 'http://localhost:' + app.get('port'));
-app.set('views', path.join(assetsPath, 'html'));
+app.set('views', path.join(assetsPath, 'views'));
 app.set('view engine', 'ejs');
 app.engine('html', require('ejs').renderFile);
 

@@ -9,8 +9,8 @@ angular.module('ProfileModule', [])
   };
 }])
 .controller('ProfileCtrl', [
-  '$scope', '$location', '$routeParams', 'userService',
-  function ($scope, $location, $routeParams, userService) {
+  '$scope', '$location', '$routeParams', '$modal', 'userService',
+  function ($scope, $location, $routeParams, $modal, userService) {
     'use strict';
     if ($routeParams.error) {
       $scope.message = {clazz: 'alert-danger', text: $routeParams.error};
@@ -35,6 +35,37 @@ angular.module('ProfileModule', [])
       }, function(err) {
         $scope.message = {clazz: 'alert-danger', text: err};
       });
+    };
+
+    $scope.editUserDialog = function() {
+      var backup = angular.copy($scope.user);
+      var modalInstance = $modal.open({
+        templateUrl: 'templates/dialog/user/edit.html',
+        controller: 'UserEditionModalCtrl'
+      });
+
+      modalInstance.result.then(null, function(reason) {
+        $scope.user = backup;
+        $log.info('User edition modal dismissed: ', reason);
+      });
+    };
+  }
+])
+.controller('UserEditionModalCtrl', [
+  '$scope', '$modalInstance', 'userService',
+  function ($scope, $modalInstance, userService) {
+    var errHandler = function(err) {
+      alert('Unable to edit user: ' + err.error);
+      $modalInstance.dismiss(err);
+    };
+
+    $scope.ok = function () {
+      userService.update($scope.user)
+      .then($modalInstance.close, errHandler);
+    };
+
+    $scope.cancel = function () {
+      $modalInstance.dismiss('cancel');
     };
   }
 ]);

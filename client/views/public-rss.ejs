@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id><%= realm %>/rss/<%= user.publicAlias %></id>
+    <title><![CDATA[<%= user.publicAlias %>'s public feed]]></title>
+    <author><name><%= realm %></name></author>
+    <% if (docs.length) { %>
+    <updated><%= docs[0].date %></updated>
+    <% } %>
+    <link rel="self" href="<%= realm %>/rss/<%= user.publicAlias%>" hreflang="en"/>
+    <subtitle><![CDATA[<%= info.description %>]]></subtitle>
+    <rights>GPLv3</rights>
+    <logo><%= realm %>/icons/icon_152.png</logo>
+    <generator><%= info.title %></generator>
+    <% for (var i in docs) { %>
+        <% var doc = docs[i] %>
+        <entry>
+            <id><%= doc._id %></id>
+            <title><![CDATA[<%= doc.title %>]]></title>
+            <updated><%= doc.date %></updated>
+            <link rel="alternate" href="<%= realm + '/doc/' + doc._id %>"/>
+            <summary><![CDATA[<%= doc.title %>]]></summary>
+        </entry>
+    <% } %>
+</feed>

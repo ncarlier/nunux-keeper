@@ -59,5 +59,23 @@ describe('Check API access:', function() {
     });
   });
 
+  it('should update user infos if logged', function(done) {
+    var url = mockServer.getRealm() + '/api/user/current',
+        content = {publicAlias: 'foobar'};
+    request.put({
+      url: url,
+      jar: true,
+      json: true,
+      body: content
+    }, function (err, res, body) {
+      if (err) return done(err);
+      res.statusCode.should.equal(200);
+      body.should.have.property('uid');
+      body.uid.should.equal('foo@bar.com');
+      body.publicAlias.should.equal('foobar');
+      done();
+    });
+  });
+
 });
 

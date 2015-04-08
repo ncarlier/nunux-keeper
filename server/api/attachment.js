@@ -35,7 +35,7 @@ module.exports = {
         return next(new errors.NotFound('Document has no attachment.'));
       }
 
-      var container = storage.getContainerName(req.user.uid, 'documents', doc._id.toString(), 'attachment');
+      var container = storage.getContainerName(doc.owner, 'documents', doc._id.toString(), 'attachment');
       return storage.info(container, doc.attachment)
       .then(function(infos) {
         if (!infos) {
