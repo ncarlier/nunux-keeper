@@ -1,5 +1,5 @@
 module.exports =
   html: [
-    'dist/html/index.html'
-    'dist/html/bookmarklet.html'
+    'dist/views/index.html'
+    'dist/views/bookmarklet.html'
   ]

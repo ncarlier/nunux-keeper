@@ -6,7 +6,7 @@ module.exports =
       fileTmpl: '<script src="%s"></script>'
       appRoot: 'client/'
     files:
-      'client/html/index.html': ['client/lib/*/*.js']
+      'client/views/index.html': ['client/lib/*/*.js']
   css:
     options:
       startTag: '<!-- include:css -->'
@@ -14,4 +14,4 @@ module.exports =
       fileTmpl: '<link rel="stylesheet" href="%s" />'
       appRoot: 'client/'
     files:
-      'client/html/index.html': ['client/lib/*/*.css']
+      'client/views/index.html': ['client/lib/*/*.css']

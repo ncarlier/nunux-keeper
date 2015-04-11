@@ -10,7 +10,7 @@ module.exports =
         'icons/**'
         'images/**'
         'templates/**'
-        'html/**'
+        'views/**'
         '*.js'
         'lib/ckeditor/**'
       ]

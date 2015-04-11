@@ -1,7 +1,7 @@
 module.exports =
   html: [
-    'client/html/index.html'
-    'client/html/bookmarklet.html'
+    'client/views/index.html'
+    'client/views/bookmarklet.html'
   ]
   options:
     dest: 'dist'
