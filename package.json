@@ -2,7 +2,7 @@
   "author": "Nicolas Carlier (https://github.com/ncarlier/)",
   "name": "keeper",
   "version": "0.0.1",
-  "description": "Keep the best of your internet surfing in one place.",
+  "description": "Your personal content curation service.",
   "license": "gplv3",
   "homepage": "http://keeper.nunux.org",
   "apidoc": {
