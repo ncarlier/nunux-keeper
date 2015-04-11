@@ -71,6 +71,35 @@ var _init = function () {
   }
 }();
 </script>
+<script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/md5.js"></script>
+  <script>
+var _init = function () {
+  var resolveResourceUrl = function(source) {
+    var baseUri = '/api/document/<%= doc._id %>/',
+    rUri = baseUri + 'resource/';
+
+    if (source.indexOf(baseUri) === 0) {
+      return source;
+    }
+    var cleanName = source.replace(/\?.*$/, '');
+    var ext = cleanName.split('.').pop();
+    if (ext) ext = ext.match(/^[a-zA-Z0-9]+/)[0];
+    return rUri + CryptoJS.MD5(cleanName) +
+      (ext ? '.' + ext : '');
+  }
+
+  var imgs = document.getElementsByTagName('img');
+  for (var i = 0; i < imgs.length; i++) {
+    var img = imgs[i],
+      data = img.dataset,
+      src = img.getAttribute('data-app-src') || img.getAttribute('app-src');
+    if (src) {
+      img.src = resolveResourceUrl(src);
+    }
+  }
+}();
+  </script>
+
 <script type="text/javascript">var switchTo5x=true;</script>
 <script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
 <script type="text/javascript">stLight.options({publisher: "ur-7b7490-1ab2-9bf1-3c22-a9bd13c279d6", doNotHash: false, doNotCopy: false, hashAddressBar: false});</script>
