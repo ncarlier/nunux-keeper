@@ -23,11 +23,58 @@ describe('Check search API', function() {
 
   after(mockServer.stop);
 
-  it('should find documents', function(done) {
+  it('should find documents of an category', function(done) {
     request.get({
       url: url,
       jar: true,
-      qs:  {q: 'Sample'},
+      qs:  {q: 'category:system-public'},
+      json: true
+    }, function(err, res, body) {
+      if (err) return done(err);
+      res.statusCode.should.equal(200);
+      body.should.have.properties('total', 'hits');
+      body.total.should.be.above(0);
+      done();
+    });
+  });
+
+  if (process.env.APP_SEARCH_ENGINE === 'disabled') {
+    it('full text search should not be available', function(done) {
+      request.get({
+        url: url,
+        jar: true,
+        qs:  {q: 'Sample'},
+        json: true
+      }, function(err, res, body) {
+        if (err) return done(err);
+        res.statusCode.should.equal(400);
+        done();
+      });
+    });
+  }
+
+  if (process.env.APP_SEARCH_ENGINE !== 'disabled') {
+    it('full text search should find documents', function(done) {
+      request.get({
+        url: url,
+        jar: true,
+        qs:  {q: 'Sample'},
+        json: true
+      }, function(err, res, body) {
+        if (err) return done(err);
+        res.statusCode.should.equal(200);
+        body.should.have.properties('total', 'hits');
+        body.total.should.be.above(0);
+        done();
+      });
+    });
+  }
+
+  it('should find all documents', function(done) {
+    request.get({
+      url: url,
+      jar: true,
+      qs:  {size: 100},
       json: true
     }, function(err, res, body) {
       if (err) return done(err);

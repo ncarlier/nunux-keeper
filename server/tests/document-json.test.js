@@ -77,12 +77,13 @@ describe('Check JSON document API', function() {
   it('should create new JSON documents by uploading file)', function(done) {
     this.timeout(5000);
     var title = '-- Not used here --',
-        file  = path.join(__dirname, 'assets', 'import.json');
+        file  = path.join(__dirname, 'assets', 'import.json'),
+        categories = ['system-public'];
 
     var r = request.post({
       url: url,
       jar: true,
-      qs:  {title: title}
+      qs:  {title: title, categories: categories}
     }, function(err, res, body) {
       if (err) return done(err);
       res.statusCode.should.equal(201);

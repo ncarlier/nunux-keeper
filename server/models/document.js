@@ -2,98 +2,10 @@ var _        = require('underscore'),
     when     = require('when'),
     logger   = require('../helpers').logger,
     errors   = require('../helpers').errors,
-    hash     = require('../helpers').hash,
     storage  = require('../storage'),
     download = require('../downloaders'),
-    elasticsearch    = require('../helpers').elasticsearch,
+    searchEngine     = require('./search'),
     contentExtractor = require('../extractors');
-
-/**
- * Get documents river configuration.
- * @param {Object} conn Mongoose connection
- * @returns {Object} river configuration
- */
-var getRiverConf = function(conn) {
-  var conf = {
-    type: 'mongodb',
-    mongodb: {
-      db: conn.name,
-      servers: [{
-        host: conn.host,
-        port: conn.port
-      }],
-      options: { secondary_read_preference: true },
-      collection: 'documents'
-    },
-    index: {
-      name: 'documents',
-      type: 'document'
-    }
-  };
-  return conf;
-};
-
-/**
- * Document mapping configuration.
- * TODO illustration should be replace by first image resource
- * But to do this we should use ES 1.3 mapping transform feature.
- * @see http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/mapping-transform.html
- */
-var mapping = {
-  document: {
-    _source : {enabled : false},
-    properties: {
-      title:        {type: 'string', store: 'yes'},
-      content:      {type: 'string', store: 'no'},
-      contentType:  {type: 'string', store: 'yes', index: 'not_analyzed'},
-      owner:        {type: 'string', store: 'yes', index: 'not_analyzed'},
-      categories:   {type: 'string', store: 'yes', index: 'not_analyzed', index_name: 'category'},
-      attachment:   {type: 'string', store: 'yes', index: 'not_analyzed'},
-      illustration: {type: 'string', store: 'yes', index: 'not_analyzed'},
-      link:         {type: 'string', store: 'yes'},
-      date:         {type: 'date',   store: 'yes', format: 'dateOptionalTime'}
-    }
-  }
-};
-
-
-/**
- * Build elasticsearch query to find documents.
- * @param {String} owner owner used to filter the query
- * @param {String} q query
- * @returns {Object} query DSL
- */
-var buildQuery = function(owner, params) {
-  var from = params.from ? params.from : 0,
-      size = params.size ? params.size : 20,
-      order = params.order ? params.order : 'desc';
-  var q = {
-    fields: ['title', 'contentType', 'category', 'illustration', 'attachment'],
-    from: from,
-    size: size,
-    sort: [
-      '_score',
-      { date: {order: order}}
-    ],
-    query: {
-      filtered: {
-        query: { match_all: {} },
-        filter : { term : { owner : owner } }
-      }
-    }
-  };
-
-  if (params.q) {
-    q.query.filtered.query = {
-      query_string: {
-        fields: ['title^5', 'category^4', 'content'],
-        query: params.q
-      }
-    };
-  }
-
-  return q;
-};
 
 /**
  * Download document resources.
@@ -140,7 +52,7 @@ var saveAttachment = function(doc) {
  * @module document
  */
 module.exports = function(db, conn) {
-  var type = 'documents';
+  searchEngine.configure(conn);
 
   var DocumentSchema = new db.Schema({
     title:        { type: String, required: true },
@@ -158,12 +70,6 @@ module.exports = function(db, conn) {
     link:         { type: String },
     owner:        { type: String, required: true },
     date:         { type: Date, default: Date.now }
-  });
-
-  DocumentSchema.static('configure', function() {
-    return elasticsearch.configureRiver(getRiverConf(conn)).then(function() {
-      return elasticsearch.configureMapping(type, 'document', mapping);
-    });
   });
 
   DocumentSchema.static('extract', function(obj) {
@@ -266,25 +172,52 @@ module.exports = function(db, conn) {
     return this.remove({_id: doc._id}).exec().then(function() {
       logger.debug('Deleting document #%s files...',
                    doc._id);
-      return storage.remove(storage.getContainerName(doc.owner, type, doc._id.toString()));
+      return storage.remove(storage.getContainerName(doc.owner, 'documents', doc._id.toString()));
     });
   });
 
-  DocumentSchema.static('search', function(uid, params) {
-    return elasticsearch.search(type, buildQuery(uid, params))
-    .then(function(data) {
-      var result = {};
-      result.total = data.hits.total;
-      result.hits = [];
-      data.hits.hits.forEach(function(hit) {
-        var doc = {_id: hit._id};
-        for (var field in hit.fields) {
-          doc[field] = _.isArray(hit.fields[field]) ? hit.fields[field][0] : hit.fields[field];
-        }
-        result.hits.push(doc);
-      });
-      return when.resolve(result);
+  DocumentSchema.static('search', function(uid, query) {
+    _.defaults(query, {
+      q: '',
+      from: 0,
+      size: 20,
+      order: 'desc'
     });
+    var match = /^category:([a-z\-]+)$/.exec(query.q);
+    var missing = query.q === '_missing_:category';
+    var empty = query.q === '';
+    if (match || missing || empty ) {
+      // If the query is only onto the category,
+      // then search directly into the database.
+      logger.debug('Searching using database...');
+      var self = this;
+      var qCount = self.count()
+      .where('owner').equals(uid);
+      if (match) qCount.where('categories').equals(match[1]);
+      if (missing) qCount.where('categories.0').exists(false);
+      return qCount.exec()
+      .then(function(total) {
+        var qFind = self.find()
+        .where('owner').equals(uid);
+        if (match) qFind.where('categories').equals(match[1]);
+        if (missing) qFind.where('categories.0').exists(false);
+        return qFind.limit(query.size)
+        .skip(query.from)
+        .sort(query.order === 'desc' ? '-date' : 'date')
+        .select('_id contentType illustration attachment title categories')
+        .exec()
+        .then(function(hits) {
+          return {
+            total: total,
+            hits: hits
+          };
+        });
+      });
+    } else {
+      // Pass the query to the search engine
+      logger.debug('Searching using the search engine...');
+      return searchEngine.searchDocuments(uid, query);
+    }
   });
 
   DocumentSchema.static('downloadResources', downloadResources);

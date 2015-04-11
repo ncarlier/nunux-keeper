@@ -29,6 +29,9 @@
     <ul ng-if="doc.category" class="categories">
       <li ng-repeat="cat in doc.category | toArray" style="background-color: {{cat | categoryColor}}" title="{{cat}}"></li>
     </ul>
+    <ul ng-if="doc.categories" class="categories">
+      <li ng-repeat="cat in doc.categories | toArray" style="background-color: {{cat | categoryColor}}" title="{{cat}}"></li>
+    </ul>
     </li>
   </ul>
   <span ng-if="documents.length == 0" class="no-result">{{ emptyMessage }}</span>

@@ -31,8 +31,7 @@ var express        = require('express'),
     logger         = require('./helpers').logger,
     files          = require('./helpers').files,
     middleware     = require('./middlewares'),
-    appInfo        = require('../package.json'),
-    Document       = require('./models').Document;
+    appInfo        = require('../package.json');
 
 var app = module.exports = express();
 
@@ -103,26 +102,20 @@ require('./security/oauth2')(app, passport);
 // Register routes...
 require('./routes')(app);
 
+// Set up models
+require('./models');
+
 // Set up connectors
 require('./connectors');
 
 app.use(middleware.errorHandler(app));
 
-Document.configure().then(function() {
-  logger.debug('Great! Elasticsearch seem to be well configured.');
-  if (!module.parent) {
-    app.listen(app.get('port'), function() {
-      logger.info('%s web server listening on port %s (%s mode)',
-                  app.get('info').name,
-                  app.get('port'),
-                  app.get('env'));
-    });
-  }
-}, function(err) {
-  logger.error('Arghhh! Elasticsearch seem to be misconfigured. Application will not work properly.');
-  logger.error(err);
-  if (!module.parent) {
-    process.exit(1);
-  }
-});
+if (!module.parent) {
+  app.listen(app.get('port'), function() {
+    logger.info('%s web server listening on port %s (%s mode)',
+                app.get('info').name,
+                app.get('port'),
+                app.get('env'));
+  });
+}
 
