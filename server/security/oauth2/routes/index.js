@@ -21,16 +21,16 @@ var authorization = function(clientId, redirectURI, done) {
 };
 
 /**
- * API Routes.
+ * OAuth API Routes.
  */
 module.exports = function(app, server, passport) {
   /**
-   * User authorization endpoint.
-   *
-   * Initializes a new authorization transaction.  It is the application's
-   * responsibility to authenticate the user and render a dialog to obtain
-   * their approval (displaying details about the client requesting
-   * authorization).
+   * @api {get} /oauth/authorize User authorization endpoint
+   * @apiDescription Initializes a new authorization transaction. The application
+   * authenticate the user and render a dialog to obtain their approval.
+   * @apiVersion 0.0.1
+   * @apiName GetAuthorize
+   * @apiGroup oauth
    */
   app.get('/oauth/authorize',
           api.ensureLoggedIn(app),
@@ -48,10 +48,12 @@ module.exports = function(app, server, passport) {
            server.decision());
 
   /**
-   * Token endpoint.
-   *
-   * `token` middleware handles client requests to exchange authorization grants
+   * @api {post} /oauth/token Token endpoint
+   * @apiDescription Handles client requests to exchange authorization grants
    * for access tokens.
+   * @apiVersion 0.0.1
+   * @apiName GetToken
+   * @apiGroup oauth
    */
   app.post('/oauth/token',
            passport.authenticate(['basic', 'oauth2-client-password'], { session: false }),
