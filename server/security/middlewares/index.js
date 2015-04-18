@@ -14,7 +14,8 @@ module.exports = {
       if (req.isAuthenticated()) { return next(); }
       passport.authenticate('bearer', function(err, user, info) {
         if (err) { return next(err); }
-        next();
+        if (!user) { return next(); }
+        req.logIn(user, next);
       })(req, res, next);
     };
   },
