@@ -2,7 +2,7 @@
 
 > Your personal content curation service.
 
-Nunux Keeper allow you to collect, organize, and display articles or medias you found on the internet.
+Nunux Keeper allow you to collect, organize, and display articles or medias you found on the Internet.
 
 ## Features
 
@@ -10,7 +10,7 @@ Nunux Keeper allow you to collect, organize, and display articles or medias you 
 * Save, classify and index documents.
 * A document can be an html page, notes, images and more!
 * Documents attached medias are also saved.
-* Search a document with powerfull full text queries.
+* Search a document with powerful full text queries.
 * Access from your mobile or your computer. It's fully responsive.
 * Easily save web content while surfing thanks to the awesome bookmarklet.
 * Share a document on a public page.
@@ -29,13 +29,13 @@ Nunux Keeper allow you to collect, organize, and display articles or medias you 
 
 ## Under the hood
 
-The backend is using Node.js. All documents are stored in a MongoDB and are indexed with ElasticSearch using the MongoDB river. Redis is optionnal, but can be used to provide a message queuing system to download medias in background.
+The backend is using Node.js. All documents are stored in a MongoDB and are indexed with ElasticSearch using the MongoDB river. Redis is optional, but can be used to provide a message queuing system to download medias in background.
 
 The frontend is using AngularJS and for the visual is using LESS with Twitter Bootstrap 3.
 
 ## Installation (the -not so- hard way)
 
-This installation procedure is from skratch. You can find below an easiest installation procedure thanks to Docker!
+This installation procedure is from scratch. You can find below an easiest installation procedure thanks to Docker!
 
 ### Prerequisites
 
@@ -77,7 +77,7 @@ Connect to mongodb and enabled replicaset:
 
 ### Run the Keeper
 
-See "etc/env_sample.conf" for environment configuration.
+See [etc/env_sample.conf](etc/env_sample.conf) for configuration details.
 
     npm start
 
@@ -89,7 +89,7 @@ Open your browser, go to http://localhost:3000 and enjoy!
 
 * [Docker](http://www.docker.io/)
 
-or a cool docker hosting service.
+Or a cool docker hosting service.
 
 ### Start the Keeper
 
@@ -121,7 +121,9 @@ or a cool docker hosting service.
 
     # Enjoy!
 
-Note: See ./etc/env_sample.conf for configuration variables.
+## Configuration
+
+See [etc/env_sample.conf](etc/env_sample.conf) for configuration details.
 
 ----------------------------------------------------------------------
 
