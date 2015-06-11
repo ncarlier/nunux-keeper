@@ -19,6 +19,11 @@
 
 process.title = 'keeper-server';
 
+// APM
+if (process.env.NEW_RELIC_LICENSE_KEY) {
+  require('newrelic');
+}
+
 var express        = require('express'),
     bodyParser     = require('body-parser'),
     compress       = require('compression'),

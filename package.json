@@ -62,7 +62,8 @@
     "bunyan": "1.1.x",
     "mime": "1.2.x",
     "knox": "0.9.x",
-    "webshot": "0.15.x"
+    "webshot": "0.15.x",
+    "newrelic": "*"
   },
   "devDependencies": {
     "grunt": "^0.4.5",
