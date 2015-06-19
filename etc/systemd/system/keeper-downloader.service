@@ -1,0 +1,17 @@
+[Unit]
+Description=Nunux Keeper downloader daemon
+After=docker.service
+Requires=docker.service redis.service
+PartOf=keeper-server.service
+
+[Service]
+ExecStartPre=-/usr/bin/docker kill %p
+ExecStartPre=-/usr/bin/docker rm %p
+ExecStart=/usr/bin/docker run --rm --name %p \
+    --env-file /etc/environment \
+    --env-file /etc/default/keeper \
+    --env-file /etc/default/keeper_custom \
+    --link redis:redis \
+    ncarlier/keeper run resource-downloader
+ExecStop=/usr/bin/docker stop %p
+

@@ -1,0 +1,18 @@
+[Unit]
+Description=Nunux Keeper server
+After=docker.service
+Requires=docker.service redis.service mongodb.service elasticsearch.service
+
+[Service]
+ExecStartPre=-/usr/bin/docker kill %p
+ExecStartPre=-/usr/bin/docker rm %p
+ExecStart=/usr/bin/docker run --rm --name %p \
+    --env-file /etc/environment \
+    --env-file /etc/default/keeper \
+    --env-file /etc/default/keeper_custom \
+    --link mongodb:mongodb \
+    --link redis:redis \
+    --link elasticsearch:elasticsearch \
+    ncarlier/keeper
+ExecStop=/usr/bin/docker stop %p
+

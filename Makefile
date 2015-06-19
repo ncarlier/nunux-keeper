@@ -1,20 +1,28 @@
 .SILENT :
-.PHONY : help volume mount build clean cleanup run debug shell test publish
+.PHONY : help volume mount build clean cleanup run debug shell test install
 
 USERNAME:=ncarlier
 APPNAME:=keeper
 IMAGE:=$(USERNAME)/$(APPNAME)
+env?=dev
 
 define docker_run_flags
 --rm \
 --link mongodb:mongodb \
 --link redis:redis \
 --link elasticsearch:elasticsearch \
---env-file $(PWD)/etc/env.conf \
+--env-file="./etc/default/$(env).env" \
+--env-file="./etc/default/custom.env" \
 --dns 172.17.42.1 \
 -P \
 -i -t
 endef
+
+DOCKER=docker
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Linux)
+	DOCKER=sudo docker
+endif
 
 all: build cleanup
 
@@ -34,7 +42,7 @@ help:
 ## Make the volume image
 volume:
 	echo "Building $(APPNAME) volumes..."
-	sudo docker run -v $(PWD):/opt/$(APPNAME) -v ~/var/$(APPNAME):/var/opt/$(APPNAME) --name $(APPNAME)_volumes busybox true
+	$(DOCKER) run -v $(PWD):/opt/$(APPNAME) -v ~/var/$(APPNAME):/var/opt/$(APPNAME) --name $(APPNAME)_volumes busybox true
 
 ## Mount volumes
 mount:
@@ -44,44 +52,45 @@ mount:
 ## Build the image
 build:
 	echo "Building $(IMAGE) docker image..."
-	sudo docker build --rm -t $(IMAGE) .
+	$(DOCKER) build --rm -t $(IMAGE) .
 
 ## Remove the image
 clean:
 	echo "Removing $(IMAGE) docker image..."
-	-sudo docker rmi $(IMAGE)
+	-$(DOCKER) rmi $(IMAGE)
 
 ## Remove dangling images
 cleanup:
 	echo "Removing dangling docker images..."
-	-sudo docker images -q --filter 'dangling=true' | xargs sudo docker rmi
+	-$(DOCKER) images -q --filter 'dangling=true' | xargs sudo docker rmi
 
 ## Start the container
 start:
 	echo "Starting $(IMAGE) docker image..."
-	sudo docker run $(docker_run_flags) --name $(APPNAME) $(IMAGE)
+	$(DOCKER) run $(docker_run_flags) --name $(APPNAME) $(IMAGE)
 
 ## Run the container in debug mode
 debug:
 	echo "Running $(IMAGE) docker image in DEBUG mode..."
-	sudo docker run $(docker_run_flags) -p 3333:8080 --name $(APPNAME) $(IMAGE) run debug
+	$(DOCKER) run $(docker_run_flags) -p 3333:8080 --name $(APPNAME) $(IMAGE) run debug
 
 ## Run the container with shell access
 shell:
 	echo "Running $(IMAGE) docker image with shell access..."
-	sudo docker run $(docker_run_flags) --entrypoint="/bin/bash" $(IMAGE) -c /bin/bash
+	$(DOCKER) run $(docker_run_flags) --entrypoint="/bin/bash" $(IMAGE) -c /bin/bash
 
 ## Run the container in test mode
 test:
 	echo "Running tests..."
-	sudo docker run $(docker_run_flags) $(IMAGE) test
+	$(DOCKER) run $(docker_run_flags) $(IMAGE) test
 
-## Publish the image to private registry
-publish:
-	ifndef REGISTRY
-		$(error REGISTRY is undefined)
-	else
-		echo "Publish image into the registry..."
-		sudo docker tag $(IMAGE) $(REGISTRY)/$(IMAGE)
-		sudo docker push $(REGISTRY)/$(IMAGE)
-	endif
+## Install as a service (needs root privileges)
+install: build
+	echo "Install as a service..."
+	cp etc/systemd/system/* /etc/systemd/system/
+	cp etc/default/$(env).env /etc/default/$(APPNAME)
+	cp etc/blacklist.txt /var/opt/$(APPNAME)/
+	systemctl daemon-reload
+	systemctl restart $(APPNAME)-server
+	$(MAKE) cleanup
+

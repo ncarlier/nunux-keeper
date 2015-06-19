@@ -48,38 +48,50 @@ This installation procedure is from scratch. You can find below an easiest insta
 
 #### Install Git, Node.JS, MongoDB and Redis (on Debian)
 
-    sudo aptitude install git nodejs mongodb-server redis-server imagemagick
+```
+sudo aptitude install git nodejs mongodb-server redis-server imagemagick
+```
 
 #### Install Elasticsearch (and MongoDB river)
 
-    sudo aptitude install openjdk-7-jre wget
-    ES_HOME /opt/Elasticsearcharch
-    (cd /tmp && wget https://download.elasticsearch.org/elasticsearch/elasticsearchsticsearch/elasticsearch-0.90.10.tar.gz -O pkg.tar.gz && tar zxf pkg.tar.gz && mv elasticsearch-* $ES_HOME)
-    $ES_HOME/bin/plugin -install elasticsearch/elasticsearch-mapper-attachments/1.9.0
-    $ES_HOME/bin/plugin -install com.github.richardwilly98.elasticsearch/elasticsearch-river-mongodb/1.7.3
+```
+sudo aptitude install openjdk-7-jre wget
+ES_HOME /opt/Elasticsearcharch
+(cd /tmp && wget https://download.elasticsearch.org/elasticsearch/elasticsearchsticsearch/elasticsearch-0.90.10.tar.gz -O pkg.tar.gz && tar zxf pkg.tar.gz && mv elasticsearch-* $ES_HOME)
+$ES_HOME/bin/plugin -install elasticsearch/elasticsearch-mapper-attachments/1.9.0
+$ES_HOME/bin/plugin -install com.github.richardwilly98.elasticsearch/elasticsearch-river-mongodb/1.7.3
+```
 
 Connect to mongodb and enabled replicaset:
 
-    $ mongo
-    > cfg = { "_id" : "rs0", "version" : 1, "members" : [ { "_id" : 0, "host" : "localhost:27017" } ] }
-    > rs.initiate(cfg)
+```
+$ mongo
+> cfg = { "_id" : "rs0", "version" : 1, "members" : [ { "_id" : 0, "host" : "localhost:27017" } ] }
+> rs.initiate(cfg)
+```
 
 #### Install Grunt
 
-    sudo npm install -g grunt-cli
+```
+sudo npm install -g grunt-cli
+```
 
 ### Install the Keeper
 
-    mkdir -p /opt/node/keeper && cd $_
-    git clone git@github.com:ncarlier/nunux-keeper.git
-    cd keeper
-    npm install
+```
+mkdir -p /opt/node/keeper && cd $_
+git clone git@github.com:ncarlier/nunux-keeper.git
+cd keeper
+npm install
+```
 
 ### Run the Keeper
 
-See [etc/env_sample.conf](etc/env_sample.conf) for configuration details.
+See [etc/default/dev.env](etc/default/dev.env) for configuration details.
 
-    npm start
+```
+npm start
+```
 
 Open your browser, go to http://localhost:3000 and enjoy!
 
@@ -93,37 +105,39 @@ Or a cool docker hosting service.
 
 ### Start the Keeper
 
-    # Start Redis, MongoDB and ElasticSearch
-    docker run --name redis -d ncarlier/redis
-    docker run --name mongodb -d ncarlier/mongodb
-    docker run --name elasticsearch -d ncarlier/elasticsearch
+```
+# Start Redis, MongoDB and ElasticSearch
+docker run --name redis -d ncarlier/redis
+docker run --name mongodb -d ncarlier/mongodb
+docker run --name elasticsearch -d ncarlier/elasticsearch
 
-    # Get and run Keeper
-    docker run \
-      --name="keeper-server" \
-      --link mongodb:db \
-      --link elasticsearch:elasticsearch \
-      --link redis:redis \
-      --env-file="./etc/env.conf" \
-      -d \
-      ncarlier/keeper
+# Get and run Keeper
+docker run \
+  --name="keeper-server" \
+  --link mongodb:db \
+  --link elasticsearch:elasticsearch \
+  --link redis:redis \
+  --env-file="./etc/env.conf" \
+  -d \
+  ncarlier/keeper
 
-    # (Optional) Run Keeper downloader deamon
-    # Only if you set APP_DOWNLOADER="async-redis"
-    docker run \
-      --name="keeper-resource-downloader" \
-      --link mongodb:db \
-      --link elasticsearch:elasticsearch \
-      --link redis:redis \
-      --env-file="./etc/env.conf" \
-      -d \
-      ncarlier/keeper resource-downloader
+# (Optional) Run Keeper downloader deamon
+# Only if you set APP_DOWNLOADER="async-redis"
+docker run \
+  --name="keeper-resource-downloader" \
+  --link mongodb:db \
+  --link elasticsearch:elasticsearch \
+  --link redis:redis \
+  --env-file="./etc/env.conf" \
+  -d \
+  ncarlier/keeper resource-downloader
 
-    # Enjoy!
+# Enjoy!
+```
 
 ## Configuration
 
-See [etc/env_sample.conf](etc/env_sample.conf) for configuration details.
+See [etc/default/dev.env](etc/default/dev.env) for configuration details.
 
 ----------------------------------------------------------------------
 

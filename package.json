@@ -21,6 +21,7 @@
     "debug": "node-inspector & node --debug server/app",
     "test": "grunt",
     "postinstall": "grunt dist",
+    "resource-downloader": "node server/daemons/resource-downloader -v",
     "document-updater": "APP_DOWNLOADER=disabled node server/jobs/document-updater -v"
   },
   "dependencies": {
