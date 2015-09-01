@@ -1,0 +1,7 @@
+test:
+  script:
+  - apt-get update -qy
+  - apt-get install -y nodejs npm imagemagick
+  - ln -s /usr/bin/nodejs /usr/bin/node
+  - npm install
+  - npm test
