@@ -1,5 +1,5 @@
 .SILENT :
-.PHONY : help volume mount build clean cleanup run debug shell test install
+.PHONY : help volume mount build clean cleanup start rm debug shell test install
 
 USERNAME:=ncarlier
 APPNAME:=keeper
@@ -12,7 +12,6 @@ define docker_run_flags
 --link redis:redis \
 --link elasticsearch:elasticsearch \
 --env-file="./etc/default/$(env).env" \
---env-file="./etc/default/custom.env" \
 --dns 172.17.42.1 \
 -P \
 -i -t
@@ -68,6 +67,11 @@ cleanup:
 start:
 	echo "Starting $(IMAGE) docker image..."
 	$(DOCKER) run $(docker_run_flags) --name $(APPNAME) $(IMAGE)
+
+## Delete the container
+rm:
+	echo "Deleting container $(APPNAME) ..."
+	-$(DOCKER) rm $(APPNAME)
 
 ## Run the container in debug mode
 debug:
