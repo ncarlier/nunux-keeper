@@ -1,7 +1,8 @@
 node_modules/
 client/stylesheets/*.css
-etc/env*
-!etc/env_sample.conf
+etc/default/*.env
+!etc/default/dev.env
+!etc/default/staging.env
 dist/
 var/
 .tmp/
