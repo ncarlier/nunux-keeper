@@ -1,5 +1,7 @@
 # NUNUX Keeper
 
+[![build status](https://ci.gitlab.com/projects/6625/status.png?ref=master)](https://ci.gitlab.com/projects/6625?ref=master)
+
 > Your personal content curation service.
 
 Nunux Keeper allow you to collect, organize, and display articles or medias you found on the Internet.
