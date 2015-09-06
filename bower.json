@@ -1,6 +1,6 @@
 {
   "name": "keeper",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "main": "app.js",
   "dependencies": {
     "bootstrap": "~3.0.0",

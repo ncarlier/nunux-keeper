@@ -108,10 +108,13 @@ Or a cool docker hosting service.
 ### Start the Keeper
 
 ```
-# Start Redis, MongoDB and ElasticSearch
+# Start Redis
 docker run --name redis -d ncarlier/redis
+# MongoDB and ElasticSearch
 docker run --name mongodb -d ncarlier/mongodb
-docker run --name elasticsearch -d ncarlier/elasticsearch
+# Don't forget to initiate the new replica set: rs.initiate()
+# And ElasticSearch (linked with MongoDb replica)
+docker run --name elasticsearch --link mongodb:mongodb -d ncarlier/elasticsearch
 
 # Get and run Keeper
 docker run \
