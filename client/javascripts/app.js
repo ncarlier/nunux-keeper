@@ -43,6 +43,9 @@ angular.module('KeeperApp', [
     redirectTo: '/document'
   });
 }])
+.config(['$compileProvider', function($compileProvider) {
+  $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|javascript):/);
+}])
 .filter('fromNow', function() {
   return function(dateString) {
     return dateString ?
