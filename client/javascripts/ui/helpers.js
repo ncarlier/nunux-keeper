@@ -119,6 +119,7 @@ angular.module('ui.helpers', ['angular-md5'])
       el.addEventListener('drop',
         function(e) {
           // Stops some browsers from redirecting.
+          e.preventDefault();
           if (e.stopPropagation) e.stopPropagation();
 
           this.classList.remove('over');
