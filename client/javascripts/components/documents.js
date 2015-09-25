@@ -147,7 +147,7 @@ angular.module('DocumentsModule', ['ngRoute', 'angularFileUpload', 'infinite-scr
       var data = {
         document: {
           _id: doc._id,
-          categories: doc.category
+          categories: doc.categories
         }
       };
       return JSON.stringify(data);
