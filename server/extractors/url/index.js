@@ -1,13 +1,17 @@
 var when       = require('when'),
     url        = require('url'),
     path       = require('path'),
+    zlib       = require('zlib'),
     logger     = require('../../helpers').logger,
     errors     = require('../../helpers').errors,
     validators = require('../../helpers').validators,
     request    = require('request');
 
 var kRequest = request.defaults({
-  headers: {'User-Agent': process.env.APP_USER_AGENT || 'Mozilla/5.0 (compatible; Keeperbot/1.0)'}
+  headers: {
+    'User-Agent': process.env.APP_USER_AGENT || 'Mozilla/5.0 (compatible; Keeperbot/1.0)',
+    'Accept-Encoding': 'gzip'
+  }
 });
 
 // Load json extractors
@@ -62,12 +66,19 @@ module.exports = {
         var filename = url.parse(doc.link).pathname;
         filename = filename.substring(filename.lastIndexOf('/') + 1);
         doc.contentType = res.headers['content-type'];
+        var encoding = res.headers['content-encoding'];
         doc.attachment = {
           name: filename,
-          stream: kRequest.get(doc.link),
           contentType: res.headers['content-type'],
           contentLength: res.headers['content-length']
         };
+        if (encoding == 'gzip') {
+          doc.attachment.stream = kRequest.get(doc.link).pipe(zlib.createGunzip());
+        } else if (encoding == 'deflate') {
+          doc.attachment.stream = kRequest.get(doc.link).pipe(zlib.createInflate());
+        } else {
+          doc.attachment.stream = kRequest.get(doc.link);
+        }
         // Get HTTP content...
         module.parent.exports.get(doc.contentType).extract(doc)
         .then(extracted.resolve, extracted.reject);
