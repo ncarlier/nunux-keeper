@@ -1,6 +1,6 @@
 # NUNUX Keeper
 
-[![build status](https://ci.gitlab.com/projects/6625/status.png?ref=master)](https://ci.gitlab.com/projects/6625?ref=master)
+[![Build Status](https://travis-ci.org/ncarlier/nunux-keeper.svg)](https://travis-ci.org/ncarlier/nunux-keeper)
 
 > Your personal content curation service.
 
