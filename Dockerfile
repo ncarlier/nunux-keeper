@@ -2,37 +2,31 @@
 #
 # VERSION 0.0.1
 
-FROM ncarlier/nodejs
+FROM node:4
 
 MAINTAINER Nicolas Carlier <https://github.com/ncarlier>
 
 # Install packages
 RUN apt-get update && apt-get install -y imagemagick
 
-# Add files
-ADD . /opt/keeper
+# Create app directories
+RUN mkdir -p /usr/src/keeper /var/opt/keeper
 
-# Create var directory and fix rights
-RUN mkdir /var/opt/keeper && \
-    chown node.node -R /opt/keeper && \
-    chown node.node -R /var/opt/keeper
+# Setup working directory
+WORKDIR /usr/src/keeper
 
-# Def. working directory
-WORKDIR /opt/keeper
+# Add package definition
+COPY package.json /usr/src/keeper/
 
-# Def. user
-USER node
-ENV HOME /home/node
-
-# Install App
+# Install
 RUN npm install
 
-# Main port
-EXPOSE 3000
+# Ports
+EXPOSE 3000 8080
 
-# Debug port
-EXPOSE 8080
+# Copy sources
+COPY . /usr/src/keeper
 
-ENTRYPOINT ["/usr/bin/npm"]
+ENTRYPOINT ["/usr/local/bin/npm"]
 
 CMD ["start"]
