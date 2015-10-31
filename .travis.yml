@@ -1,10 +1,12 @@
+sudo: false
 language: node_js
 services:
   - mongodb
 node_js:
-  - "node"
-before_install:
-    - sudo apt-get update -qq
-    - sudo apt-get install -y imagemagick
+  - "4.1"
+addons:
+  apt:
+    packages:
+      - imagemagick
 
 
