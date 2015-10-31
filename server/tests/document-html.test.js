@@ -33,8 +33,8 @@ describe('Check HTML document API', function() {
           '<img class="bad" src = "http://feeds.feedburner.com/~r/azerty" />' +
           '<img class="bad" src = "http://doubleclick.net/azerty" />' +
           '<img class="test" app-src="test" src = "test" alt="test" />',
-        expectedContent = '<p>sample</p><img app-src="' + imageUrl + '" />' +
-          '<img app-src="test" alt="test" />',
+        expectedContent = '<p>sample</p><img app-src="' + imageUrl + '">' +
+          '<img app-src="test" alt="test">',
         categories = ['system-public', 'user-test', 'bad'];
 
     request.post({
@@ -83,7 +83,7 @@ describe('Check HTML document API', function() {
   it('should update previous HTML document', function(done) {
     var title   = 'Updated sample simple HTML document',
         content = '<p>updated sample</P><img src="' + imageUrl + '"/>',
-        expectedContent = '<p>updated sample</p><img app-src="' + imageUrl + '" />',
+        expectedContent = '<p>updated sample</p><img app-src="' + imageUrl + '">',
         categories = ['system-trash'];
 
     request.put({

@@ -1,4 +1,8 @@
-var multiparty = require('multiparty');
+var os         = require('os'),
+    path       = require('path'),
+    multiparty = require('multiparty');
+
+var uploadDir = process.env.APP_VAR_DIR ? path.join(process.env.APP_VAR_DIR, 'upload') : os.tmpdir();
 
 /**
  * Middleware to handle multipart/form-data requests.
@@ -8,7 +12,7 @@ module.exports = function() {
   return function(req, res, next) {
     var ct = req.header('Content-Type');
     if (req.method === 'POST' && /^multipart\/form-data/.test(ct)) {
-      var form = new multiparty.Form();
+      var form = new multiparty.Form({uploadDir: uploadDir});
 
       req.files = [];
       req.fields = {};

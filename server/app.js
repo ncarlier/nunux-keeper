@@ -31,7 +31,6 @@ var express        = require('express'),
     cookieParser   = require('cookie-parser'),
     session        = require('express-session'),
     path           = require('path'),
-    os             = require('os'),
     passport       = require('passport'),
     logger         = require('./helpers').logger,
     files          = require('./helpers').files,
@@ -41,7 +40,6 @@ var express        = require('express'),
 var app = module.exports = express();
 
 var env = process.env.NODE_ENV || 'development',
-    uploadDir = process.env.APP_VAR_DIR ? path.join(process.env.APP_VAR_DIR, 'upload') : os.tmpdir(),
     production = 'production' == env,
     assetsPath = production ? path.join(__dirname, '../dist') : path.join(__dirname, '../client');
 
