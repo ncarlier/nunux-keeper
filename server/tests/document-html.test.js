@@ -27,6 +27,7 @@ describe('Check HTML document API', function() {
   after(mockServer.stop);
 
   it('should create new HTML document', function(done) {
+    this.timeout(5000);
     var title   = 'Sample simple HTML document',
         content = '<p id="toclean">sample</P><img src="' + imageUrl + '"/>' +
           '<img class="bad" src = "http://feeds.feedburner.com/~r/azerty" />' +
