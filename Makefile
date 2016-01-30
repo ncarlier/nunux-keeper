@@ -12,7 +12,7 @@ define docker_run_flags
 --link redis:redis \
 --link elasticsearch:elasticsearch \
 --env-file="./etc/default/$(env).env" \
---dns 172.17.42.1 \
+--env-file="./etc/default/custom.env" \
 -P \
 -i -t
 endef
@@ -41,7 +41,7 @@ help:
 ## Make the volume image
 volume:
 	echo "Building $(APPNAME) volumes..."
-	$(DOCKER) run -v $(PWD):/opt/$(APPNAME) -v ~/var/$(APPNAME):/var/opt/$(APPNAME) --name $(APPNAME)_volumes busybox true
+	$(DOCKER) run -v $(PWD):/usr/src/$(APPNAME) -v ~/var/$(APPNAME):/var/opt/$(APPNAME) --name $(APPNAME)_volumes busybox true
 
 ## Mount volumes
 mount:
