@@ -4,6 +4,9 @@ After=docker.service
 Requires=docker.service redis.service
 PartOf=keeper-server.service
 
+[Install]
+WantedBy=multi-user.target
+
 [Service]
 ExecStartPre=-/usr/bin/docker kill %p
 ExecStartPre=-/usr/bin/docker rm %p

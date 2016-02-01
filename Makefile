@@ -95,6 +95,9 @@ install: build
 	cp etc/default/$(env).env /etc/default/$(APPNAME)
 	cp etc/blacklist.txt /var/opt/$(APPNAME)/
 	systemctl daemon-reload
+	systemctl enable $(APPNAME)-server
 	systemctl restart $(APPNAME)-server
+	systemctl enable $(APPNAME)-downloader
+	systemctl restart $(APPNAME)-downloader
 	$(MAKE) cleanup
 
