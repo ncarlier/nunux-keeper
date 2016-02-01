@@ -10,6 +10,7 @@ WantedBy=multi-user.target
 ExecStartPre=-/usr/bin/docker kill %p
 ExecStartPre=-/usr/bin/docker rm %p
 ExecStart=/usr/bin/docker run --rm --name %p \
+    --volume=/var/opt/keeper:/var/opt/keeper \
     --env DOMAIN_NAME=keeper.nunux.org \
     --env MAIN_PORT=3000 \
     --env-file /etc/environment \

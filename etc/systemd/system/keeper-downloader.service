@@ -11,6 +11,7 @@ WantedBy=multi-user.target
 ExecStartPre=-/usr/bin/docker kill %p
 ExecStartPre=-/usr/bin/docker rm %p
 ExecStart=/usr/bin/docker run --rm --name %p \
+    --volume=/var/opt/keeper:/var/opt/keeper \
     --env-file /etc/environment \
     --env-file /etc/default/keeper \
     --env-file /etc/default/keeper_custom \
