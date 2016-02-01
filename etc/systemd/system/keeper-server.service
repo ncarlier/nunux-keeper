@@ -7,6 +7,8 @@ Requires=docker.service redis.service mongodb.service elasticsearch.service
 ExecStartPre=-/usr/bin/docker kill %p
 ExecStartPre=-/usr/bin/docker rm %p
 ExecStart=/usr/bin/docker run --rm --name %p \
+    --env DOMAIN_NAME=keeper.nunux.org \
+    --env MAIN_PORT=3000 \
     --env-file /etc/environment \
     --env-file /etc/default/keeper \
     --env-file /etc/default/keeper_custom \
