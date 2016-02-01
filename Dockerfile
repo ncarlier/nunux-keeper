@@ -27,6 +27,9 @@ EXPOSE 3000 8080
 # Copy sources
 COPY . /usr/src/keeper
 
+# Install app
+RUN npm install --unsafe-perm
+
 ENTRYPOINT ["/usr/local/bin/npm"]
 
 CMD ["start"]
