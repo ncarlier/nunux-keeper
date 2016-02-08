@@ -10,7 +10,7 @@ if [ ! -d "$APP_BACKUP_DIR" ]; then
     exit 1
 fi
 
-BACKUP_TARGET_DIR=$BACKUP_DIR/keeper
+BACKUP_TARGET_DIR=$APP_BACKUP_DIR/keeper
 if [ ! -d "$BACKUP_TARGET_DIR" ]; then
     echo "Target backup directory not found ... creating"
     mkdir -p $BACKUP_TARGET_DIR
