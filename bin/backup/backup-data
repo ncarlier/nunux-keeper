@@ -1,0 +1,34 @@
+#!/bin/sh
+
+if [ ! -d "$APP_VAR_DIR" ]; then
+    echo "App data directory (APP_VAR_DIR=$APP_VAR_DIR) doesn't exist."
+    exit 1
+fi
+
+if [ ! -d "$APP_BACKUP_DIR" ]; then
+    echo "Backup directory (APP_BACKUP_DIR=$APP_BACKUP_DIR) doesn't exist."
+    exit 1
+fi
+
+BACKUP_TARGET_DIR=$BACKUP_DIR/keeper
+if [ ! -d "$BACKUP_TARGET_DIR" ]; then
+    echo "Target backup directory not found ... creating"
+    mkdir -p $BACKUP_TARGET_DIR
+fi
+
+DATE=`date +%Y-%m-%d`
+
+BACKUP_FILE=$BACKUP_TARGET_DIR/keeper-data-${DATE}.tgz
+
+echo "Backup data to: $BACKUP_FILE ..."
+
+tar czf $BACKUP_FILE $APP_VAR_DIR
+if [ $? != 0 ]; then
+    echo "Error, unable to backup files"
+    exit 1
+fi
+
+echo "Removing old backup(s)..."
+(ls -t $BACKUP_TARGET_DIR/keeper-data*|head -n 1;ls $BACKUP_TARGET_DIR/keeper-data*)|sort|uniq -u|xargs rm -rv
+
+echo "Backup: [done]"

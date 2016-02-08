@@ -1,5 +1,5 @@
 .SILENT :
-.PHONY : help volume mount build clean cleanup start rm debug shell test install
+.PHONY : help volume mount build clean cleanup start rm debug shell test install uninstall
 
 USERNAME:=ncarlier
 APPNAME:=keeper
@@ -99,5 +99,18 @@ install: build
 	systemctl restart $(APPNAME)-server
 	systemctl enable $(APPNAME)-downloader
 	systemctl restart $(APPNAME)-downloader
+	systemctl enable $(APPNAME)-backup
+	systemctl restart $(APPNAME)-backup
 	$(MAKE) cleanup
+
+## Un-install service (needs root privileges)
+uninstall:
+	echo "Un-install service..."
+	systemctl stop $(APPNAME)-server
+	systemctl stop $(APPNAME)-downloader
+	systemctl stop $(APPNAME)-backup
+	rm /etc/systemd/system/keeper-*
+	rm /etc/default/$(APPNAME)
+	systemctl daemon-reload
+	$(MAKE) rm clean
 

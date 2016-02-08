@@ -1,0 +1,11 @@
+[Unit]
+Description=Daily backup of Nunux Reader data
+
+[Timer]
+# see systemd.time(7) manual page for other scheduling options
+OnCalendar=daily
+# run immediately if we missed a backup for some reason
+Persistent=true
+
+[Install]
+WantedBy=timers.target

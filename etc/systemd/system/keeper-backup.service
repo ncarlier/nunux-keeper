@@ -1,0 +1,19 @@
+[Unit]
+Description=Nunux Keeper backup job
+Requires=docker.service
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Nice=19
+IOSchedulingClass=2
+IOSchedulingPriority=7
+ExecStart=/usr/bin/docker run --rm --name %p \
+    --entrypoint="/bin/bash" \
+    --volume /var/opt/backup:/var/opt/backup \
+    --volume /var/opt/keeper:/var/opt/keeper \
+    --env-file /etc/environment \
+    --env-file /etc/default/reader \
+    --env-file /etc/default/reader_custom \
+    ncarlier/keeper ./bin/backup/backup-data
