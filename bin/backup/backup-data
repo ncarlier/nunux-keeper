@@ -29,6 +29,6 @@ if [ $? != 0 ]; then
 fi
 
 echo "Removing old backup(s)..."
-(ls -t $BACKUP_TARGET_DIR/keeper-data*|head -n 1;ls $BACKUP_TARGET_DIR/keeper-data*)|sort|uniq -u|xargs rm -rv
+(ls -t $BACKUP_TARGET_DIR/keeper-data*|head -n 2;ls $BACKUP_TARGET_DIR/keeper-data*)|sort|uniq -u|xargs rm -rv
 
 echo "Backup: [done]"

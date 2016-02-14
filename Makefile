@@ -99,16 +99,19 @@ install: build
 	systemctl restart $(APPNAME)-server
 	systemctl enable $(APPNAME)-downloader
 	systemctl restart $(APPNAME)-downloader
-	systemctl enable $(APPNAME)-backup
-	systemctl restart $(APPNAME)-backup
+	systemctl enable $(APPNAME)-backup.timer
+	systemctl restart $(APPNAME)-backup.timer
 	$(MAKE) cleanup
 
 ## Un-install service (needs root privileges)
 uninstall:
 	echo "Un-install service..."
 	systemctl stop $(APPNAME)-server
+	systemctl disable $(APPNAME)-server
 	systemctl stop $(APPNAME)-downloader
-	systemctl stop $(APPNAME)-backup
+	systemctl disable $(APPNAME)-downloader
+	systemctl stop $(APPNAME)-backup.timer
+	systemctl disable $(APPNAME)-backup.timer
 	rm /etc/systemd/system/keeper-*
 	rm /etc/default/$(APPNAME)
 	systemctl daemon-reload

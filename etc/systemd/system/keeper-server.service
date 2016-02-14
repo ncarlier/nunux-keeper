@@ -1,12 +1,17 @@
 [Unit]
 Description=Nunux Keeper server
-After=docker.service
+After=docker.service redis.service mongodb.service elasticsearch.service
 Requires=docker.service redis.service mongodb.service elasticsearch.service
 
 [Install]
 WantedBy=multi-user.target
 
 [Service]
+WatchdogSec=30s
+Restart=on-failure
+StartLimitInterval=5min
+StartLimitBurst=4
+OnFailure=unit-status-mail@%n.service
 ExecStartPre=-/usr/bin/docker kill %p
 ExecStartPre=-/usr/bin/docker rm %p
 ExecStart=/usr/bin/docker run --rm --name %p \
