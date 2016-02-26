@@ -7,7 +7,6 @@ Requires=docker.service redis.service mongodb.service elasticsearch.service
 WantedBy=multi-user.target
 
 [Service]
-WatchdogSec=30s
 Restart=on-failure
 StartLimitInterval=5min
 StartLimitBurst=4
