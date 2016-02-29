@@ -1,8 +1,13 @@
+image: node:4
+
+services:
+  - mongo:2
+
+before_script:
+  - apt-get update -qy
+  - apt-get install -y imagemagick
+  - npm install --unsafe-perm
+
 test:
   script:
-  - apt-get update -qy
-  - apt-get install -y wget build-essential imagemagick
-  - wget --no-check-certificate -O - https://deb.nodesource.com/setup_5.x | bash
-  - apt-get install -y nodejs
-  - npm install
   - npm test
