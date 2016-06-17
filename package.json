@@ -38,6 +38,7 @@
     "express-session": "1.0.x",
     "fs-extra": "0.8.x",
     "gm": "1.16.x",
+    "jszip": "^3.0.0",
     "knox": "0.9.x",
     "less-middleware": "^2.0.1",
     "method-override": "1.0.0",
