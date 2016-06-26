@@ -23,6 +23,8 @@ ExecStart=/usr/bin/docker run --rm --name %p \
     --link mongodb:mongodb \
     --link redis:redis \
     --link elasticsearch:elasticsearch \
+    --label traefik.backend=keeper \
+    --label traefik.frontend.rule=Host:keeper.nunux.org \
     ncarlier/keeper
 ExecStop=/usr/bin/docker stop %p
 
