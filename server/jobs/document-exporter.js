@@ -65,6 +65,7 @@ stream.on('data', function (doc) {
     categories: doc.categories,
     attachment: doc.attachment,
     resources: doc.resources,
+    date: doc.date,
     link: doc.link
   }));
 
