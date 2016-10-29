@@ -6,6 +6,8 @@
 
 Nunux Keeper allow you to collect, organize, and display articles or medias you found on the Internet.
 
+![Screenshot](screenshot.png)
+
 ## Features
 
 * Connect with your Google account (OAuth2) or with Mozilla Persona
