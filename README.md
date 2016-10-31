@@ -7,8 +7,8 @@
 Nunux Keeper allow you to collect, organize, and display articles or medias you
 found on the Internet.
 
-*WARNING:*This project is no longer maintained. Please refer to the [new
-version](https://keeper.nunux.org) of this project.
+**WARNING: This project is no longer maintained. Please refer to the [new
+version](https://keeper.nunux.org) of this project.**
 
 ![Screenshot](screenshot.png)
 
