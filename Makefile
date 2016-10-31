@@ -13,7 +13,7 @@ define docker_run_flags
 --link elasticsearch:elasticsearch \
 --env-file="./etc/default/$(env).env" \
 --env-file="./etc/default/custom.env" \
--P \
+-p 3000:3000 \
 -i -t
 endef
 
