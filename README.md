@@ -4,7 +4,11 @@
 
 > Your personal content curation service.
 
-Nunux Keeper allow you to collect, organize, and display articles or medias you found on the Internet.
+Nunux Keeper allow you to collect, organize, and display articles or medias you
+found on the Internet.
+
+*WARNING:*This project is no longer maintained. Please refer to the [new
+version](https://keeper.nunux.org) of this project.
 
 ![Screenshot](screenshot.png)
 
@@ -22,14 +26,6 @@ Nunux Keeper allow you to collect, organize, and display articles or medias you 
 * Link your account with Twitter and keep your tweets.
 * Import your bookmarks from Pocket
 * Store medias on the local disk or on S3
-
-## Roadmap
-
-* Add a user quota for local storage
-* Export a document to PDF
-* Add new document type support (Markdown, ...)
-* Improve sharing features
-* ...
 
 ## Under the hood
 
