@@ -9,7 +9,7 @@ found on the Internet.
 
 ---
 
-### :warning::warning::warning:This project is no longer maintained:warning::warning::warning:
+### :warning::warning::warning:This project has moved:warning::warning::warning:
 
 **Please refer to the [new version](https://github.com/nunux-keeper) of this project**
 
